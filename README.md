@@ -12,7 +12,7 @@ A bike shop made with PHP, mySQL and Tailwind CSS.
 Compose docker container:
 
 ```
-docker-compose up
+docker-compose build && docker-compose up
 ```
 
 Run shell script to install and to run the tailwind build process
@@ -28,3 +28,6 @@ To manually do the tailwind build process:
 ```
 
 Note: You can still run `run-install.sh` instead and it will ignore the install and just do the tailwind build process.
+
+## Before changing anything in the Docker container
+If you fuck something up in the docker container, the best way to 'fix' it is to run either: `docker-compose down` or `docker-compose restart`. It could save your life someday
