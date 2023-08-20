@@ -6,6 +6,7 @@ services:
     build: './build/php'
     volumes:
       - .:/var/www/html/
+      - ./website/apache/:/etc/apache2/sites-available/
   mysql:
     ports:
       - "3306:3306"
