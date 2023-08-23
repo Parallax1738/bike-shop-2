@@ -5,5 +5,5 @@
     # route to /src/views/{filename}
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ /src/view/$1 [L]
+    RewriteRule ^(.*)$ /src/view/index.php [L]
 </IfModule>
