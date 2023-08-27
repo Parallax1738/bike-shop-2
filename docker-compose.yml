@@ -15,9 +15,10 @@ services:
       MYSQL_ROOT_PASSWORD: "password"
       MYSQL_USER: "user"
       MYSQL_PASSWORD: "password"
-      MYSQL_DATABASE: "LAPTOPS"
+      MYSQL_DATABASE: "BIKE_SHOP"
     volumes:
       - dbData:/var/lib/mysql
+      - ./build/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Add this line
 volumes:
   app:
   dbData:
