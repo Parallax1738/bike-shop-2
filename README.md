@@ -29,6 +29,18 @@ To manually do the tailwind build process:
 
 Note: You can still run `run-install.sh` instead and it will ignore the install and just do the tailwind build process.
 
+## MVC
+In MVC, each there are Models, Views, and Controllers. When creating a new controller, you should call it 
+'{name}Controller' (examples in /src/base/controller). Each controller should have multiple methods or 'actions'
+which will be asociated with a model and a view. To define a new controller, go to `src/base/Router` and add a new element inside the `controllerMap` array.  
+
+When creating an action, please ensure that it is a **unique** name. For exmaple, If the user navigates to
+`example.com/test`, the action `test()` will be run. But it will also accept `test2()` because I am bad at programming. 
+If you have a better solution, please change it at `src/base/Rotuer` in the method `getActionFromStr()`. 
+
+Also, while the method is being called, all of the parameters from the URL will be directly parsed as an array and passed 
+into the method which may cause some issues (when I implement it eventually).
+
 ## Updating init.sql script
 init.sql is what runs when the mysql docker container is created. If you change the container, you must run:
 

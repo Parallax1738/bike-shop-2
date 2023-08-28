@@ -1,7 +1,8 @@
 <?php
-class HomeController extends Controller
+	
+	class HomeController extends Controller implements IHasIndexPage
 {
-  public function index(): void
+		public function index(array $params): void
   {
     echo "<h1>Hello, World! (home controller)</h1>";
   }

@@ -11,18 +11,18 @@ class MvcUri
     $this->action = $action;
     $this->parameters = $parameters;
   }
-
-  public function getController(): string
+	
+	public function getControllerName(): string
   {
     return $this->controller;
   }
-
-  public function getAction(): string
+	
+	public function getActionName(): string
   {
     return $this->action;
   }
-
-  public function getParameters(): array
+	
+	public function getParametersArray(): array
   {
     return $this->parameters;
   }
