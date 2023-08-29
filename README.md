@@ -32,7 +32,51 @@ Note: You can still run `run-install.sh` instead and it will ignore the install 
 ## MVC
 In MVC, each there are Models, Views, and Controllers. When creating a new controller, you should call it 
 '{name}Controller' (examples in /src/base/controller). Each controller should have multiple methods or 'actions'
-which will be asociated with a model and a view. To define a new controller, go to `src/base/Router` and add a new element inside the `controllerMap` array.  
+which will be asociated with a model and a view. To define a new controller, firstly create a new controller such as 
+`ExampleController`, make it implement `Controller`, and then go to `src/base/Router` and add a new element inside the 
+`controllerMap` array. To create an index page that will be automatically navigated to when going to 
+`example.com/controllerName`, you must implement the `IHasIndexPage` interface and override the `index(array $params)` 
+function. An example implementation colud look like:
+
+```php
+<?php
+
+// Example Controller
+class ExampleController extends Controller implements IHasIndexPage 
+{
+	// http://test.com/example
+	function index(array $params) 
+	{
+		// todo - actually implement models and views into the framework
+		echo '<h1>Example</h1>';
+	} 
+	
+	// http://test.com/example/books
+	function books(array $params) 
+	{
+		// holy shit there is more to this project than I thought
+		// create database access object
+		$database = new DataAccess();
+		
+		$books = $database->selectAllBooks();
+		foreach ($books as $b) 
+		{
+			echo '<p>' . $books->name . '</p>';
+		}
+	}
+}
+
+// Ensuring the router knows about this route's existence
+
+// Router.php
+		
+		public function __construct()
+		{
+			// ...
+			$this->controllerMap[ "example" ] = new ExapmleController();
+			// ...
+		}
+```
 
 When creating an action, please ensure that it is a **unique** name. For exmaple, If the user navigates to
 `example.com/test`, the action `test()` will be run. But it will also accept `test2()` because I am bad at programming. 
