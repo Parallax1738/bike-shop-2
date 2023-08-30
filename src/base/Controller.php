@@ -2,9 +2,19 @@
 	
 	class Controller
 	{
-		// TODO - Make array or map that links actions to action names for the URL
-		public function getName()
-		{
-			return "shit";
-		}
+        protected function view(string $controller, string $action, $data): void
+        {
+            $fileName = __DIR__ . "/../view/" . $controller . "/" . $action . "View.php";
+            if (!file_exists($fileName)) {
+                $this->viewError("The view does not exist, dumbass. Make sure you know how the fuck to type ");
+            } else {
+                require_once $fileName;
+            }
+        }
+
+        private function viewError($message): void
+        {
+            echo '<h1 style="font-size: 2.5rem; font-weight: bold; color: red;">Error with views :)</h1>';
+            echo '<p>' . $message . "</p>";
+        }
 	}

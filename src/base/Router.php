@@ -22,7 +22,7 @@
 		{
 			// If no controller, go to /
 			if (empty($uri->getControllerName())) {
-				$this->displayIndex();
+				$this->displayIndex($uri->getParametersArray());
 				return;
 			}
 			
@@ -45,14 +45,14 @@
 			}
 			
 			// Calling the action as a method inside the controller
-			$c->$a();
+			$c->$a($uri->getParametersArray());
 		}
 		
-		private function displayIndex() : void
+		private function displayIndex(array $params) : void
 		{
 			try {
 				if ($this->indexController instanceof IHasIndexPage) {
-					$this->indexController->index([]);
+					$this->indexController->index($params);
 				} else {
 					$this->notFound("No index page found");
 				}
