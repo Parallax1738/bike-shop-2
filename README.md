@@ -30,13 +30,21 @@ To manually do the tailwind build process:
 Note: You can still run `run-install.sh` instead and it will ignore the install and just do the tailwind build process.
 
 ## MVC
-In MVC, each there are Models, Views, and Controllers. When creating a new controller, you should call it 
+In MVC, each there are Models, Views, and Controllers. 
+
+When creating a new controller, you should call it 
 '{name}Controller' (examples in /src/base/controller). Each controller should have multiple methods or 'actions'
 which will be asociated with a model and a view. To define a new controller, firstly create a new controller such as 
 `ExampleController`, make it implement `Controller`, and then go to `src/base/Router` and add a new element inside the 
 `controllerMap` array. To create an index page that will be automatically navigated to when going to 
 `example.com/controllerName`, you must implement the `IHasIndexPage` interface and override the `index(array $params)` 
-function. An example implementation colud look like:
+function. 
+
+To define an action, you must set up a .php file inside `/src/view/{controller}/{function/action}View.php`. This view
+be called automatically when you call the function `$this->view({controller}, {action}, {your model / data});`, where 
+your data can be anything. The data will be passed into the view, which will be described later.
+
+An example controller implementation colud look like:
 
 ```php
 <?php
@@ -48,7 +56,7 @@ class ExampleController extends Controller implements IHasIndexPage
 	function index(array $params) 
 	{
 		// todo - actually implement models and views into the framework
-		echo '<h1>Example</h1>';
+		return view("example", "index", "");
 	} 
 	
 	// http://test.com/example/books
@@ -59,10 +67,7 @@ class ExampleController extends Controller implements IHasIndexPage
 		$database = new DataAccess();
 		
 		$books = $database->selectAllBooks();
-		foreach ($books as $b) 
-		{
-			echo '<p>' . $books->name . '</p>';
-		}
+		return view("example", "books", $books);
 	}
 }
 
@@ -82,8 +87,19 @@ When creating an action, please ensure that it is a **unique** name. For exmaple
 `example.com/test`, the action `test()` will be run. But it will also accept `test2()` because I am bad at programming. 
 If you have a better solution, please change it at `src/base/Rotuer` in the method `getActionFromStr()`. 
 
-Also, while the method is being called, all of the parameters from the URL will be directly parsed as an array and passed 
-into the method which may cause some issues (when I implement it eventually).
+Here is an example of a view you cogdfcgififglud use. This is following on the example for `/example/books`. Just 
+remember that when you call the `view()` function from inside your controller had the `$data` parameter which you should
+be using in your view.
+
+```php
+<h1>Holy shit it worked</h1>
+<?php
+    foreach ($data as $book) 
+    {
+        echo "<p>" . $book->name . "</p>";
+    }
+?>
+```
 
 ## Updating init.sql script
 init.sql is what runs when the mysql docker container is created. If you change the container, you must run:
