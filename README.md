@@ -15,7 +15,9 @@ Compose docker container:
 docker-compose build && docker-compose up
 ```
 
-Run shell script to install and to run the tailwind build process
+## Tailwind Setup 
+
+You should only need to run these when you are modifying UI elements as output.css should have the most up-to-date CSS. Run shell script to install and to run the tailwind build process
 
 ```
 ./run-install.sh
