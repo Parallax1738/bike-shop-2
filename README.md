@@ -115,10 +115,10 @@ You should see something along the lines of `bike-shop_dbData`. Then, run
 docker volume rm bike-shop_dbData # or whatever you found in the command
 ```
 
-Then, you can restart the docker container by running:
+Then, you can restart, and rebuild the docker container by running:
 
 ```
-docker-compose up
+docker-compose up --build
 ```
 
 ## Before changing anything in the Docker container
