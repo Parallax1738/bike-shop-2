@@ -3,6 +3,7 @@
 	require 'IHasIndexPage.php';
 	require '../controller/HomeController.php';
 	require '../controller/TestController.php';
+	require '../controller/BikesController.php';
 	
 	class Router
 	{
@@ -16,6 +17,7 @@
 			$this->indexController = $homeController;
 			$this->controllerMap[ "home" ] = $homeController;
 			$this->controllerMap[ "test" ] = new TestController();
+			$this->controllerMap[ "bikes" ] = new BikesController();
 		}
 		
 		public function manageUrl(MvcUri $uri) : void
