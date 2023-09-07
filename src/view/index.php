@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Tailwind CSS Test Page</title>
+    <title>Bike shop</title>
     <link href="../../output.css" rel="stylesheet">
 </head>
-<body class="bg-gray-200">
-<div class="container mx-auto">
-    <header class="bg-blue-500 text-white p-4">
-        <h1 class="text-4xl">Tailwind CSS Test Page</h1>
-    </header>
-    <main class="p-4">
-		<?php
+
+<body>
+    <?php include './components/navbar.php'; ?>
+    <main>
+        <?php
 			
 			require '../base/MvcUri.php';
 			require '../base/Router.php';
@@ -73,6 +72,7 @@
 			getUri();
 		?>
     </main>
-</div>
+    </div>
 </body>
+
 </html>

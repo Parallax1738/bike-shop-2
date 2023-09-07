@@ -36,7 +36,7 @@ In MVC, each there are Models, Views, and Controllers.
 
 When creating a new controller, you should call it 
 '{name}Controller' (examples in /src/base/controller). Each controller should have multiple methods or 'actions'
-which will be associated with a model and a view. To define a new controller, firstly create a new controller such as
+which will be asociated with a model and a view. To define a new controller, firstly create a new controller such as 
 `ExampleController`, make it implement `Controller`, and then go to `src/base/Router` and add a new element inside the 
 `controllerMap` array. To create an index page that will be automatically navigated to when going to 
 `example.com/controllerName`, you must implement the `IHasIndexPage` interface and override the `index(array $params)` 
@@ -46,7 +46,7 @@ To define an action, you must set up a .php file inside `/src/view/{controller}/
 be called automatically when you call the function `$this->view({controller}, {action}, {your model / data});`, where 
 your data can be anything. The data will be passed into the view, which will be described later.
 
-An example controller implementation could look like:
+An example controller implementation colud look like:
 
 ```php
 <?php
@@ -64,6 +64,7 @@ class ExampleController extends Controller implements IHasIndexPage
 	// http://test.com/example/books
 	function books(array $params) 
 	{
+		// holy shit there is more to this project than I thought
 		// create database access object
 		$database = new DataAccess();
 		
@@ -79,21 +80,21 @@ class ExampleController extends Controller implements IHasIndexPage
 		public function __construct()
 		{
 			// ...
-			$this->controllerMap[ "example" ] = new ExampleController();
+			$this->controllerMap[ "example" ] = new ExapmleController();
 			// ...
 		}
 ```
 
-When creating an action, please ensure that it is a **unique** name. For example, If the user navigates to
-`example.com/test`, the action `test()` will be run. But it will also accept `test2()`.
-If you have a better solution, please change it at `src/base/Router` in the method `getActionFromStr()`.
+When creating an action, please ensure that it is a **unique** name. For exmaple, If the user navigates to
+`example.com/test`, the action `test()` will be run. But it will also accept `test2()` because I am bad at programming. 
+If you have a better solution, please change it at `src/base/Rotuer` in the method `getActionFromStr()`. 
 
-Here is an example of a view you could use. This is following on the example for `/example/books`. Just
+Here is an example of a view you cogdfcgififglud use. This is following on the example for `/example/books`. Just 
 remember that when you call the `view()` function from inside your controller had the `$data` parameter which you should
 be using in your view.
 
 ```php
-<h1>Hello World!</h1>
+<h1>Holy shit it worked</h1>
 <?php
     foreach ($data as $book) 
     {
@@ -123,4 +124,4 @@ docker-compose up --build
 ```
 
 ## Before changing anything in the Docker container
-If you make a mistake in the docker container, the best way to 'fix' it is to run either: `docker-compose down` or `docker-compose restart`.
+If you fuck something up in the docker container, the best way to 'fix' it is to run either: `docker-compose down` or `docker-compose restart`. It could save your life someday

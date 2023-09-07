@@ -11,6 +11,4 @@
 		{
 			echo '<h1>oh fucking shit</h1>';
 		}
-
-
 	}
