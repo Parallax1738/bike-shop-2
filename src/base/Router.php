@@ -4,6 +4,7 @@
 	require '../controller/HomeController.php';
 	require '../controller/TestController.php';
 	require '../controller/BikesController.php';
+	require '../controller/AuthController.php';
 	
 	class Router
 	{
@@ -18,6 +19,7 @@
 			$this->controllerMap[ "home" ] = $homeController;
 			$this->controllerMap[ "test" ] = new TestController();
 			$this->controllerMap[ "bikes" ] = new BikesController();
+			$this->controllerMap[ "auth" ] = new AuthController();
 		}
 		
 		public function manageUrl(MvcUri $uri) : void
