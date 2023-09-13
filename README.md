@@ -9,11 +9,21 @@ A bike shop made with PHP, mySQL and Tailwind CSS.
 
 ## Installation/Setup
 
+### Setting up Docker container
+
 Compose docker container:
 
 ```
 docker-compose build && docker-compose up
 ```
+
+### Installing Composer Packages
+
+We need to have a package installed for the assessment (sorry). To install a package, firstly you must define the
+package in `composer.json` under the `require` section (you can see an example in there already)
+
+Then, find the docker container using `docker ps` (assuming it is already running). Then, using the docker container id,
+run `docker exec -it {container id} composer install && composer update` to properly install the packages
 
 ## Tailwind Setup 
 
@@ -122,13 +132,6 @@ Then, you can restart, and rebuild the docker container by running:
 ```
 docker-compose up --build
 ```
-
-## Installing Composer Packages
-We need to have a package installed for the assessment (sorry). To install a package, firstly you must define the 
-package in `composer.json` under the `require` section (you can see an example in there already)
-
-Then, find the docker container using `docker ps` (assuming it is already running). Then, using the docker container id,
-run `docker exec -it {container id} composer install && composer update` to properly install the packages
 
 ## Before changing anything in the Docker container
 If you fuck something up in the docker container, the best way to 'fix' it is to run either: `docker-compose down` or `docker-compose restart`. It could save your life someday
