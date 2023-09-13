@@ -8,7 +8,7 @@
 //                <input name='test' value='4' />
 //                <input style='background-color: darkgrey;' type='submit' value='Submit' />
 //            </form>";
-            $this->view('home', 'index', "test");
+            $this->view('home', 'index', 10);
 		}
 		
 		public function test() : void

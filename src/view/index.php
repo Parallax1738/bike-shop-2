@@ -9,7 +9,7 @@
 
 <body>
     <?php
-        include './components/navbar.php';
+        include './ui-components/navbar.php';
         require '../../vendor/autoload.php';
     ?>
     <main>
