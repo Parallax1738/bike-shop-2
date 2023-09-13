@@ -1,0 +1,12 @@
+{
+  "name": "conedor/bikeshop",
+  "description": "this is a bike shop",
+  "require": {
+    "joshtronic/php-loremipsum": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "conedor\\": "src/view/"
+    }
+  }
+}
