@@ -1,5 +1,6 @@
 <?php
 	
+	namespace database;
 	class DatabaseConnector
 	{
 		private string $databaseUser;
@@ -7,7 +8,7 @@
 		private string $databaseName;
 		private string $databaseHost;
 		private string $databasePort;
-		private mysqli|null $mysqli;
+		private mysqli | null $mysqli;
 		
 		public function __construct(string $user, string $pwd, string $dbname, string $host, string $port)
 		{
@@ -28,24 +29,20 @@
 		 * Connects to the database
 		 * @return void
 		 */
-		private function connect(): void {
+		private function connect() : void
+		{
 			if ($this->isConnected()) {
 				return;
 			}
 			
-			$this->mysqli = new mysqli(
-				$this->databaseHost,
-				$this->databaseUser,
-				$this->databasePwd,
-				$this->databaseName,
-				$this->databasePort
-			);
+			$this->mysqli = new mysqli($this->databaseHost, $this->databaseUser, $this->databasePwd, $this->databaseName, $this->databasePort);
 		}
 		
 		/**
 		 * @return bool If the database is connected to PHP ocl
 		 */
-		private function isConnected(): bool {
+		private function isConnected() : bool
+		{
 			return empty($this->mysqli);
 		}
 		
@@ -55,6 +52,7 @@
 		 */
 		private function disconnect() : void
 		{
+			echo $this->mysqli == null ? "true" : 'false';
 			if (!$this->isConnected()) {
 				return;
 			}
