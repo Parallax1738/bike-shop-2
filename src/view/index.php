@@ -9,12 +9,15 @@
 
 <body>
     <?php
-        include './ui-components/navbar.php';
+		include './ui-components/navbar.php';
         require '../../vendor/autoload.php';
+        require '../database/DatabaseConnector.php';
     ?>
     <main>
         <?php
-			
+            $connection = new DatabaseConnector("root", "password", "BIKE_SHOP", "mysql");
+            $connection->getUsers();
+            
 			require '../base/MvcUri.php';
 			require '../base/Router.php';
 			

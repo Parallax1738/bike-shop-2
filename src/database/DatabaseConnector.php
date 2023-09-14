@@ -1,22 +1,20 @@
 <?php
+	require '../models/DbUserModel.php';
 	
-	namespace database;
 	class DatabaseConnector
 	{
 		private string $databaseUser;
 		private string $databasePwd;
 		private string $databaseName;
-		private string $databaseHost;
-		private string $databasePort;
+		private string $serverName;
 		private mysqli | null $mysqli;
 		
-		public function __construct(string $user, string $pwd, string $dbname, string $host, string $port)
+		public function __construct(string $user, string $pwd, string $dbname, string $serverName)
 		{
 			$this->databaseUser = $user;
 			$this->databasePwd = $pwd;
 			$this->databaseName = $dbname;
-			$this->databaseHost = $host;
-			$this->databasePort = $port;
+			$this->serverName = $serverName;
 		}
 		
 		public function __destruct()
@@ -25,17 +23,37 @@
 			$this->disconnect();
 		}
 		
+		public function getUsers(): array
+		{
+			$users = [];
+			
+			$this->connect();
+			$sql = $this->mysqli->prepare("SELECT * FROM USER");
+			
+			if ($sql->execute())
+			{
+				$sql->bind_result($id, $firstName, $lastName, $emailAddress, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				while ($sql->fetch())
+				{
+					$user = new DbUserModel($id, $firstName, $lastName, $emailAddress, $password, $address, $suburb, $state, $postcode, $country, $phone);
+					$user->print();
+				}
+			}
+			return $users;
+		}
+		
 		/**
 		 * Connects to the database
 		 * @return void
 		 */
 		private function connect() : void
 		{
-			if ($this->isConnected()) {
+			if ($this->isConnected())
+			{
 				return;
 			}
 			
-			$this->mysqli = new mysqli($this->databaseHost, $this->databaseUser, $this->databasePwd, $this->databaseName, $this->databasePort);
+			$this->mysqli = new mysqli($this->serverName, $this->databaseUser, $this->databasePwd, $this->databaseName);
 		}
 		
 		/**
@@ -43,7 +61,7 @@
 		 */
 		private function isConnected() : bool
 		{
-			return empty($this->mysqli);
+			return !empty($this->mysqli);
 		}
 		
 		/**
@@ -52,7 +70,6 @@
 		 */
 		private function disconnect() : void
 		{
-			echo $this->mysqli == null ? "true" : 'false';
 			if (!$this->isConnected()) {
 				return;
 			}
