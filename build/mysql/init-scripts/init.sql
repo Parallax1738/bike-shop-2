@@ -18,18 +18,16 @@ CREATE TABLE PRODUCT(
 
 CREATE TABLE USER(
     ID int NOT NULL,
-    NAME varchar(20),
     FIRST_NAME varchar(50),
-    FAMILY_NAME varchar(50),
-    EMAIL_ADDRESS nvarchar(50),
-    PASSWORD varchar(100),
-    CONFIRM_PASSWORD varchar(100),
+    LAST_NAME varchar(50),
+    EMAIL_ADDRESS varchar(500),
+    PASSWORD varchar(500),
     ADDRESS varchar(200),
     SUBURB varchar(10),
     STATE varchar(10),
-    POSTCODE INT,
+    POSTCODE varchar(4),
     COUNTRY varchar(50),
-    PHONE INT,
+    PHONE varchar(14),
     PRIMARY KEY (ID)
 );
 
