@@ -9,12 +9,6 @@
 		private string $databasePort;
 		private mysqli|null $mysqli;
 		
-		/**
-		 * @param string $user The username for the database
-		 * @param string $pwd The password of the user for the database
-		 * @param string $dbname The database name
-		 * @param string $host The host name (127.0.0.1) that the database is running on
-		 */
 		public function __construct(string $user, string $pwd, string $dbname, string $host, string $port)
 		{
 			$this->databaseUser = $user;
@@ -27,15 +21,15 @@
 		public function __destruct()
 		{
 			// Ensure to delete all active connections
-			$this->Disconnect();
+			$this->disconnect();
 		}
 		
 		/**
 		 * Connects to the database
 		 * @return void
 		 */
-		private function Connect() {
-			if ($this->IsConnected()) {
+		private function connect(): void {
+			if ($this->isConnected()) {
 				return;
 			}
 			
@@ -51,20 +45,21 @@
 		/**
 		 * @return bool If the database is connected to PHP ocl
 		 */
-		private function IsConnected(): bool {
-			return $this->mysqli != null;
+		private function isConnected(): bool {
+			return empty($this->mysqli);
 		}
 		
 		/**
 		 * Disconnects from the database if the connection is still active
 		 * @return void
 		 */
-		private function Disconnect() {
-			if ($this->mysqli == null) {
+		private function disconnect() : void
+		{
+			if (!$this->isConnected()) {
 				return;
 			}
 			
-			$this->connection->close();
-			$this->connection = null;
+			$this->mysqli->close();
+			$this->mysqli = null;
 		}
 	}

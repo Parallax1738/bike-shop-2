@@ -2,7 +2,8 @@
   "name": "conedor/bikeshop",
   "description": "this is a bike shop",
   "require": {
-    "joshtronic/php-loremipsum": "dev-master"
+    "joshtronic/php-loremipsum": "dev-master",
+    "ext-mysqli": "*"
   },
   "autoload": {
     "psr-4": {
