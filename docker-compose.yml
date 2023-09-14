@@ -18,7 +18,7 @@ services:
       MYSQL_DATABASE: "BIKE_SHOP"
     volumes:
       - dbData:/var/lib/mysql
-      - ./build/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Add this line
+      - ./build/mysql/init-scripts:/docker-entrypoint-initdb.d/  # Add this line
 volumes:
   app:
   dbData:
