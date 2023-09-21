@@ -4,7 +4,7 @@
 	{
         protected function view(string $controller, string $action, $data): void
         {
-            $fileName = __DIR__ . "/../view/" . $controller . "/" . $action . "View.php";
+            $fileName = __DIR__ . "/../view/" . $controller . "/" . $action . ".php";
             if (!file_exists($fileName)) {
                 $this->viewError("The view does not exist, dumbass. Make sure you know how the fuck to type ");
             } else {

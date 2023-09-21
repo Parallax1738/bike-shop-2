@@ -52,7 +52,7 @@ which will be asociated with a model and a view. To define a new controller, fir
 `example.com/controllerName`, you must implement the `IHasIndexPage` interface and override the `index(array $params)` 
 function. 
 
-To define an action, you must set up a .php file inside `/src/view/{controller}/{function/action}View.php`. This view
+To define an action, you must set up a .php file inside `/src/view/{controller}/{function/action}.php`. This view
 be called automatically when you call the function `$this->view({controller}, {action}, {your model / data});`, where 
 your data can be anything. The data will be passed into the view, which will be described later.
 
