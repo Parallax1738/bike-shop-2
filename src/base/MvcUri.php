@@ -20,7 +20,7 @@
 		
 		public function getActionName() : string
 		{
-			return $this->action;
+			return str_replace('-', '', $this->action);
 		}
 		
 		public function getParametersArray() : array
