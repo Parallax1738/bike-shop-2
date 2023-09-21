@@ -9,7 +9,7 @@
             include('button.php');
             button([
               'text' => 'Login',
-              'targetPage' => 'auth.php',
+              'targetPage' => '/auth/login',
               'isLoggedIn' => false
             ]);
             ?>
