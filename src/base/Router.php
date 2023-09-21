@@ -147,7 +147,8 @@
 			
 			$reflectedController = new ReflectionClass($controller);
 			foreach ($reflectedController->getMethods() as $controllerMethod) {
-				if (str_contains($controllerMethod->getName(), $actionName)) {
+				echo "<p>" . $controllerMethod . "</p>";
+				if (str_contains(strtolower($controllerMethod->getName()), strtolower($actionName))) {
 					return $controllerMethod->getName();
 				}
 			}
