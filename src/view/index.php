@@ -22,7 +22,6 @@
 			$router->manageUrl();
 		?>
     </main>
-    </div>
 </body>
 
 </html>
