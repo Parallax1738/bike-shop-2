@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   php-apache:
+    container_name: "bike-shop-web"
     ports:
       - "80:80"
     build: './build/php'
@@ -8,6 +9,7 @@ services:
       - .:/var/www/html/
       - ./website/apache/:/etc/apache2/sites-available/
   mysql:
+    container_name: "bike-shop-database"
     ports:
       - "3306:3306"
     build: './build/mysql'
