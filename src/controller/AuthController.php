@@ -1,13 +1,38 @@
 <?php
 	require_once '../models/CreateAccountModel.php';
+	require_once '../models/LoginModel.php';
 	class AuthController extends Controller
 	{
-		public function login()
+		/**
+		 * @throws Exception
+		 */
+		public function login(): void
 		{
-			$this->view('auth', 'login');
+			$credentials = null;
+			
+			if ($_SERVER["REQUEST_METHOD"] == "GET")
+			{
+				$this->view('auth', 'login');
+			}
+			else
+			{
+				try
+				{
+					$credentials = $this->getLoginCredentials($_POST);
+				}
+				catch (Exception $e)
+				{
+					echo $e->getMessage();
+				}
+				
+				if (!($credentials instanceof LoginModel))
+					throw new Exception("An error occurred while trying to gather user credentials (cannot convert " . $credentials::class . " to " . LoginModel::class . ").");
+				
+				echo $this->validateCredentials($credentials) ? "Logged In!" : "Invalid Credentials. Please check your email address or password";
+			}
 		}
 		
-		public function createAccount()
+		public function createAccount(): void
 		{
 			if (!$_SERVER["REQUEST_METHOD"] == "POST")
 			{
@@ -18,7 +43,7 @@
 			// get data
 			try
 			{
-				$account = $this->getUserFromRequest();
+				$account = $this->getCreateAccountDetails($_POST);
 			}
 			catch (Exception $e)
 			{
@@ -43,36 +68,74 @@
 		}
 		
 		/**
+		 * Checks an array to collect all details used to create an account
+		 * @param $arr array The array that contains the request method
 		 * @throws Exception if a GET request was performed instead of a POST or if username/password fileds are wrong
 		 */
-		private function getUserFromRequest() : CreateAccountModel|null
+		private function getCreateAccountDetails(array $arr) : CreateAccountModel|null
 		{
 			// TODO - Instead of throwing exceptions, reroute to login() and show errors.
 			// TODO - Rename 'emailAddress' to 'email' like a sensible person
 			
-			if ($_SERVER["REQUEST_METHOD"] != "POST")
-			{
-				throw new Exception("Cannot GET create-account, you can only POST");
-			}
-			
-			$post = $_POST;
-			
 			// Check if emailAddress exists, and if it is of correct length
-			if (!array_key_exists("email", $post)) throw new Exception("No emailAddress was provided");
+			if (!array_key_exists("email", $arr)) throw new Exception("No emailAddress was provided");
 			
-			$emailAddress = $post["email"];
+			$emailAddress = $arr["email"];
 			
 			if (empty($emailAddress) || strlen($emailAddress) > 50) throw new Exception("Username has invalid size. Must be between 1 - 50 letters long");
 			$emailAddress = filter_var($emailAddress, FILTER_SANITIZE_EMAIL);
 			
 			// Check if password exists, and if it is of correct length
-			if (!array_key_exists("password", $post)) throw new Exception("No password was provided");
+			if (!array_key_exists("password", $arr)) throw new Exception("No password was provided");
 			
-			$password = $post["password"];
+			$password = $arr["password"];
 			
 			// TODO - Password (and email) should have infinite string length (or at least 256)
 			if (empty($password) || strlen($password) > 50) throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
 			
 			return new CreateAccountModel($emailAddress, $password);
+		}
+		
+		/**
+		 * Checks an array to see if there is an email or password field inside it
+		 * @param $arr array The array that contains the request method
+		 * @throws Exception if a GET request was performed instead of a POST or if username/password fileds are wrong
+		 * @returns LoginModel coming from the array, filtered and sanatised
+		 */
+		private function getLoginCredentials(array $arr) : LoginModel|null
+		{
+			// TODO - Instead of throwing exceptions, reroute to login() and show errors.
+			// TODO - Rename 'emailAddress' to 'email' like a sensible person
+			
+			// Check if emailAddress exists, and if it is of correct length
+			if (!array_key_exists("email", $arr)) throw new Exception("No emailAddress was provided");
+			
+			$emailAddress = $arr["email"];
+			
+			if (empty($emailAddress) || strlen($emailAddress) > 50) throw new Exception("Username has invalid size. Must be between 1 - 50 letters long");
+			$emailAddress = filter_var($emailAddress, FILTER_SANITIZE_EMAIL);
+			
+			// Check if password exists, and if it is of correct length
+			if (!array_key_exists("password", $arr)) throw new Exception("No password was provided");
+			
+			$password = $arr["password"];
+			
+			// TODO - Password (and email) should have infinite string length (or at least 256)
+			if (empty($password) || strlen($password) > 50) throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
+			
+			return new LoginModel($emailAddress, $password);
+		}
+		
+		private function validateCredentials(LoginModel $credentials): bool
+		{
+			// Check if user exists
+			$dbo = new DatabaseConnector("user", "password", "BIKE_SHOP");
+			$user = $dbo->findUserWithEmailAddress($credentials->getEmail());
+			if (empty($user))
+			{
+				return false;
+			}
+			
+			return password_verify($credentials->getPassword(), $user->getPassword());
 		}
 	}
