@@ -45,9 +45,9 @@ Note: You can still run `run-install.sh` instead and it will ignore the install 
 In MVC, each there are Models, Views, and Controllers. 
 
 When creating a new controller, you should call it 
-'{name}Controller' (examples in /src/base/controller). Each controller should have multiple methods or 'actions'
+'{name}Controller' (examples in /src/core/controller). Each controller should have multiple methods or 'actions'
 which will be asociated with a model and a view. To define a new controller, firstly create a new controller such as 
-`ExampleController`, make it implement `Controller`, and then go to `src/base/Router` and add a new element inside the 
+`ExampleController`, make it implement `Controller`, and then go to `src/core/Router` and add a new element inside the 
 `controllerMap` array. To create an index page that will be automatically navigated to when going to 
 `example.com/controllerName`, you must implement the `IHasIndexPage` interface and override the `index(array $params)` 
 function. 
@@ -97,7 +97,7 @@ class ExampleController extends Controller implements IHasIndexPage
 
 When creating an action, please ensure that it is a **unique** name. For exmaple, If the user navigates to
 `example.com/test`, the action `test()` will be run. But it will also accept `test2()` because I am bad at programming. 
-If you have a better solution, please change it at `src/base/Rotuer` in the method `getActionFromStr()`. 
+If you have a better solution, please change it at `src/core/Rotuer` in the method `getActionFromStr()`. 
 
 Here is an example of a view you cogdfcgififglud use. This is following on the example for `/example/books`. Just 
 remember that when you call the `view()` function from inside your controller had the `$data` parameter which you should
