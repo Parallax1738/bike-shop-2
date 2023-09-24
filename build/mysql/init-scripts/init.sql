@@ -20,19 +20,16 @@ CREATE TABLE PRODUCT(
 
 DROP TABLE IF EXISTS USER;
 CREATE TABLE USER(
-    ID int NOT NULL AUTO_INCREMENT,
+    EMAIL_ADDRESS varchar(500) PRIMARY KEY,
     FIRST_NAME varchar(50),
     LAST_NAME varchar(50),
-    EMAIL_ADDRESS varchar(500),
     PASSWORD varchar(500),
     ADDRESS varchar(200),
     SUBURB varchar(10),
     STATE varchar(10),
     POSTCODE varchar(4),
     COUNTRY varchar(50),
-    PHONE varchar(14),
-    PRIMARY KEY (ID),
-    PRIMARY KEY (EMAIL_ADDRESS)
+    PHONE varchar(14)
 );
 
 
