@@ -6,9 +6,12 @@
         protected function view(string $controller, string $action, $data = null): void
         {
             $fileName = __DIR__ . "/../view/" . $controller . "/" . $action . ".php";
-            if (!file_exists($fileName)) {
+            if (!file_exists($fileName))
+			{
                 $this->viewError("The view {" . $fileName ."} does not exist, dumbass. Make sure you know how the fuck to type ");
-            } else {
+            }
+			else
+			{
 				// Loads the file, which is where the HTML/CSS will be loaded for the user
                 require_once $fileName;
             }
