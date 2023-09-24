@@ -1,10 +1,10 @@
 <?php
-	require 'Controller.php';
-	require 'IHasIndexPage.php';
-	require '../controller/HomeController.php';
-	require '../controller/TestController.php';
-	require '../controller/BikesController.php';
-	require '../controller/AuthController.php';
+	require_once 'Controller.php';
+	require_once 'IHasIndexPage.php';
+	require_once '../controller/HomeController.php';
+	require_once '../controller/TestController.php';
+	require_once '../controller/BikesController.php';
+	require_once '../controller/AuthController.php';
 	
 	class Router
 	{

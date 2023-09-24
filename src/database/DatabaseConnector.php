@@ -1,5 +1,6 @@
 <?php
-	require '../models/DbUserModel.php';
+	require_once '../models/DbUserModel.php';
+	require_once '../models/CreateAccountModel.php';
 	
 	class DatabaseConnector
 	{
@@ -9,7 +10,7 @@
 		private string $serverName;
 		private mysqli | null $mysqli;
 		
-		public function __construct(string $user, string $pwd, string $dbname, string $serverName)
+		public function __construct(string $user, string $pwd, string $dbname, string $serverName = "bike-shop-database")
 		{
 			$this->databaseUser = $user;
 			$this->databasePwd = $pwd;
@@ -23,23 +24,46 @@
 			$this->disconnect();
 		}
 		
-		public function getUsers(): array
+		public function findUserWithEmailAddress($emailToFind): DbUserModel | null
 		{
-			$users = [];
-			
 			$this->connect();
-			$sql = $this->mysqli->prepare("SELECT * FROM USER");
+			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER.EMAIL_ADDRESS = ?");
+			$sql->bind_param("s", $sqlEmail);
+			$sqlEmail = $emailToFind;
 			
 			if ($sql->execute())
 			{
-				$sql->bind_result($id, $firstName, $lastName, $emailAddress, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				$sql->bind_result($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				while ($sql->fetch())
 				{
-					$user = new DbUserModel($id, $firstName, $lastName, $emailAddress, $password, $address, $suburb, $state, $postcode, $country, $phone);
-					$user->print();
+					return new DbUserModel($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				}
 			}
-			return $users;
+			$this->disconnect();
+			return null;
+		}
+		
+		/**
+		 * @throws Exception When an account already exists with a specified email address
+		 */
+		public function insertUser(CreateAccountModel $newAcc) : void
+		{
+			// make sure a user does not exist already
+			$foundUser = $this->findUserWithEmailAddress($newAcc->getEmail());
+			if ($foundUser instanceof DbUserModel)
+			{
+				throw new Exception("An account with the email address " . $foundUser->getEmailAddress() . " already exists!");
+			}
+			
+			$this->connect();
+//			$sql = $this->mysqli->prepare("INSERT INTO USER (EMAIL_ADDRESS, PASSWORD) VALUES(?, ?)");
+//			$sql->bind_param("ss", $sqlEmail, $sqlPass);
+//
+//			$sqlEmail = $newAcc->getEmail();
+//			$sqlPass = $newAcc->getPassword();
+//
+//			$sql->execute();
+			$this->disconnect();
 		}
 		
 		/**
