@@ -55,14 +55,16 @@
 				throw new Exception("An account with the email address " . $foundUser->getEmailAddress() . " already exists!");
 			}
 			
+			$hashedPassword = password_hash($newAcc->getPassword(), PASSWORD_BCRYPT);
+			
 			$this->connect();
-//			$sql = $this->mysqli->prepare("INSERT INTO USER (EMAIL_ADDRESS, PASSWORD) VALUES(?, ?)");
-//			$sql->bind_param("ss", $sqlEmail, $sqlPass);
-//
-//			$sqlEmail = $newAcc->getEmail();
-//			$sqlPass = $newAcc->getPassword();
-//
-//			$sql->execute();
+			$sql = $this->mysqli->prepare("INSERT INTO USER (EMAIL_ADDRESS, PASSWORD) VALUES(?, ?)");
+			$sql->bind_param("ss", $sqlEmail, $hashedPassword);
+
+			$sqlEmail = $newAcc->getEmail();
+			$sqlPass = $newAcc->getPassword();
+
+			$sql->execute();
 			$this->disconnect();
 		}
 		
