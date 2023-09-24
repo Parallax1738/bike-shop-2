@@ -15,8 +15,8 @@
     ?>
     <main>
         <?php
-			require '../base/MvcUri.php';
-			require '../base/Router.php';
+			require '../core/MvcUri.php';
+			require '../core/Router.php';
 			
 			$router = new Router();
 			$router->manageUrl();
