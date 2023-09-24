@@ -20,7 +20,8 @@ CREATE TABLE PRODUCT(
 
 DROP TABLE IF EXISTS USER;
 CREATE TABLE USER(
-    EMAIL_ADDRESS varchar(500) PRIMARY KEY,
+    ID int primary key,
+    EMAIL_ADDRESS varchar(500) unique,
     FIRST_NAME varchar(50),
     LAST_NAME varchar(50),
     PASSWORD varchar(500),
