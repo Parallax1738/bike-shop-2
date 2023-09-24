@@ -4,29 +4,29 @@
 class DbUserModel
 {
 	private int $id;
-	private string $firstName;
-	private string $lastName;
 	private string $emailAddress;
-	private string $password;
-	private string $address;
-	private string $suburb;
-	private string $state;
-	private string $postcode;
-	private string $country;
-	private string $phone;
+	private string | null $firstName;
+	private string | null $lastName;
+	private string | null $password;
+	private string | null $address;
+	private string | null $suburb;
+	private string | null $state;
+	private string | null $postcode;
+	private string | null $country;
+	private string | null $phone;
 	
 	public function __construct(
 		int $id,
-		string $firstName,
-		string $lastName,
 		string $emailAddress,
-		string $password,
-		string $address,
-		string $suburb,
-		string $state,
-		string $postcode,
-		string $country,
-		string $phone
+		string | null $firstName,
+		string | null $lastName,
+		string | null $password,
+		string | null $address,
+		string | null $suburb,
+		string | null $state,
+		string | null $postcode,
+		string | null $country,
+		string | null $phone
 	)
 	{
 		$this->setId($id);
@@ -66,7 +66,7 @@ class DbUserModel
 	/**
 	 * @return string
 	 */
-	public  function getFirstName(): string
+	public  function getFirstName(): string | null
 	{
 		return $this->firstName;
 	}
@@ -74,16 +74,16 @@ class DbUserModel
 	/**
 	 * @param string $firstName
 	 */
-	public  function setFirstName(string $firstName):void
+	public  function setFirstName(string | null $firstName):void
 	{
-		$firstName = trim($firstName);
+		$firstName = trim($firstName ?? "");
 		$this->firstName = $firstName;
 	}
 	
 	/**
 	 * @return string
 	 */
-	public  function getLastName(): string
+	public  function getLastName(): string | null
 	{
 		return $this->lastName;
 	}
@@ -91,9 +91,9 @@ class DbUserModel
 	/**
 	 * @param string $lastName
 	 */
-	public  function setLastName(string $lastName):void
+	public  function setLastName(string | null $lastName):void
 	{
-		$lastName = trim($lastName);
+		$lastName = trim($lastName ?? "");
 		$this->lastName = $lastName;
 	}
 	
@@ -117,7 +117,7 @@ class DbUserModel
 	/**
 	 * @return string
 	 */
-	public  function getPassword(): string
+	public  function getPassword(): string | null
 	{
 		return $this->password;
 	}
@@ -125,7 +125,7 @@ class DbUserModel
 	/**
 	 * @param string $password
 	 */
-	public  function setPassword(string $password):void
+	public  function setPassword(string | null $password):void
 	{
 		$this->password = $password;
 	}
@@ -133,7 +133,7 @@ class DbUserModel
 	/**
 	 * @return string
 	 */
-	public  function getAddress(): string
+	public  function getAddress(): string | null
 	{
 		return $this->address;
 	}
@@ -141,17 +141,17 @@ class DbUserModel
 	/**
 	 * @param string $address
 	 */
-	public  function setAddress(string $address):void
+	public  function setAddress(string | null $address):void
 	{
 		// TODO - Better way to sanitise address?
-		$address = trim($address);
+		$address = trim($address ?? "");
 		$this->address = $address;
 	}
 	
 	/**
 	 * @return string
 	 */
-	public  function getSuburb(): string
+	public  function getSuburb(): string | null
 	{
 		return $this->suburb;
 	}
@@ -159,16 +159,16 @@ class DbUserModel
 	/**
 	 * @param string $suburb
 	 */
-	public  function setSuburb(string $suburb):void
+	public  function setSuburb(string | null $suburb):void
 	{
-		$suburb = trim($suburb);
+		$suburb = trim($suburb ?? "");
 		$this->suburb = $suburb;
 	}
 	
 	/**
 	 * @return string
 	 */
-	public  function getState(): string
+	public  function getState(): string | null
 	{
 		return $this->state;
 	}
@@ -176,16 +176,16 @@ class DbUserModel
 	/**
 	 * @param string $state
 	 */
-	public  function setState(string $state):void
+	public  function setState(string | null $state):void
 	{
-		$state = trim($state);
+		$state = trim($state ?? "");
 		$this->state = $state;
 	}
 	
 	/**
 	 * @return string
 	 */
-	public  function getPostcode(): string
+	public  function getPostcode(): string | null
 	{
 		return $this->postcode;
 	}
@@ -193,16 +193,16 @@ class DbUserModel
 	/**
 	 * @param string $postcode
 	 */
-	public  function setPostcode(string $postcode):void
+	public  function setPostcode(string | null $postcode):void
 	{
-		$postcode = trim($postcode);
+		$postcode = trim($postcode ?? "");
 		$this->postcode = $postcode;
 	}
 	
 	/**
 	 * @return string
 	 */
-	public  function getCountry(): string
+	public  function getCountry(): string | null
 	{
 		return $this->country;
 	}
@@ -210,16 +210,16 @@ class DbUserModel
 	/**
 	 * @param string $country
 	 */
-	public  function setCountry(string $country):void
+	public  function setCountry(string | null $country):void
 	{
-		$country = trim($country);
+		$country = trim($country ?? "");
 		$this->country = $country;
 	}
 	
 	/**
 	 * @return string
 	 */
-	public  function getPhone(): string
+	public  function getPhone(): string | null
 	{
 		return $this->phone;
 	}
@@ -227,9 +227,9 @@ class DbUserModel
 	/**
 	 * @param string $phone
 	 */
-	public  function setPhone(string $phone):void
+	public  function setPhone(string | null $phone):void
 	{
-		$phone = trim($phone);
+		$phone = trim($phone ?? "");
 		$this->phone = $phone;
 	}
 }
