@@ -9,15 +9,20 @@
 
 <body>
     <?php
-		include './ui-components/navbar.php';
-        require '../../vendor/autoload.php';
-        require '../database/DatabaseConnector.php';
+		include_once './ui-components/navbar.php';
+        require_once '../../vendor/autoload.php';
+        require_once '../database/DatabaseConnector.php';
+        
     ?>
     <main>
         <?php
-			require '../core/MvcUri.php';
-			require '../core/Router.php';
-			
+			require_once '../core/MvcUri.php';
+			require_once '../core/Router.php';
+			require_once '../core/jwt/JwtPayload.php';
+            
+            $testPayload = new JwtPayload("test", "test", "test", [ "userId" => 1, "email" => "test@mail.com" ]);
+            echo '<p>' . $testPayload->toJson() . "</p>";
+            
 			$router = new Router();
 			$router->manageUrl();
 		?>
