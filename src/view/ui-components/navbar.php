@@ -2,7 +2,7 @@
     <div class="flex items-center justify-between">
         <div class="w-1/4"></div>
         <div class="w-1/2 font-bold text-center text-white text-7xl">
-            Bike shop
+            <a href="/">Bike shop</a>
         </div>
         <div class="w-1/4 flex justify-end items-center space-x-4 gap-2">
             <?php

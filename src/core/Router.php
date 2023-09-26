@@ -144,14 +144,18 @@
 		
 		private function notFound($message) : void
 		{
-			echo '<h1 style="color: red !important; font-size: 3rem; font-weight: bold;">Not Found :(</h1>';
+			echo '<div style="display: flex; height: 100vh; justify-content: center; align-items: center; flex-direction: column;">';
+			echo '<h1 style="color: red !important; font-size: 3rem; font-weight: bold;">404 Not Found 😭</h1>';
 			echo '<p><b>Message: </b>' . $message . '</p>';
+			echo '</div>';
 		}
 		
 		private function serverError($message) : void
 		{
-			echo '<h1 style="color: red !important; font-size: 3rem; font-weight: bold;">Server Error :(</h1>';
+			echo '<div style="display: flex; height: 100vh; justify-content: center; align-items: center; flex-direction: column;">';
+			echo '<h1 style="color: red !important; font-size: 3rem; font-weight: bold;">Server Error 😭</h1>';
 			echo '<p><b>Message: </b>' . $message . '</p>';
+			echo '</div>';
 		}
 		
 		private function getControllerFromStr($controllerName) : Controller | null
