@@ -23,38 +23,40 @@
 			if ($_SERVER["REQUEST_METHOD"] == "GET")
 			{
 				$this->view('auth', 'login');
+				return;
 			}
-			else
+			
+			try {
+				$credentials = $this->getLoginCredentials($_POST);
+			} catch (Exception $e) {
+				echo $e->getMessage();
+			}
+			
+			if (!( $credentials instanceof LoginModel ))
+				throw new Exception("An error occurred while trying to gather user credentials (cannot convert " . $credentials::class . " to " . LoginModel::class . ").");
+			
+			$foundUser = $this->validateCredentials($credentials);
+			
+			if ($foundUser == null)
 			{
-				try
-				{
-					$credentials = $this->getLoginCredentials($_POST);
-				}
-				catch (Exception $e)
-				{
-					echo $e->getMessage();
-				}
-				
-				if (!($credentials instanceof LoginModel))
-					throw new Exception("An error occurred while trying to gather user credentials (cannot convert " . $credentials::class . " to " . LoginModel::class . ").");
-				
-				
-				// Create Jwt
-				$expiry = new DateTime();
-				$expiryTime = new DateInterval("P30M"); // 30M = 30 minutes, P is required for date intervals
-				$expiry->add($expiryTime);
-				
-				$payload = new JwtPayload(
-					'localhost',
-					new DateTime(),
-					$expiry,
-					[]
-				);
-				
-				$token = new JwtToken([], $payload);
-				
-				$this->view('auth', 'login', new ModelBase($token->encode()));
+				throw new Exception("This account doesn't exist, or was deleted. Please sign in again or create an account");
 			}
+				
+			// Create Jwt
+			$expiry = new DateTime();
+			$expiryTime = new DateInterval("P30M"); // 30M = 30 minutes, P is required for date intervals
+			$expiry->add($expiryTime);
+
+			$payload = new JwtPayload(
+				'localhost',
+				new DateTime(),
+				$expiry,
+				$foundUser->getId(),
+			);
+
+			$token = new JwtToken([], $payload);
+			
+			$this->view('auth', 'login', new ModelBase($token->encode()));
 		}
 		
 		public function createAccount(): void
@@ -150,15 +152,19 @@
 			return new LoginModel(null, $emailAddress, $password);
 		}
 		
-		private function validateCredentials(LoginModel $credentials): bool
+		/**
+		 * @throws Exception if the user puts in the wrong password
+		 */
+		private function validateCredentials(LoginModel $credentials): DbUserModel | null
 		{
 			// Check if user exists
 			$user = $this->databaseConnector->findUserWithEmailAddress($credentials->getEmail());
 			if (empty($user))
-			{
-				return false;
-			}
+				throw new Exception("Invalid email or password");
 			
-			return password_verify($credentials->getPassword(), $user->getPassword());
+			if (password_verify($credentials->getPassword(), $user->getPassword()))
+				return $user;
+			else
+				throw new Exception("Invalid email or password");
 		}
 	}

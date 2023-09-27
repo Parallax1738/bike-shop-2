@@ -30,6 +30,11 @@
 			$this->payload = $payload;
 		}
 		
+		public function getPayload(): JwtPayload
+		{
+			return $this->payload;
+		}
+		
 		/**
 		 * Converts the object into a hashed token containing all the data that you gave it in the constructor
 		 * @return string The token itself
@@ -72,6 +77,7 @@
 				$payload = base64_decode($payload);
 				$header = base64_decode($header);
 			}
-			return new JwtToken([], new JwtPayload("", new DateTime(), new DateTime(), []));
+			
+			return new JwtToken([], new JwtPayload("", new DateTime(), new DateTime(), 0));
 		}
 	}

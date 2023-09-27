@@ -21,7 +21,8 @@
             if (array_key_exists('token', $_COOKIE) && !empty($_COOKIE['token']))
             {
                 // The user has a token. Verify it
-                JwtToken::decode($_COOKIE['token']);
+                $token = JwtToken::decode($_COOKIE['token']);
+                echo $token->getPayload()->toJson();
             }
             
 			$router = new Router();

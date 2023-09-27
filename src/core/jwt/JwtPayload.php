@@ -30,21 +30,22 @@ class JwtPayload
 	 * @param string $exp Expiry: When the token expires
 	 * @param array $data An array of data that contains stuff about the user, like their address or something
 	 */
-	public function __construct(string $iss, DateTime $iat, DateTime $exp, array $data)
+	public function __construct(string $iss, DateTime $iat, DateTime $exp, int $userId)
 	{
 		$this->iss = $iss;
 		$this->iat = $iat;
 		$this->exp = $exp;
-		$this->data = $data;
+		$this->data = [
+			"user-id" => $userId,
+		];
 	}
 	
 	/**
 	 * Converts the token object into json
 	 */
-	public function toJson()
+	public function toJson() : string
 	{
 		$dataJson = json_encode($this->data);
-		
 		
 		return "{
 			\"iss\": \"{$this->iss}\",
