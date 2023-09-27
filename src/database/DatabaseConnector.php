@@ -1,5 +1,5 @@
 <?php
-	require_once '../models/DbUserModel.php';
+	require_once 'models/DbUserModel.php';
 	require_once '../models/CreateAccountModel.php';
 	
 	class DatabaseConnector

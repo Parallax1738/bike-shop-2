@@ -1,7 +1,6 @@
 <?php
 	// TODO - Should SET methods be private?
 	// TODO - Also validate length of strings
-	namespace models;
 	
 	/**
 	 * A class representation of a user record inside the database

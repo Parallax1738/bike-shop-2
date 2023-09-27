@@ -1,12 +1,14 @@
 <?php
 	
-	class LoginModel
+	class LoginModel extends ModelBase
 	{
 		private $email;
 		private $password;
 		
-		public function __construct(string $email, string $password)
+		public function __construct(string|null $jwt, string $email, string $password)
 		{
+			parent::__construct($jwt);
+			
 			$this->email = $email;
 			$this->password = $password;
 		}

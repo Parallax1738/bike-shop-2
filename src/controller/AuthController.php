@@ -1,8 +1,21 @@
 <?php
 	require_once '../models/CreateAccountModel.php';
 	require_once '../models/LoginModel.php';
+	require_once '../core/jwt/JwtPayload.php';
+	require_once '../core/jwt/JwtToken.php';
+	require_once '../core/jwt/JwtTokenFactory.php';
+	
 	class AuthController extends Controller
 	{
+		private JwtTokenFactory $jwtTokenFactory;
+		private DatabaseConnector $databaseConnector;
+		
+		public function __construct()
+		{
+			$this->databaseConnector = new DatabaseConnector("user", "password", "BIKE_SHOP");
+			$this->jwtTokenFactory = new JwtTokenFactory();
+		}
+		
 		/**
 		 * @throws Exception
 		 */
@@ -28,7 +41,22 @@
 				if (!($credentials instanceof LoginModel))
 					throw new Exception("An error occurred while trying to gather user credentials (cannot convert " . $credentials::class . " to " . LoginModel::class . ").");
 				
-				echo $this->validateCredentials($credentials) ? "Logged In!" : "Invalid Credentials. Please check your email address or password";
+				
+				// Create Jwt
+				$expiry = new DateTime();
+				$expiryTime = new DateInterval("P30M"); // 30M = 30 minutes, P is required for date intervals
+				$expiry->add($expiryTime);
+				
+				$payload = new JwtPayload(
+					'localhost',
+					new DateTime(),
+					$expiry,
+					[]
+				);
+				
+				$token = $this->jwtTokenFactory->createTokenFromPayload($payload);
+				
+				$this->view('auth', 'login', new ModelBase($token->encode()));
 			}
 		}
 		
@@ -53,10 +81,9 @@
 			if ($account instanceof CreateAccountModel)
 			{
 				// User is not null, insert it into the database
-				$dbo = new DatabaseConnector("user", "password", "BIKE_SHOP");
 				try
 				{
-					$dbo->insertUser($account);
+					$this->databaseConnector->insertUser($account);
 				}
 				catch (Exception $e)
 				{
@@ -123,14 +150,13 @@
 			// TODO - Password (and email) should have infinite string length (or at least 256)
 			if (empty($password) || strlen($password) > 50) throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
 			
-			return new LoginModel($emailAddress, $password);
+			return new LoginModel(null, $emailAddress, $password);
 		}
 		
 		private function validateCredentials(LoginModel $credentials): bool
 		{
 			// Check if user exists
-			$dbo = new DatabaseConnector("user", "password", "BIKE_SHOP");
-			$user = $dbo->findUserWithEmailAddress($credentials->getEmail());
+			$user = $this->databaseConnector->findUserWithEmailAddress($credentials->getEmail());
 			if (empty($user))
 			{
 				return false;
