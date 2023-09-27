@@ -49,4 +49,29 @@
 			
 			return $encodedHeader . '.' . $encodedPayload . '.' . $encodedSignature;
 		}
+		
+		public static function decode(string $token): JwtToken|null
+		{
+			$parts = explode('.', $token);
+			if (count($parts) == 3) {
+				$header = $parts[0];
+				$payload = $parts[1];
+				$receivedSignature = $parts[2];
+				
+				// Verify signature by re-hashing the header and payload together using SECRET_KEY which only this
+				// application will know about; only this application will be able to generate a valid
+				// signature in the first place
+				$expectedSignature = hash_hmac('sha256', $header . '.' . $payload, self::SECRET_KEY, true);
+				$expectedSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($expectedSignature));
+				
+				if ($receivedSignature != $expectedSignature)
+				{
+					return null;
+				}
+				
+				$payload = base64_decode($payload);
+				$header = base64_decode($header);
+			}
+			return new JwtToken([], new JwtPayload("", new DateTime(), new DateTime(), []));
+		}
 	}

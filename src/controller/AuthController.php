@@ -3,17 +3,14 @@
 	require_once '../models/LoginModel.php';
 	require_once '../core/jwt/JwtPayload.php';
 	require_once '../core/jwt/JwtToken.php';
-	require_once '../core/jwt/JwtTokenFactory.php';
 	
 	class AuthController extends Controller
 	{
-		private JwtTokenFactory $jwtTokenFactory;
 		private DatabaseConnector $databaseConnector;
 		
 		public function __construct()
 		{
 			$this->databaseConnector = new DatabaseConnector("user", "password", "BIKE_SHOP");
-			$this->jwtTokenFactory = new JwtTokenFactory();
 		}
 		
 		/**
@@ -54,7 +51,7 @@
 					[]
 				);
 				
-				$token = $this->jwtTokenFactory->createTokenFromPayload($payload);
+				$token = new JwtToken([], $payload);
 				
 				$this->view('auth', 'login', new ModelBase($token->encode()));
 			}
