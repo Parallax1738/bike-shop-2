@@ -18,13 +18,13 @@
 		 */
 		public function login(): void
 		{
-			$credentials = null;
-			
 			if ($_SERVER["REQUEST_METHOD"] == "GET")
 			{
 				$this->view('auth', 'login');
 				return;
 			}
+			
+			$credentials = null;
 			
 			try {
 				$credentials = $this->getLoginCredentials($_POST);
@@ -36,17 +36,18 @@
 				throw new Exception("An error occurred while trying to gather user credentials (cannot convert " . $credentials::class . " to " . LoginModel::class . ").");
 			
 			$foundUser = $this->validateCredentials($credentials);
+			echo $foundUser->getId();
 			
-			if ($foundUser == null)
+			if (!($foundUser instanceof DbUserModel))
 			{
 				throw new Exception("This account doesn't exist, or was deleted. Please sign in again or create an account");
 			}
 				
 			// Create Jwt
 			$expiry = new DateTime();
-			$expiryTime = new DateInterval("P30M"); // 30M = 30 minutes, P is required for date intervals
+			$expiryTime = new DateInterval("P1M"); // 30M = 30 minutes, P is required for date intervals
 			$expiry->add($expiryTime);
-
+			
 			$payload = new JwtPayload(
 				'localhost',
 				new DateTime(),

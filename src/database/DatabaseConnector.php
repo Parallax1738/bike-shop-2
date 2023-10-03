@@ -36,6 +36,7 @@
 				$sql->bind_result($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				while ($sql->fetch())
 				{
+					$this->disconnect();
 					return new DbUserModel($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				}
 			}
@@ -102,5 +103,25 @@
 			
 			$this->mysqli->close();
 			$this->mysqli = null;
+		}
+		
+		public function findUserWithIdAddress(int $userId)
+		{
+			$this->connect();
+			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER.ID = ?");
+			$sql->bind_param("i", $sqlId);
+			$sqlId = $userId;
+			
+			if ($sql->execute())
+			{
+				$sql->bind_result($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				while ($sql->fetch())
+				{
+					$this->disconnect();
+					return new DbUserModel($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				}
+			}
+			$this->disconnect();
+			return null;
 		}
 	}

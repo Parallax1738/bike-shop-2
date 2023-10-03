@@ -15,14 +15,23 @@
 		require_once '../core/MvcUri.php';
 		require_once '../core/Router.php';
 		require_once '../core/jwt/JwtPayload.php';
+        require_once '../core/AuthManager.php';
     ?>
     <main>
         <?php
+            $manager = new AuthManager();
+            $isLoggedIn = false;
+            
             if (array_key_exists('token', $_COOKIE) && !empty($_COOKIE['token']))
             {
                 // The user has a token. Verify it
-                $token = JwtToken::decode($_COOKIE['token']);
-                echo $token->getPayload()->toJson();
+				$isLoggedIn = $manager->verifyToken($_COOKIE['token']);
+            }
+            
+            if ($isLoggedIn) {
+                echo "You are logged in!";
+            } else {
+                echo "shit";
             }
             
 			$router = new Router();
