@@ -9,15 +9,31 @@
 
 <body>
     <?php
-		include './ui-components/navbar.php';
-        require '../../vendor/autoload.php';
-        require '../database/DatabaseConnector.php';
+		include_once './ui-components/navbar.php';
+        require_once '../../vendor/autoload.php';
+        require_once '../database/DatabaseConnector.php';
+		require_once '../core/MvcUri.php';
+		require_once '../core/Router.php';
+		require_once '../core/jwt/JwtPayload.php';
+        require_once '../core/AuthManager.php';
     ?>
     <main>
         <?php
-			require '../core/MvcUri.php';
-			require '../core/Router.php';
-			
+            $manager = new AuthManager();
+            $isLoggedIn = false;
+            
+            if (array_key_exists('token', $_COOKIE) && !empty($_COOKIE['token']))
+            {
+                // The user has a token. Verify it
+				$isLoggedIn = $manager->verifyToken($_COOKIE['token']);
+            }
+            
+            if ($isLoggedIn) {
+                echo "You are logged in!";
+            } else {
+                echo "shit";
+            }
+            
 			$router = new Router();
 			$router->manageUrl();
 		?>
