@@ -1,6 +1,8 @@
 <?php
 	
-	class CreateAccountModel
+	include 'ModelBase.php';
+	
+	class CreateAccountModel extends ModelBase
 	{
 		private string $username;
 		private string $password;
