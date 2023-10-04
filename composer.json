@@ -3,7 +3,8 @@
   "description": "this is a bike shop",
   "require": {
     "joshtronic/php-loremipsum": "dev-master",
-    "ext-mysqli": "*"
+    "ext-mysqli": "*",
+    "moneyphp/money": "^3.3"
   },
   "autoload": {
     "psr-4": {

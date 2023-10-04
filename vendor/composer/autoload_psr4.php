@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     'joshtronic\\' => array($vendorDir . '/joshtronic/php-loremipsum/src'),
     'conedor\\' => array($baseDir . '/src/view'),
+    'Money\\' => array($vendorDir . '/moneyphp/money/src'),
 );

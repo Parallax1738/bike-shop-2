@@ -15,6 +15,10 @@ class ComposerStaticInit2ce6bd13222234cc5da3c5d173adbab7
         array (
             'conedor\\' => 8,
         ),
+        'M' => 
+        array (
+            'Money\\' => 6,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -25,6 +29,10 @@ class ComposerStaticInit2ce6bd13222234cc5da3c5d173adbab7
         'conedor\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/view',
+        ),
+        'Money\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/moneyphp/money/src',
         ),
     );
 

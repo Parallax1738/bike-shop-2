@@ -11,7 +11,7 @@ RUN apt install -y \
     && docker-php-ext-install zip
 
 # Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer/
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Enable Rewrite

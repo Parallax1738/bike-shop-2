@@ -1,4 +1,8 @@
 <?php
+	use Money\Currency;
+	use Money\Money;
+	
+	require_once 'models/DbProduct.php';
 	require_once 'models/DbUserModel.php';
 	require_once '../models/CreateAccountModel.php';
 	
@@ -29,7 +33,7 @@
 			$this->connect();
 			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER.EMAIL_ADDRESS = ?");
 			$sql->bind_param("s", $sqlEmail);
-			$sqlEmail = $emailToFind;
+				$sqlEmail = $emailToFind;
 			
 			if ($sql->execute())
 			{
@@ -42,6 +46,27 @@
 			}
 			$this->disconnect();
 			return null;
+		}
+		
+		public function selectAllProducts(int $offset = 0, int $count = 0)
+		{
+			$this->connect();
+			
+			$stmt = $this->mysqli->prepare("SELECT * FROM PRODUCT LIMIT ? OFFSET ?");
+			$stmt->bind_param('ii', $limitSql, $offsetSql);
+			
+			$offsetSql = $offset;
+			$limitSql = $count;
+			
+			if ($stmt->execute())
+			{
+				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultPrice);
+				while ($record = $stmt->fetch())
+				{
+					$p = new DbProduct($resultId, $resultCategory, $resultName, new Money($resultPrice, new Currency('AUD')));
+					echo '<p>' . $p->print() . '</p>';
+				}
+			}
 		}
 		
 		/**
