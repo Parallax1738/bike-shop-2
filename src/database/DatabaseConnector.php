@@ -48,7 +48,7 @@
 			return null;
 		}
 		
-		public function selectAllProducts(int $offset = 0, int $count = 0)
+		public function selectAllProducts(int $offset = 0, int $count = 0): array
 		{
 			$this->connect();
 			
@@ -60,13 +60,40 @@
 			
 			if ($stmt->execute())
 			{
+				$records = array();
 				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultPrice);
 				while ($record = $stmt->fetch())
 				{
 					$p = new DbProduct($resultId, $resultCategory, $resultName, new Money($resultPrice, new Currency('AUD')));
-					echo '<p>' . $p->print() . '</p>';
+					$records[] = $p;
 				}
+				return $records;
 			}
+			throw new Exception("Unable to do somtehming with the database");
+		}
+		
+		public function selectBikes(int $offset = 0, int $count = 0, string $query = ""): array
+		{
+			$this->connect();
+			
+			$stmt = $this->mysqli->prepare("SELECT * FROM PRODUCT WHERE CATEGORY_ID = 1 LIMIT ? OFFSET ?");
+			$stmt->bind_param('ii', $limitSql, $offsetSql);
+			
+			$offsetSql = $offset;
+			$limitSql = $count;
+			
+			if ($stmt->execute())
+			{
+				$records = array();
+				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultPrice);
+				while ($record = $stmt->fetch())
+				{
+					$p = new DbProduct($resultId, $resultCategory, $resultName, new Money($resultPrice, new Currency('AUD')));
+					$records[] = $p;
+				}
+				return $records;
+			}
+			throw new Exception("Unable to do somtehming with the database");
 		}
 		
 		/**

@@ -37,7 +37,7 @@
 			return $this->price;
 		}
 		
-		public function print(): string
+		public function __toString(): string
 		{
 			return $this->name . ': $' . $this->price->getAmount();
 		}

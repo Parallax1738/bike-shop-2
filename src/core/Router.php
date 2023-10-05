@@ -88,9 +88,6 @@
 		private function getUri() : MvcUri
 		{
 			$url = $_SERVER[ "REQUEST_URI" ];
-		
-			$controller = "";
-			$action = "";
 			
 			// Split the URL by '/'
 			$parts = explode('/', trim($url, '/'));
