@@ -96,8 +96,24 @@
 			$controller = $parts[ 0 ] ?? 'home';
 			$action = $parts[ 1 ] ?? '';
 			
+			// Ensure to disclude parameters (grabbed using $_GET)
+			if (str_contains($controller, '?'))
+				$controller = $this->removeParams($controller);
+			
+			if (str_contains($action, '?'))
+				$action = $this->removeParams($action);
 			
 			return new MvcUri($controller, $action, [ ]);
+		}
+		
+		/**
+		 * Removes all the parameters from a url. Example: removeParams("controller?testParam=3") = "testParam"
+		 * @param string $str String to parse
+		 * @return string The fixed string
+		 */
+		private function removeParams(string $str): string
+		{
+			return explode('?', $str)[0];
 		}
 		
 		private function notFound($message) : void
