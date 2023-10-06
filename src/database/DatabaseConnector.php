@@ -72,6 +72,28 @@
 			throw new Exception("Unable to do somtehming with the database");
 		}
 		
+		/**
+		 * Gets the amount of bikes that were returned from a search query
+		 * @param string $query What to search for in the db
+		 * @return int the amount of records found
+		 */
+		public function selectBikesCount(string $query = ""): int
+		{
+			$this->connect();
+			
+			$stmt = $this->mysqli->prepare("SELECT COUNT(*) FROM PRODUCT WHERE CATEGORY_ID = 1");
+			
+			if ($stmt->execute())
+			{
+				$stmt->bind_result($c);
+				if ($stmt->fetch())
+				{
+					return $c;
+				}
+			}
+			return 0;
+		}
+		
 		public function selectBikes(int $offset = 0, int $count = 0, string $query = ""): array
 		{
 			$this->connect();

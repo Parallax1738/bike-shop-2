@@ -31,7 +31,7 @@
             if ($isLoggedIn) {
                 echo "You are logged in!";
             } else {
-                echo "shit";
+            
             }
             
 			$router = new Router();

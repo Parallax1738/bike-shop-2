@@ -135,3 +135,9 @@ docker-compose up --build
 
 ## Before changing anything in the Docker container
 If you fuck something up in the docker container, the best way to 'fix' it is to run either: `docker-compose down` or `docker-compose restart`. It could save your life someday
+
+## Environment Variables
+There are some environment variables which you can set if you so desire. Here are all the currently available vars you 
+can change inside `docker-compose.yml`:
+
+- __DEFAULT_SEARCH_RESULT_COUNT = 10
