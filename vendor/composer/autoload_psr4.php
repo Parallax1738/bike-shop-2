@@ -7,6 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'joshtronic\\' => array($vendorDir . '/joshtronic/php-loremipsum/src'),
-    'conedor\\' => array($baseDir . '/src/view'),
+    'bikeshop\\' => array($baseDir . '/src'),
     'Money\\' => array($vendorDir . '/moneyphp/money/src'),
 );

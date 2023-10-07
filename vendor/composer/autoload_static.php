@@ -11,9 +11,9 @@ class ComposerStaticInit2ce6bd13222234cc5da3c5d173adbab7
         array (
             'joshtronic\\' => 11,
         ),
-        'c' => 
+        'b' => 
         array (
-            'conedor\\' => 8,
+            'bikeshop\\' => 9,
         ),
         'M' => 
         array (
@@ -26,9 +26,9 @@ class ComposerStaticInit2ce6bd13222234cc5da3c5d173adbab7
         array (
             0 => __DIR__ . '/..' . '/joshtronic/php-loremipsum/src',
         ),
-        'conedor\\' => 
+        'bikeshop\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src/view',
+            0 => __DIR__ . '/../..' . '/src',
         ),
         'Money\\' => 
         array (
