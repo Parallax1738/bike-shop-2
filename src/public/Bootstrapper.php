@@ -31,7 +31,7 @@
 				try {
 					$isLoggedIn = $manager->verifyToken($_COOKIE['token']);
 				} catch (Exception $e) {
-					echo $e;
+//					echo $e->getMessage();
 				}
 			}
 			
