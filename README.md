@@ -61,8 +61,8 @@ An example controller implementation colud look like:
 ```php
 <?php
 
-// Example Controller
-class ExampleController extends Controller implements IHasIndexPage 
+// Example app\core\Controller
+use bikeshop\app\core\Controller;use bikeshop\app\core\IHasIndexPage;class ExampleController extends Controller implements IHasIndexPage 
 {
 	// http://test.com/example
 	function index(array $params) 
@@ -85,7 +85,7 @@ class ExampleController extends Controller implements IHasIndexPage
 
 // Ensuring the router knows about this route's existence
 
-// Router.php
+// app\core\Router.php
 		
 		public function __construct()
 		{
