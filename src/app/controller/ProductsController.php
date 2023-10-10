@@ -7,8 +7,14 @@
 	use bikeshop\app\models\PagingModel;
 	use Exception;
 	
-	class BikesController extends Controller implements IHasIndexPage
+	class ProductsController extends Controller implements IHasIndexPage
 	{
+		
+		public function __construct(private int $productId)
+		{
+		
+		}
+		
 		public function index(array $params) : void
 		{
 			// Get Page Index and Result Count. If they are not found, set to defaults
@@ -26,8 +32,8 @@
 			$db = new DatabaseConnector('user', 'password', 'BIKE_SHOP');
 			try {
 				// pageIndex * resultCount = amount of results the user has already viewed. Skip them.
-				$bikes = $db->selectBikes($currentPage * $resultCount, $resultCount);
-				$maxPages = ceil($db->selectBikesCount() / $resultCount);
+				$bikes = $db->selectProducts($this->productId, $currentPage * $resultCount, $resultCount);
+				$maxPages = ceil($db->selectProductCount($this->productId) / $resultCount);
 			} catch (Exception $e) {
 				echo "shit: " . $e;
 				return;

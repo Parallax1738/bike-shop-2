@@ -1,7 +1,7 @@
 <?php
 	namespace bikeshop\app\core;
 	use bikeshop\app\controller\AuthController;
-	use bikeshop\app\controller\BikesController;
+	use bikeshop\app\controller\ProductsController;
 	use bikeshop\app\controller\HomeController;
 	use bikeshop\app\controller\TestController;
 	use ReflectionClass;
@@ -17,8 +17,14 @@
 			$this->indexController = $homeController;
 			$this->controllerMap[ "home" ] = $homeController;
 			$this->controllerMap[ "test" ] = new TestController();
-			$this->controllerMap[ "bikes" ] = new BikesController();
 			$this->controllerMap[ "auth" ] = new AuthController();
+			
+			// Products
+			$this->controllerMap[ "bikes" ] = new ProductsController(1);
+			$this->controllerMap[ "scooters" ] = new ProductsController(2);
+			$this->controllerMap[ "accessories" ] = new ProductsController(3);
+			$this->controllerMap[ "apparel" ] = new ProductsController(4);
+			$this->controllerMap[ "components" ] = new ProductsController(5);
 		}
 		
 		public function manageUrl() : void

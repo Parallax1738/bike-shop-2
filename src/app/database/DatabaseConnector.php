@@ -83,11 +83,13 @@
 		 * @param string $query What to search for in the db
 		 * @return int the amount of records found
 		 */
-		public function selectBikesCount() : int
+		public function selectProductCount(int $prodId) : int
 		{
 			$this->connect();
 			
-			$stmt = $this->mysqli->prepare("SELECT COUNT(*) FROM PRODUCT WHERE CATEGORY_ID = 1");
+			$stmt = $this->mysqli->prepare("SELECT COUNT(*) FROM PRODUCT WHERE CATEGORY_ID = ?");
+			$stmt->bind_param('i', $sqlProdId);
+			$sqlProdId = $prodId;
 			
 			if ($stmt->execute()) {
 				$stmt->bind_result($c);
@@ -98,13 +100,14 @@
 			return 0;
 		}
 		
-		public function selectBikes(int $offset = 0, int $count = 0, string $query = "") : array
+		public function selectProducts(int $prodId, int $offset = 0, int $count = 0, string $query = "") : array
 		{
 			$this->connect();
 			
-			$stmt = $this->mysqli->prepare("SELECT * FROM PRODUCT WHERE CATEGORY_ID = 1 LIMIT ? OFFSET ?");
-			$stmt->bind_param('ii', $limitSql, $offsetSql);
+			$stmt = $this->mysqli->prepare("SELECT * FROM PRODUCT WHERE CATEGORY_ID = ? LIMIT ? OFFSET ?");
+			$stmt->bind_param('iii', $sqlProdId, $limitSql, $offsetSql);
 			
+			$sqlProdId = $prodId;
 			$offsetSql = $offset;
 			$limitSql = $count;
 			
