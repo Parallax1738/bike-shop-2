@@ -4,6 +4,8 @@
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\models\BikeDisplayModel;
+	use bikeshop\app\models\PagingModel;
+	use Exception;
 	
 	class BikesController extends Controller implements IHasIndexPage
 	{
@@ -11,26 +13,27 @@
 		{
 			// Get Page Index and Result Count. If they are not found, set to defaults
 			if (!array_key_exists('page', $_GET) || empty($_GET[ 'page' ]))
-				$pageIndex = 0; else
-				$pageIndex = $_GET[ 'page' ];
+				$currentPage = 0;
+			else
+				$currentPage = $_GET[ 'page' ];
 			
 			if (!array_key_exists('results', $_GET) || empty($_GET[ 'results' ]))
-				$resultCount = $_ENV[ '__DEFAULT_SEARCH_RESULT_COUNT' ] ?? 10; else
-				$resultCount = $_GET[ 'results' ];
+				$resultCount = $_ENV['__DEFAULT_SEARCH_RESULT_COUNT'];
+			else
+				$resultCount = $_GET['results'];
 			
 			// Connect to database to get data from it
 			$db = new DatabaseConnector('user', 'password', 'BIKE_SHOP');
 			try {
 				// pageIndex * resultCount = amount of results the user has already viewed. Skip them.
-				$bikes = $db->selectBikes($pageIndex * $resultCount, $resultCount);
-				$pageCount = ceil($db->selectBikesCount("") / 10);
-				echo $pageCount;
+				$bikes = $db->selectBikes($currentPage * $resultCount, $resultCount);
+				$maxPages = ceil($db->selectBikesCount() / $resultCount);
 			} catch (Exception $e) {
 				echo "shit: " . $e;
 				return;
 			}
 			
-			$model = new BikeDisplayModel($bikes, $pageCount, $pageIndex, $resultCount);
+			$model = new PagingModel($bikes, $currentPage, $maxPages, $resultCount);
 			$this->view('bikes', 'index', $model);
 		}
 		

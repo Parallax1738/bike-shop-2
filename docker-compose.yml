@@ -5,6 +5,8 @@ services:
     ports:
       - "80:80"
     build: './build/php'
+    environment:
+      - __DEFAULT_SEARCH_RESULT_COUNT=20
     volumes:
       - .:/var/www/html/
       - ./website/apache/:/etc/apache2/sites-available/

@@ -1,8 +1,10 @@
 <?php
 	namespace bikeshop\app\database;
 	use bikeshop\app\database\models\DbProduct;
+	use bikeshop\app\database\models\DbProductOutput;
 	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\app\models\CreateAccountModel;
+	use Exception;
 	use Money\Currency;
 	use Money\Money;
 	use mysqli;
@@ -51,6 +53,9 @@
 			return null;
 		}
 		
+		/**
+		 * @throws Exception
+		 */
 		public function selectAllProducts(int $offset = 0, int $count = 0) : array
 		{
 			$this->connect();
@@ -78,7 +83,7 @@
 		 * @param string $query What to search for in the db
 		 * @return int the amount of records found
 		 */
-		public function selectBikesCount(string $query = "") : int
+		public function selectBikesCount() : int
 		{
 			$this->connect();
 			
