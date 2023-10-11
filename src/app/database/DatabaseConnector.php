@@ -43,10 +43,10 @@
 			$sqlEmail = $emailToFind;
 			
 			if ($sql->execute()) {
-				$sql->bind_result($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				while ($sql->fetch()) {
 					$this->disconnect();
-					return new DbUserModel($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+					return new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				}
 			}
 			$this->disconnect();
@@ -87,7 +87,7 @@
 		{
 			$this->connect();
 			
-			$stmt = $this->mysqli->prepare("SELECT COUNT(*) FROM PRODUCT WHERE CATEGORY_ID = ?");
+			$stmt = $this->mysqli->prepare("SELECT COUNT(*) FROM BIKE_SHOP.`PRODUCT` WHERE CATEGORY_ID = ?");
 			$stmt->bind_param('i', $sqlProdId);
 			$sqlProdId = $prodId;
 			
@@ -104,7 +104,7 @@
 		{
 			$this->connect();
 			
-			$stmt = $this->mysqli->prepare("SELECT * FROM PRODUCT WHERE CATEGORY_ID = ? LIMIT ? OFFSET ?");
+			$stmt = $this->mysqli->prepare("SELECT * FROM BIKE_SHOP.`PRODUCT` WHERE CATEGORY_ID = ? LIMIT ? OFFSET ?");
 			$stmt->bind_param('iii', $sqlProdId, $limitSql, $offsetSql);
 			
 			$sqlProdId = $prodId;
@@ -137,9 +137,10 @@
 			$hashedPassword = password_hash($newAcc->getPassword(), PASSWORD_BCRYPT);
 			
 			$this->connect();
-			$sql = $this->mysqli->prepare("INSERT INTO USER (EMAIL_ADDRESS, PASSWORD) VALUES(?, ?)");
-			$sql->bind_param("ss", $sqlEmail, $hashedPassword);
+			$sql = $this->mysqli->prepare("INSERT INTO BIKE_SHOP.`USER`(`USER_ROLE_ID`, `EMAIL_ADDRESS`, `PASSWORD`) VALUES(?, ?, ?)");
+			$sql->bind_param("iss", $sqlRoleId, $sqlEmail, $hashedPassword);
 			
+			$sqlRoleId = $newAcc->getRoleId();
 			$sqlEmail = $newAcc->getEmail();
 			$sqlPass = $newAcc->getPassword();
 			

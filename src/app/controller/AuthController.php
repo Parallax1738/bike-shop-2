@@ -19,6 +19,25 @@
 		public function __construct()
 		{
 			$this->databaseConnector = new DatabaseConnector("user", "password", "BIKE_SHOP");
+			
+			if ($this->checkArray($_ENV, '__SYSADMIN_EMAIL') && $this->checkArray($_ENV, '__SYSADMIN_PASS'))
+			{
+				$email = $_ENV['__SYSADMIN_EMAIL'];
+				$password = $_ENV['__SYSADMIN_PASS'];
+				if (!$this->databaseConnector->findUserWithEmailAddress($email, $password))
+				{
+					$this->databaseConnector->insertUser(new CreateAccountModel($email, $password, 4));
+					echo 'Created Sysadmin User';
+				}
+				else
+				{
+					echo 'This account already exists';
+				}
+			}
+			else
+			{
+				echo 'Email and Pass does not exist';
+			}
 		}
 		
 		/**
@@ -167,5 +186,10 @@
 			if (password_verify($credentials->getPassword(), $user->getPassword()))
 				return $user; else
 				throw new Exception("Invalid email or password");
+		}
+		
+		private function checkArray(array $arr, string $key): bool
+		{
+			return array_key_exists($key, $arr) && !empty($arr[$key]);
 		}
 	}

@@ -8,11 +8,13 @@
 	{
 		private string $username;
 		private string $password;
+		private int $userRoleId;
 		
-		public function __construct(string $username, string $password)
+		public function __construct(string $username, string $password, int $userRoleId = 1)
 		{
 			$this->username = $username;
 			$this->password = $password;
+			$this->userRoleId = $userRoleId;
 		}
 		
 		public function getEmail() : string
@@ -23,5 +25,10 @@
 		public function getPassword() : string
 		{
 			return $this->password;
+		}
+		
+		public function getRoleId()
+		{
+			return $this->userRoleId;
 		}
 	}

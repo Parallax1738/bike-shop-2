@@ -53,4 +53,9 @@
 			
 			return true;
 		}
+		
+		public function createDefaultSysAdmin()
+		{
+			
+		}
 	}
