@@ -2,9 +2,7 @@
 	
 	namespace bikeshop\app\models;
 	
-	include 'ModelBase.php';
-	
-	class CreateAccountModel extends ModelBase
+	class CreateAccountModel
 	{
 		private string $username;
 		private string $password;

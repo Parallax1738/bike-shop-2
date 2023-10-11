@@ -7,7 +7,6 @@
 	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\app\models\CreateAccountModel;
 	use bikeshop\app\models\LoginModel;
-	use bikeshop\app\models\ModelBase;
 	use DateInterval;
 	use DateTime;
 	use Exception;
@@ -31,7 +30,7 @@
 				}
 				else
 				{
-					echo 'This account already exists';
+					// Account Exists
 				}
 			}
 			else
@@ -77,7 +76,7 @@
 			
 			$token = new JwtToken([], $payload);
 			
-			$this->view('auth', 'login', new ModelBase($token->encode()));
+			$this->view('auth', 'login', $token);
 		}
 		
 		public function createAccount() : void
@@ -170,7 +169,7 @@
 			if (empty($password) || strlen($password) > 50)
 				throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
 			
-			return new LoginModel(null, $emailAddress, $password);
+			return new LoginModel($emailAddress, $password);
 		}
 		
 		/**

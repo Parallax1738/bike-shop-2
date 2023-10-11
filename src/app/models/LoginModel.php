@@ -2,15 +2,16 @@
 	
 	namespace bikeshop\app\models;
 	
-	class LoginModel extends ModelBase
+	/**
+	 * Contains information needed to log in a user
+	 */
+	class LoginModel
 	{
 		private string $email;
 		private string $password;
 		
-		public function __construct(string | null $jwt, string $email, string $password)
+		public function __construct(string $email, string $password)
 		{
-			parent::__construct($jwt);
-			
 			$this->email = $email;
 			$this->password = $password;
 		}
