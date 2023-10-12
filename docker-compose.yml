@@ -7,8 +7,8 @@ services:
     build: './build/php'
     environment:
       - __DEFAULT_SEARCH_RESULT_COUNT=20
-      - __SYSADMIN_EMAIL="sa@mail.com"
-      - __SYSADMIN_PASS="password"
+      - __SYSADMIN_EMAIL=sa@mail.com
+      - __SYSADMIN_PASS=password
     volumes:
       - .:/var/www/html/
       - ./website/apache/:/etc/apache2/sites-available/
