@@ -49,12 +49,15 @@
 		}
 		
 		/**
-		 * TODO - Make this some kind of service instead of having it inside the model (it defeats the purpose of MVC)
+		 * Displays a single product
 		 */
 		public function displayItem(int $index): string {
 			return "<div>" . $this->list[$index] . "</div>";
 		}
 		
+		/**
+		 * Displays all products, and arrows to move left and right
+		 */
 		public function displayItemsHTML() {
 			for ($i = 0; $i < count($this->list); $i++) {
 				echo $this->displayItem($i);
@@ -67,7 +70,7 @@
 			{
 				// Display Left Arrow because if it is greater than 0, user can go back a page
 				$newPage = $this->currentPage - 1;
-				echo '<form method="post" action="http://localhost/bikes?page=' . $newPage . '&results=' . $results . '">
+				echo '<form method="get" action="http://localhost/bikes?page=' . $newPage . '&results=' . $results . '">
 					<input type="submit" value="_<_" style="background-color: darkgrey" />
 				</form>';
 			}
@@ -79,7 +82,7 @@
 			{
 				// Oposite to if statement above
 				$newPage = $this->currentPage + 1;
-				echo '<form method="post" action="http://localhost/bikes?page=' . $newPage . '&results=' . $results . '">
+				echo '<form method="get" action="http://localhost/bikes?page=' . $newPage . '&results=' . $results . '">
 					<input type="submit" value="_>_" style="background-color: darkgrey"/>
 				</form>';
 			}
