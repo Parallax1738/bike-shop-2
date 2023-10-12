@@ -3,6 +3,7 @@
 	use bikeshop\app\controller\AuthController;
 	use bikeshop\app\controller\ProductsController;
 	use bikeshop\app\controller\HomeController;
+	use bikeshop\app\controller\SysAdminController;
 	use bikeshop\app\controller\TestController;
 	use ReflectionClass;
 	
@@ -18,6 +19,7 @@
 			$this->controllerMap[ "home" ] = $homeController;
 			$this->controllerMap[ "test" ] = new TestController();
 			$this->controllerMap[ "auth" ] = new AuthController();
+			$this->controllerMap[ "sys-admin" ] = new SysAdminController();
 			
 			// Products
 			$this->controllerMap[ "bikes" ] = new ProductsController(1);

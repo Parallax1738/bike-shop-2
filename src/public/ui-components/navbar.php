@@ -22,7 +22,7 @@
                 
                 button([
                     'text' => 'View Sysadmin',
-                    'targetPage' => '/auth/login',
+                    'targetPage' => '/sys-admin',
                     'isLoggedIn' => false
                 ]);
             }
