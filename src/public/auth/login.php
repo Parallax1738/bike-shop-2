@@ -1,15 +1,15 @@
 <?php
     // IF THE USER HAS A TOKEN, REDIRECT TO HOME SCREEN
     // TODO - Move this into another page as it breaks the MVC thing
-	use bikeshop\app\core\jwt\JwtToken;
+	use bikeshop\app\core\Authentication\JwtToken;
 	
-	if (!empty($data) && $data instanceof JwtToken) {
+	if (!empty($data) && $data instanceof JwtToken)
+    {
         echo "
+        <p>"  . $data->getPayload()->toJson() . "</p>
         <script>
-        cookieStore.set('token', '" . $data . "');
-        
-        // TODO - Surely there is a way to set the URL without 'http://' there
-        location.href = 'http://localhost/';
+        cookieStore.set('token', '" . $data->encode() . "');
+//        location.href = '/';
         </script>
         ";
 	}

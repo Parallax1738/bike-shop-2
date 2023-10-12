@@ -1,5 +1,5 @@
 <?php
-	namespace bikeshop\app\core\jwt;
+	namespace bikeshop\app\core\Authentication;
 	use DateTime;
 	
 	/**
@@ -49,10 +49,10 @@
 			$dataJson = json_encode($this->data);
 			
 			return "{
-			\"iss\": \"{$this->iss}\",
+			\"iss\": \"$this->iss\",
 			\"iat\": \"{$this->iat->format('Y-m-d H:i:s')}\",
 			\"exp\": \"{$this->exp->format('Y-m-d H:i:s')}\",
-			\"data\": [ {$dataJson} ]
+			\"data\": $dataJson
 		}";
 		}
 	}

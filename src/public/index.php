@@ -4,7 +4,7 @@
 	use bikeshop\public\Bootstrapper;
 	
 	$bootstrapper = new Bootstrapper();
-    $bootstrapper->InitAuth();
+    $loggedInUser = $bootstrapper->InitAuth();
 ?>
 
 <!DOCTYPE html>

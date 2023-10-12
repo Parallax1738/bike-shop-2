@@ -120,7 +120,7 @@
 				}
 				return $records;
 			}
-			throw new Exception("Unable to do somtehming with the database");
+			throw new Exception("Unable to do something with the database");
 		}
 		
 		/**
@@ -183,7 +183,12 @@
 			$this->mysqli = null;
 		}
 		
-		public function findUserWithIdAddress(int $userId)
+		/**
+		 * Finds a user from the database that has a specific id
+		 * @param int $userId Id to find
+		 * @return DbUserModel|null Null if no user was found
+		 */
+		public function findUserWithIdAddress(int $userId): DbUserModel | null
 		{
 			$this->connect();
 			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER.ID = ?");
@@ -191,12 +196,13 @@
 			$sqlId = $userId;
 			
 			if ($sql->execute()) {
-				$sql->bind_result($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				while ($sql->fetch()) {
-					$this->disconnect();
-					return new DbUserModel($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				}
+				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				$sql->fetch();
+				
+				$this->disconnect();
+				return new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 			}
+			
 			$this->disconnect();
 			return null;
 		}

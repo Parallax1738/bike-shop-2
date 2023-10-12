@@ -1,8 +1,8 @@
 <?php
 	namespace bikeshop\app\controller;
+	use bikeshop\app\core\Authentication\JwtPayload;
+	use bikeshop\app\core\Authentication\JwtToken;
 	use bikeshop\app\core\Controller;
-	use bikeshop\app\core\jwt\JwtPayload;
-	use bikeshop\app\core\jwt\JwtToken;
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\app\models\CreateAccountModel;
@@ -72,7 +72,7 @@
 			$expiryTime = new DateInterval("P1M"); // 30M = 30 minutes, P is required for date intervals
 			$expiry->add($expiryTime);
 			
-			$payload = new JwtPayload('localhost', new DateTime(), $expiry, $foundUser->getId(),);
+			$payload = new JwtPayload('localhost', new DateTime(), $expiry, $foundUser->getId());
 			
 			$token = new JwtToken([], $payload);
 			
