@@ -1,5 +1,5 @@
 <?php
-	namespace bikeshop\app\core\Authentication;
+	namespace bikeshop\app\core\authentication;
 	use DateTime;
 	
 	/**

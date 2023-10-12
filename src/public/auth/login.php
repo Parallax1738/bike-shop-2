@@ -1,7 +1,7 @@
 <?php
     // IF THE USER HAS A TOKEN, REDIRECT TO HOME SCREEN
     // TODO - Move this into another page as it breaks the MVC thing
-	use bikeshop\app\core\Authentication\JwtToken;
+	use bikeshop\app\core\authentication\JwtToken;
 	
 	if (!empty($data) && $data instanceof JwtToken)
     {

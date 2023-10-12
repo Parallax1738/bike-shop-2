@@ -1,7 +1,7 @@
 <?php
 	namespace bikeshop\public;
 	require "../../vendor/autoload.php";
-	use bikeshop\app\core\Authentication\TokenManager;
+	use bikeshop\app\core\authentication\TokenManager;
 	use bikeshop\app\core\Router;
 	use bikeshop\app\database\models\DbUserModel;
 	use Exception;

@@ -1,5 +1,5 @@
 <?php
-	namespace bikeshop\app\core\Authentication;
+	namespace bikeshop\app\core\authentication;
 	
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\models\DbUserModel;

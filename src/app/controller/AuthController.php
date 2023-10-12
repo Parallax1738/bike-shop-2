@@ -1,7 +1,7 @@
 <?php
 	namespace bikeshop\app\controller;
-	use bikeshop\app\core\Authentication\JwtPayload;
-	use bikeshop\app\core\Authentication\JwtToken;
+	use bikeshop\app\core\authentication\JwtPayload;
+	use bikeshop\app\core\authentication\JwtToken;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\models\DbUserModel;
