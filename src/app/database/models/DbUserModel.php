@@ -49,7 +49,6 @@
 		{
 			return $this->id;
 		}
-		
 		/**
 		 * @param int $id
 		 */

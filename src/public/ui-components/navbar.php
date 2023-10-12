@@ -6,17 +6,26 @@
         </div>
         <div class="w-1/4 flex justify-end items-center space-x-4 gap-2">
             <?php
-            include( 'button.php' );
+				use bikeshop\app\database\models\DbUserModel;
+				
+				include( 'button.php' );
             button([
               'text' => 'Login',
               'targetPage' => '/auth/login',
               'isLoggedIn' => false
             ]);
-            button([
-                'text' => 'View Sysadmin',
-                'targetPage' => '/auth/login',
-                'isLoggedIn' => false
-            ]);
+            if (isset($loggedInUser) &&
+                $loggedInUser instanceof DbUserModel &&
+                $loggedInUser->getUserRoleId() == 4)
+            {
+				// 4 = Sysadmin in database. I know it's hard-coded, but it's the same in the init.sql file
+                
+                button([
+                    'text' => 'View Sysadmin',
+                    'targetPage' => '/auth/login',
+                    'isLoggedIn' => false
+                ]);
+            }
             ?>
             <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
                 <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
