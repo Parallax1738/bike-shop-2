@@ -9,6 +9,7 @@
 	class DbUserModel
 	{
 		private int $id;
+		private int $userRoleId;
 		private string $emailAddress;
 		private string | null $firstName;
 		private string | null $lastName;
@@ -20,9 +21,10 @@
 		private string | null $country;
 		private string | null $phone;
 		
-		public function __construct(int $id, string $emailAddress, string | null $firstName, string | null $lastName, string | null $password, string | null $address, string | null $suburb, string | null $state, string | null $postcode, string | null $country, string | null $phone)
+		public function __construct(int $id, int $userRoleId, string $emailAddress, string | null $firstName, string | null $lastName, string | null $password, string | null $address, string | null $suburb, string | null $state, string | null $postcode, string | null $country, string | null $phone)
 		{
 			$this->setId($id);
+			$this->setUserRoleId($userRoleId);
 			$this->setFirstName($firstName);
 			$this->setLastName($lastName);
 			$this->setEmailAddress($emailAddress);
@@ -47,7 +49,6 @@
 		{
 			return $this->id;
 		}
-		
 		/**
 		 * @param int $id
 		 */
@@ -224,5 +225,15 @@
 		{
 			$phone = trim($phone ?? "");
 			$this->phone = $phone;
+		}
+		
+		public function getUserRoleId(): int
+		{
+			return $this->userRoleId;
+		}
+		
+		private function setUserRoleId(int $userRoleId)
+		{
+			$this->userRoleId = $userRoleId;
 		}
 	}

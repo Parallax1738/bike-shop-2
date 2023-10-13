@@ -1,14 +1,16 @@
 <?php
     // IF THE USER HAS A TOKEN, REDIRECT TO HOME SCREEN
-	use bikeshop\app\models\ModelBase;
+    // TODO - Move this into another page as it breaks the MVC thing
+	use bikeshop\app\core\authentication\JwtToken;
+	use bikeshop\app\models\LoginSuccessModel;
 	
-	if (!empty($data) && $data instanceof ModelBase) {
+	if (!empty($data) && $data instanceof LoginSuccessModel)
+    {
         echo "
+        <p>"  . $data->getToken()->getPayload()->toJson() . "</p>
         <script>
-        cookieStore.set('token', '" . $data->getJwtToken() . "');
-        
-        // TODO - Surely there is a way to set the URL without 'http://' there
-        location.href = 'http://localhost/';
+        cookieStore.set('token', '" . $data->getToken()->encode() . "');
+//        location.href = '/';
         </script>
         ";
 	}
@@ -28,10 +30,5 @@
 
 <!-- Add line break because Tailwind CSS is annoying -->
 <br><hr><br>
-
-<h1>Create Account</h1>
-<form action="/auth/create-account" method="post">
-    <input type="text" placeholder="Email Address" name="email" />
-    <input type="password" placeholder="Password" name="password" />
-	<input type="submit" value="Create Account Button" />
-</form>
+<h1>Don't have an account?</h1>
+<a href="/auth/create-account" style="color: blue; text-decoration: underline;">Create an account</a>

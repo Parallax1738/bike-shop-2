@@ -1,12 +1,14 @@
 <?php
 	namespace bikeshop\app\controller;
+	use bikeshop\app\core\ApplicationState;
+	use bikeshop\app\core\authentication\JwtPayload;
+	use bikeshop\app\core\authentication\JwtToken;
 	use bikeshop\app\core\Controller;
-	use bikeshop\app\core\jwt\JwtPayload;
-	use bikeshop\app\core\jwt\JwtToken;
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\app\models\CreateAccountModel;
 	use bikeshop\app\models\LoginModel;
+	use bikeshop\app\models\LoginSuccessModel;
 	use bikeshop\app\models\ModelBase;
 	use DateInterval;
 	use DateTime;
@@ -19,12 +21,31 @@
 		public function __construct()
 		{
 			$this->databaseConnector = new DatabaseConnector("user", "password", "BIKE_SHOP");
+			
+			if ($this->checkArray($_ENV, '__SYSADMIN_EMAIL') && $this->checkArray($_ENV, '__SYSADMIN_PASS'))
+			{
+				$email = $_ENV['__SYSADMIN_EMAIL'];
+				$password = $_ENV['__SYSADMIN_PASS'];
+				if (!$this->databaseConnector->findUserWithEmailAddress($email, $password))
+				{
+					$this->databaseConnector->insertUser(new CreateAccountModel($email, $password, null, [], 4));
+					echo 'Created Sysadmin User';
+				}
+				else
+				{
+					// Account Exists
+				}
+			}
+			else
+			{
+				echo 'Email and Pass does not exist';
+			}
 		}
 		
 		/**
 		 * @throws Exception
 		 */
-		public function login() : void
+		public function login(ApplicationState $state) : void
 		{
 			if ($_SERVER[ "REQUEST_METHOD" ] == "GET") {
 				$this->view('auth', 'login');
@@ -34,7 +55,7 @@
 			$credentials = null;
 			
 			try {
-				$credentials = $this->getLoginCredentials($_POST);
+				$credentials = $this->getLoginCredentials($_POST, $state);
 			} catch (Exception $e) {
 				echo $e->getMessage();
 			}
@@ -54,37 +75,39 @@
 			$expiryTime = new DateInterval("P1M"); // 30M = 30 minutes, P is required for date intervals
 			$expiry->add($expiryTime);
 			
-			$payload = new JwtPayload('localhost', new DateTime(), $expiry, $foundUser->getId(),);
+			$payload = new JwtPayload('localhost', new DateTime(), $expiry, $foundUser->getId());
 			
 			$token = new JwtToken([], $payload);
 			
-			$this->view('auth', 'login', new ModelBase($token->encode()));
+			$this->view('auth', 'login', new LoginSuccessModel($token, $state));
 		}
 		
-		public function createAccount() : void
+		public function createAccount(ApplicationState $state) : void
 		{
-			if (!$_SERVER[ "REQUEST_METHOD" ] == "POST") {
-				return;
+			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
+			{
+				$userRoles = $this->databaseConnector->selectAllUserRoles();
+				$this->view('auth', 'create-account', new CreateAccountModel("", "", $state, $userRoles));
 			}
-			
-			$account = null;
-			// get data
-			try {
-				$account = $this->getCreateAccountDetails($_POST);
-			} catch (Exception $e) {
-				echo $e->getMessage();
-			}
-			
-			if ($account instanceof CreateAccountModel) {
-				// User is not null, insert it into the database
+			else
+			{
+				$account = null;
+				// get data
 				try {
-					$this->databaseConnector->insertUser($account);
+					$account = $this->getCreateAccountDetails($_POST, $state);
 				} catch (Exception $e) {
-					echo "<p>An account with this email address already exists. Either log in or reset your password</p>";
+					echo $e->getMessage();
+				}
+				
+				if ($account instanceof CreateAccountModel) {
+					// User is not null, insert it into the database
+					try {
+						$this->databaseConnector->insertUser($account);
+					} catch (Exception $e) {
+						echo "<p>An account with this email address already exists. Either log in or reset your password</p>";
+					}
 				}
 			}
-			
-			//			$this->view('auth', 'create-account');
 		}
 		
 		/**
@@ -92,7 +115,7 @@
 		 * @param $arr array The array that contains the request method
 		 * @throws Exception if a GET request was performed instead of a POST or if username/password fileds are wrong
 		 */
-		private function getCreateAccountDetails(array $arr) : CreateAccountModel | null
+		private function getCreateAccountDetails(array $arr, ApplicationState $state) : CreateAccountModel | null
 		{
 			// TODO - Instead of throwing exceptions, reroute to login() and show errors.
 			// TODO - Rename 'emailAddress' to 'email' like a sensible person
@@ -117,7 +140,13 @@
 			if (empty($password) || strlen($password) > 50)
 				throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
 			
-			return new CreateAccountModel($emailAddress, $password);
+			// Check User Role Id. Can be null
+			if (array_key_exists("user-role", $arr))
+				$userRole = $arr[ "user-role" ];
+			else
+				$userRole = null;
+			
+			return new CreateAccountModel($emailAddress, $password, $state, [], $userRole);
 		}
 		
 		/**
@@ -126,7 +155,7 @@
 		 * @throws Exception if a GET request was performed instead of a POST or if username/password fileds are wrong
 		 * @returns LoginModel coming from the array, filtered and sanatised
 		 */
-		private function getLoginCredentials(array $arr) : LoginModel | null
+		private function getLoginCredentials(array $arr, ApplicationState $state) : LoginModel | null
 		{
 			// TODO - Instead of throwing exceptions, reroute to login() and show errors.
 			// TODO - Rename 'emailAddress' to 'email' like a sensible person
@@ -151,7 +180,7 @@
 			if (empty($password) || strlen($password) > 50)
 				throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
 			
-			return new LoginModel(null, $emailAddress, $password);
+			return new LoginModel($emailAddress, $password, $state);
 		}
 		
 		/**
@@ -167,5 +196,10 @@
 			if (password_verify($credentials->getPassword(), $user->getPassword()))
 				return $user; else
 				throw new Exception("Invalid email or password");
+		}
+		
+		private function checkArray(array $arr, string $key): bool
+		{
+			return array_key_exists($key, $arr) && !empty($arr[$key]);
 		}
 	}

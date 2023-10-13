@@ -1,5 +1,5 @@
 <?php
-	namespace bikeshop\app\core\jwt;
+	namespace bikeshop\app\core\authentication;
 	
 	/**
 	 * A token that stores data about a user when they successfully authenticate. With this token, a has more functionality

@@ -3,5 +3,5 @@
 	namespace bikeshop\app\core;
 	interface IHasIndexPage
 	{
-		public function index(array $params);
+		public function index(ApplicationState $state);
 	}

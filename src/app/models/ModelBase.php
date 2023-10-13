@@ -1,17 +1,18 @@
 <?php
 	
 	namespace bikeshop\app\models;
+	
+	use bikeshop\app\core\ApplicationState;
+	
 	class ModelBase
 	{
-		private string | null $jwtToken;
-		
-		public function __construct(string | null $jwtToken)
+		public function __construct(private ApplicationState | null $state)
 		{
-			$this->jwtToken = $jwtToken;
+		
 		}
 		
-		public function getJwtToken() : string | null
+		public function getState(): ApplicationState | null
 		{
-			return $this->jwtToken;
+			return $this->state;
 		}
 	}

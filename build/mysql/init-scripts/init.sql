@@ -9,6 +9,13 @@ CREATE TABLE CATEGORY(
     PRIMARY KEY (ID)
 );
 
+DROP TABLE IF EXISTS USER_ROLES;
+CREATE TABLE USER_ROLES(
+    ID INT NOT NULL,
+    NAME NVARCHAR(100),
+    PRIMARY KEY (ID)
+);
+
 DROP TABLE IF EXISTS PRODUCT;
 CREATE TABLE PRODUCT(
        ID int NOT NULL AUTO_INCREMENT,
@@ -22,6 +29,7 @@ CREATE TABLE PRODUCT(
 DROP TABLE IF EXISTS USER;
 CREATE TABLE USER(
     ID int primary key auto_increment,
+    USER_ROLE_ID INT NOT NULL DEFAULT(1),
     EMAIL_ADDRESS varchar(500) unique,
     FIRST_NAME varchar(50),
     LAST_NAME varchar(50),
@@ -31,7 +39,8 @@ CREATE TABLE USER(
     STATE varchar(10),
     POSTCODE varchar(4),
     COUNTRY varchar(50),
-    PHONE varchar(14)
+    PHONE varchar(14),
+    FOREIGN KEY (USER_ROLE_ID) REFERENCES USER_ROLES(ID)
 );
 
 -- Test Data
@@ -41,6 +50,12 @@ VALUES (1, 'Bikes'),
        (3, 'Accessories'),
        (4, 'Apparel'),
        (5, 'Components');
+
+INSERT INTO USER_ROLES(ID, NAME)
+VALUES (1, 'Member'), -- Can read the database and make purchases
+       (2, 'Staff'), -- Can access the rosters
+       (3, 'Managers'),
+       (4, 'SysAdmin'); -- Full read write access, even to users
 
 INSERT INTO PRODUCT (CATEGORY_ID, NAME, PRICE)
 VALUES

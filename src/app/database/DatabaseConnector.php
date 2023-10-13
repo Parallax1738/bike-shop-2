@@ -35,6 +35,24 @@
 			$this->disconnect();
 		}
 		
+		/**
+		 * @return array Key=UserRoleId, Value=UserRoleName
+		 */
+		public function selectAllUserRoles(): array
+		{
+			$this->connect();
+			$sql = $this->mysqli->prepare("SELECT * FROM USER_ROLES");
+			$userRoles = [];
+			if ($sql->execute()) {
+				$sql->bind_result($id, $name);
+				while ($sql->fetch())
+				{
+					$userRoles[$id] = $name;
+				}
+			}
+			return $userRoles;
+		}
+		
 		public function findUserWithEmailAddress($emailToFind) : DbUserModel | null
 		{
 			$this->connect();
@@ -43,10 +61,10 @@
 			$sqlEmail = $emailToFind;
 			
 			if ($sql->execute()) {
-				$sql->bind_result($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				while ($sql->fetch()) {
 					$this->disconnect();
-					return new DbUserModel($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+					return new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				}
 			}
 			$this->disconnect();
@@ -87,7 +105,7 @@
 		{
 			$this->connect();
 			
-			$stmt = $this->mysqli->prepare("SELECT COUNT(*) FROM PRODUCT WHERE CATEGORY_ID = ?");
+			$stmt = $this->mysqli->prepare("SELECT COUNT(*) FROM BIKE_SHOP.`PRODUCT` WHERE CATEGORY_ID = ?");
 			$stmt->bind_param('i', $sqlProdId);
 			$sqlProdId = $prodId;
 			
@@ -104,7 +122,7 @@
 		{
 			$this->connect();
 			
-			$stmt = $this->mysqli->prepare("SELECT * FROM PRODUCT WHERE CATEGORY_ID = ? LIMIT ? OFFSET ?");
+			$stmt = $this->mysqli->prepare("SELECT * FROM BIKE_SHOP.`PRODUCT` WHERE CATEGORY_ID = ? LIMIT ? OFFSET ?");
 			$stmt->bind_param('iii', $sqlProdId, $limitSql, $offsetSql);
 			
 			$sqlProdId = $prodId;
@@ -120,7 +138,7 @@
 				}
 				return $records;
 			}
-			throw new Exception("Unable to do somtehming with the database");
+			throw new Exception("Unable to do something with the database");
 		}
 		
 		/**
@@ -137,9 +155,10 @@
 			$hashedPassword = password_hash($newAcc->getPassword(), PASSWORD_BCRYPT);
 			
 			$this->connect();
-			$sql = $this->mysqli->prepare("INSERT INTO USER (EMAIL_ADDRESS, PASSWORD) VALUES(?, ?)");
-			$sql->bind_param("ss", $sqlEmail, $hashedPassword);
+			$sql = $this->mysqli->prepare("INSERT INTO BIKE_SHOP.`USER`(`USER_ROLE_ID`, `EMAIL_ADDRESS`, `PASSWORD`) VALUES(?, ?, ?)");
+			$sql->bind_param("iss", $sqlRoleId, $sqlEmail, $hashedPassword);
 			
+			$sqlRoleId = $newAcc->getRoleId();
 			$sqlEmail = $newAcc->getEmail();
 			$sqlPass = $newAcc->getPassword();
 			
@@ -182,20 +201,28 @@
 			$this->mysqli = null;
 		}
 		
-		public function findUserWithIdAddress(int $userId)
+		/**
+		 * Finds a user from the database that has a specific id
+		 * @param int $userId Id to find
+		 * @return DbUserModel|null Null if no user was found
+		 */
+		public function findUserWithIdAddress(int $userId): DbUserModel | null
 		{
 			$this->connect();
 			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER.ID = ?");
 			$sql->bind_param("i", $sqlId);
 			$sqlId = $userId;
 			
-			if ($sql->execute()) {
-				$sql->bind_result($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				while ($sql->fetch()) {
+			if ($sql->execute())
+			{
+				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				if ($sql->fetch())
+				{
 					$this->disconnect();
-					return new DbUserModel($id, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+					return new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				}
 			}
+			
 			$this->disconnect();
 			return null;
 		}
