@@ -1,6 +1,7 @@
 <?php
     namespace public;
 	require "../../vendor/autoload.php";
+	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\public\Bootstrapper;
 	
 	$bootstrapper = new Bootstrapper();

@@ -35,6 +35,24 @@
 			$this->disconnect();
 		}
 		
+		/**
+		 * @return array Key=UserRoleId, Value=UserRoleName
+		 */
+		public function selectAllUserRoles(): array
+		{
+			$this->connect();
+			$sql = $this->mysqli->prepare("SELECT * FROM USER_ROLES");
+			$userRoles = [];
+			if ($sql->execute()) {
+				$sql->bind_result($id, $name);
+				while ($sql->fetch())
+				{
+					$userRoles[$id] = $name;
+				}
+			}
+			return $userRoles;
+		}
+		
 		public function findUserWithEmailAddress($emailToFind) : DbUserModel | null
 		{
 			$this->connect();
