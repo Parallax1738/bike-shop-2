@@ -49,7 +49,6 @@
 			
 			// Check expiry date. If it is passed the expiry date, reroute to /auth/login and clear the token cookie
 			$payload = json_decode($payload, true);
-			echo $payload['data']['user-id'];
 
 			if (!array_key_exists('exp', $payload) || empty($payload[ 'exp' ]))
 			{
