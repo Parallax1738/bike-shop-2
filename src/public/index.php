@@ -1,11 +1,10 @@
 <?php
     namespace public;
 	require "../../vendor/autoload.php";
+	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\public\Bootstrapper;
-	
-	$bootstrapper = new Bootstrapper();
-    $loggedInUser = $bootstrapper->InitAuth();
+ 
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +22,14 @@
     ?>
     <main>
         <?php
-            $bootstrapper->Start();
+            // Create Bootstrapper Object
+            $bootstrapper = new Bootstrapper();
+            
+            // Get Application State Information
+			$loggedInUser = $bootstrapper->InitAuth();
+			$state = new ApplicationState($loggedInUser);
+            
+            $bootstrapper->Start($state);
 		?>
     </main>
 </body>

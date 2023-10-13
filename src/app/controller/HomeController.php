@@ -1,14 +1,15 @@
 <?php
 	
 	namespace bikeshop\app\controller;
+	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	
 	class HomeController extends Controller implements IHasIndexPage
 	{
-		public function index(array $params) : void
+		public function index(ApplicationState $state) : void
 		{
-			$this->view('home', 'index', 10);
+			$this->view('home', 'index', $state);
 		}
 		
 		public function test() : void

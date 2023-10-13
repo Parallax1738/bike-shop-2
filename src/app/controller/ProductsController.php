@@ -1,5 +1,6 @@
 <?php
 	namespace bikeshop\app\controller;
+	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
@@ -15,7 +16,7 @@
 		
 		}
 		
-		public function index(array $params) : void
+		public function index(ApplicationState $params) : void
 		{
 			// Get Page Index and Result Count. If they are not found, set to defaults
 			if (!array_key_exists('page', $_GET) || empty($_GET[ 'page' ]))

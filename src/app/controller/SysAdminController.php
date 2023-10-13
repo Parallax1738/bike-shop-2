@@ -1,6 +1,7 @@
 <?php
 	namespace bikeshop\app\controller;
 	
+	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
@@ -15,7 +16,7 @@
 			$this->db = new DatabaseConnector("user", "password", "BIKE_SHOP");
 		}
 		
-		public function index(array $params)
+		public function index(ApplicationState $params)
 		{
 			$this->view('sys-admin', 'index');
 		}

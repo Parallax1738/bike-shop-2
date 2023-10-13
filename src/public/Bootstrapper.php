@@ -1,6 +1,7 @@
 <?php
 	namespace bikeshop\public;
 	require "../../vendor/autoload.php";
+	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\authentication\TokenManager;
 	use bikeshop\app\core\Router;
 	use bikeshop\app\database\models\DbUserModel;
@@ -45,9 +46,9 @@
 		/**
 		 * Starts the program fully by calling the Router to get the controller/action to be viewed to the user
 		 */
-		public function Start(): void
+		public function Start(ApplicationState $state): void
 		{
-			$router = new Router();
+			$router = new Router($state);
 			$router->manageUrl();
 		}
 	}

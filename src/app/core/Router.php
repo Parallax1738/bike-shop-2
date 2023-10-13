@@ -5,15 +5,19 @@
 	use bikeshop\app\controller\HomeController;
 	use bikeshop\app\controller\SysAdminController;
 	use bikeshop\app\controller\TestController;
+	use Exception;
 	use ReflectionClass;
 	
 	class Router
 	{
 		private Controller $indexController;
 		private array $controllerMap;
+		private ApplicationState $state;
 		
-		public function __construct()
+		public function __construct(ApplicationState $state)
 		{
+			$this->state = $state;
+			
 			$homeController = new HomeController();
 			$this->indexController = $homeController;
 			$this->controllerMap[ "home" ] = $homeController;
@@ -27,6 +31,7 @@
 			$this->controllerMap[ "accessories" ] = new ProductsController(3);
 			$this->controllerMap[ "apparel" ] = new ProductsController(4);
 			$this->controllerMap[ "components" ] = new ProductsController(5);
+			
 		}
 		
 		public function manageUrl() : void
@@ -35,7 +40,7 @@
 			
 			// If no controller, go to /
 			if (empty($uri->getControllerName())) {
-				$this->displayIndex($uri->getParametersArray());
+				$this->displayIndex($this->state);
 				return;
 			}
 			
@@ -50,7 +55,7 @@
 			if (empty($a)) {
 				// No action, go to index page if it exists
 				if ($c instanceof IHasIndexPage) {
-					$c->index([]);
+					$c->index($this->state);
 				} else {
 					$this->notFound("Page not found");
 				}
@@ -58,14 +63,14 @@
 			}
 			
 			// Calling the action as a method inside the controller
-			$c->$a($uri->getParametersArray());
+			$c->$a($this->state);
 		}
 		
-		private function displayIndex(array $params) : void
+		private function displayIndex(ApplicationState $state) : void
 		{
 			try {
 				if ($this->indexController instanceof IHasIndexPage) {
-					$this->indexController->index($params);
+					$this->indexController->index($state);
 				} else {
 					$this->notFound("No index page found");
 				}

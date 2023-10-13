@@ -1,12 +1,13 @@
 <?php
 	
 	namespace bikeshop\app\controller;
+	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	
 	class TestController extends Controller implements IHasIndexPage
 	{
-		public function index(array $params) : void
+		public function index(ApplicationState $state) : void
 		{
 			echo '<h1>Hello World! (test controller)</h1>';
 		}
