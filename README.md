@@ -42,75 +42,91 @@ To manually do the tailwind build process:
 Note: You can still run `run-install.sh` instead and it will ignore the install and just do the tailwind build process.
 
 ## MVC
-In MVC, each there are Models, Views, and Controllers. 
 
-When creating a new controller, you should call it 
-'{name}Controller' (examples in /src/core/controller). Each controller should have multiple methods or 'actions'
-which will be asociated with a model and a view. To define a new controller, firstly create a new controller such as 
-`ExampleController`, make it implement `Controller`, and then go to `src/core/Router` and add a new element inside the 
-`controllerMap` array. To create an index page that will be automatically navigated to when going to 
-`example.com/controllerName`, you must implement the `IHasIndexPage` interface and override the `index(array $params)` 
-function. 
+### Controller 
 
-To define an action, you must set up a .php file inside `/src/view/{controller}/{function/action}.php`. This view
-be called automatically when you call the function `$this->view({controller}, {action}, {your model / data});`, where 
-your data can be anything. The data will be passed into the view, which will be described later.
+The way this project implements MVC is not very good. Firstly, you should create a controller inside of 
+`/src/app/controller`. Each controller should be a class that extends `Controller`, an example definition could be `class
+TestController extends Controller`. Then, you should tell the Router about it inside `/src/app/core/Router.php`, and add 
+the line `$this->controllerMap[ "test" ] = new TestController();`. 
 
-An example controller implementation colud look like:
+With that line, when you navigate to `/test` in the browser, you will end up in that controller. If you implement the
+`IHasIndexPage`, it will run the view. Otherwise, it will throw an error saying that the view doesn't exist (because we
+haven't implemented it yet).
+
+### Actions
+
+Each method inisde your code will act as a viewmodel. It will gather all the data it needs, and provide it to the 
+view. Ensure that all your methods pass `ApplicationState $state`, and if you want authentication in the page you are 
+adding, ensure to pass `new ModelBase($state)` into the $view() function. Here is an example implementation:
+
+### Example Controller/Action implementation
 
 ```php
-<?php
-
-// Example app\core\Controller
-use bikeshop\app\core\Controller;use bikeshop\app\core\IHasIndexPage;class ExampleController extends Controller implements IHasIndexPage 
+use bikeshop\app\core\ApplicationState;class BooksPageModel extends ModelBase
 {
-	// http://test.com/example
-	function index(array $params) 
+	public function __construct(private array $books, ApplicationState $state)
 	{
-		// todo - actually implement models and views into the framework
-		return view("example", "index", "");
-	} 
+		parent::__construct($state);
+	}
 	
-	// http://test.com/example/books
-	function books(array $params) 
+	public function getBooks(): array
 	{
-		// holy shit there is more to this project than I thought
-		// create database access object
-		$database = new DataAccess();
-		
-		$books = $database->selectAllBooks();
-		return view("example", "books", $books);
+		return $this->books;
 	}
 }
 
-// Ensuring the router knows about this route's existence
-
-// app\core\Router.php
+class TestController extends Controller implements IHasIndexPage
+{
+	// /test/
+	public function index(ApplicationState $state)
+	{
+		$database = new DatabaseConnector();
+		$books = $database->selectAllBooks();
 		
-		public function __construct()
-		{
-			// ...
-			$this->controllerMap[ "example" ] = new ExapmleController();
-			// ...
-		}
+		$booksModel = new BooksPageModel($books, $state); 
+		
+		//  First Param: controller name, which in this case is Test (the class name without 'controller')
+		// Second Param: action name, in this case it's index (the function name)
+		//  Third Param: The model to pass into the view. Can be null if nothing is needed
+		$this->view('test', 'index', $booksModel);
+	}
+	
+	// /test/action
+	public function action(ApplicationState $state)
+	{
+		$this->view('test', 'action');
+	}
+}
 ```
 
-When creating an action, please ensure that it is a **unique** name. For exmaple, If the user navigates to
-`example.com/test`, the action `test()` will be run. But it will also accept `test2()` because I am bad at programming. 
-If you have a better solution, please change it at `src/core/Rotuer` in the method `getActionFromStr()`. 
+### Views
 
-Here is an example of a view you cogdfcgififglud use. This is following on the example for `/example/books`. Just 
-remember that when you call the `view()` function from inside your controller had the `$data` parameter which you should
-be using in your view.
+Views are even more obnoxious than the controller implementation. Calling `$this->view(...)` such as in the previous 
+code example will find the `php` file inside `/src/public/{controller}/{action}.php`. For example, if you call `$this->
+view('test', 'index');`, The file that will be loaded is `/src/public/test/index.php`. If the file doesn't exist, an 
+error will be thrown. 
+
+Passing data is ~~really easy~~, if you set the `$data` param in the `$this->view(...)` function, that will be visible 
+to the view. The view is not a class. An example could be:
 
 ```php
-<h1>Holy shit it worked</h1>
-<?php
-    foreach ($data as $book) 
-    {
-        echo "<p>" . $book->name . "</p>";
-    }
-?>
+// /src/public/test/index.php
+
+<?php>
+if (!isset($data) || !($data instanceof BooksPageModel))
+{
+	echo "Could not find page model";
+	die;
+}
+
+foreach ($data->getBooks() as $book)
+{
+	// Lists all books from the data object
+	echo "<p>" . $book->getName() . "</p>";
+}
+
+</?>
 ```
 
 ## Updating init.sql script
