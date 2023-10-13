@@ -21,7 +21,6 @@
 			$homeController = new HomeController();
 			$this->indexController = $homeController;
 			$this->controllerMap[ "home" ] = $homeController;
-			$this->controllerMap[ "test" ] = new TestController();
 			$this->controllerMap[ "auth" ] = new AuthController();
 			$this->controllerMap[ "sys-admin" ] = new SysAdminController();
 			
