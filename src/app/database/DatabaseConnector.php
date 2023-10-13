@@ -213,12 +213,14 @@
 			$sql->bind_param("i", $sqlId);
 			$sqlId = $userId;
 			
-			if ($sql->execute()) {
+			if ($sql->execute())
+			{
 				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				$sql->fetch();
-				
-				$this->disconnect();
-				return new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				if ($sql->fetch())
+				{
+					$this->disconnect();
+					return new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				}
 			}
 			
 			$this->disconnect();

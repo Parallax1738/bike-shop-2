@@ -2,13 +2,14 @@
     // IF THE USER HAS A TOKEN, REDIRECT TO HOME SCREEN
     // TODO - Move this into another page as it breaks the MVC thing
 	use bikeshop\app\core\authentication\JwtToken;
+	use bikeshop\app\models\LoginSuccessModel;
 	
-	if (!empty($data) && $data instanceof JwtToken)
+	if (!empty($data) && $data instanceof LoginSuccessModel)
     {
         echo "
-        <p>"  . $data->getPayload()->toJson() . "</p>
+        <p>"  . $data->getToken()->getPayload()->toJson() . "</p>
         <script>
-        cookieStore.set('token', '" . $data->encode() . "');
+        cookieStore.set('token', '" . $data->getToken()->encode() . "');
 //        location.href = '/';
         </script>
         ";

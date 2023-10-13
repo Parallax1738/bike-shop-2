@@ -4,7 +4,6 @@
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
-	use bikeshop\app\models\BikeDisplayModel;
 	use bikeshop\app\models\PagingModel;
 	use Exception;
 	

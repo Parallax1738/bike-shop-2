@@ -2,11 +2,27 @@
 <form action="/auth/create-account" method="post">
 	<?php
 		use bikeshop\app\database\models\DbUserModel;
+		use bikeshop\app\models\CreateAccountModel;
+		use bikeshop\app\models\ModelBase;
 		
-		if (isset($loggedInUser) && $loggedInUser instanceof DbUserModel)
+		if (isset($data) && $data instanceof CreateAccountModel)
 		{
-			echo '<p>Test</p>';
-		}
+            $user = $data->getState()->getUser();
+            if ($user && ($user->getUserRoleId() == 4 || $user->getUserRoleId() == 3))
+			{
+                // Print all user roles so that the admin or manager can create user accounts with specific account type
+                echo "
+                <div id='user-role-buttons'>";
+                foreach ($data->getUserRoles() as $key => $value)
+				{
+					// Don't allow anyone to create another sysadmin, unless they are one themselves
+                    if ($user->getUserRoleId() != 4 && $value == 4) continue;
+                    
+                    echo "<div><input type='radio' name='user-role' value='" . $key ."' /><label>" . $value . "</label></div>";
+                }
+                echo "</div>";
+            }
+        }
 	?>
 	<input type="text" placeholder="Email Address" name="email" />
 	<input type="password" placeholder="Password" name="password" />

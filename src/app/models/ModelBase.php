@@ -6,12 +6,12 @@
 	
 	class ModelBase
 	{
-		public function __construct(private ApplicationState $state)
+		public function __construct(private ApplicationState | null $state)
 		{
 		
 		}
 		
-		public function getState(): ApplicationState
+		public function getState(): ApplicationState | null
 		{
 			return $this->state;
 		}

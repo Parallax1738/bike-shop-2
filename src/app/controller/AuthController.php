@@ -8,6 +8,8 @@
 	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\app\models\CreateAccountModel;
 	use bikeshop\app\models\LoginModel;
+	use bikeshop\app\models\LoginSuccessModel;
+	use bikeshop\app\models\ModelBase;
 	use DateInterval;
 	use DateTime;
 	use Exception;
@@ -26,7 +28,7 @@
 				$password = $_ENV['__SYSADMIN_PASS'];
 				if (!$this->databaseConnector->findUserWithEmailAddress($email, $password))
 				{
-					$this->databaseConnector->insertUser(new CreateAccountModel($email, $password, 4));
+					$this->databaseConnector->insertUser(new CreateAccountModel($email, $password, null, [], 4));
 					echo 'Created Sysadmin User';
 				}
 				else
@@ -77,14 +79,15 @@
 			
 			$token = new JwtToken([], $payload);
 			
-			$this->view('auth', 'login', $token);
+			$this->view('auth', 'login', new LoginSuccessModel($token, $state));
 		}
 		
 		public function createAccount(ApplicationState $state) : void
 		{
 			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
 			{
-				$this->view('auth', 'create-account');
+				$userRoles = $this->databaseConnector->selectAllUserRoles();
+				$this->view('auth', 'create-account', new CreateAccountModel("", "", $state, $userRoles));
 			}
 			else
 			{
@@ -118,7 +121,7 @@
 			// TODO - Rename 'emailAddress' to 'email' like a sensible person
 			
 			// Check if emailAddress exists, and if it is of correct length
-			if (!array_key_exists("email", $arr, $state))
+			if (!array_key_exists("email", $arr))
 				throw new Exception("No emailAddress was provided");
 			
 			$emailAddress = $arr[ "email" ];
@@ -137,7 +140,13 @@
 			if (empty($password) || strlen($password) > 50)
 				throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
 			
-			return new CreateAccountModel($emailAddress, $password, $state);
+			// Check User Role Id. Can be null
+			if (array_key_exists("user-role", $arr))
+				$userRole = $arr[ "user-role" ];
+			else
+				$userRole = null;
+			
+			return new CreateAccountModel($emailAddress, $password, $state, [], $userRole);
 		}
 		
 		/**

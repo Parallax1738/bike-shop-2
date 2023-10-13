@@ -10,13 +10,13 @@
 	class ApplicationState
 	{
 		public function __construct(
-			private DbUserModel $user
+			private DbUserModel | null $user
 		)
 		{
 		
 		}
 		
-		public function getUser(): DbUserModel
+		public function getUser(): DbUserModel | null
 		{
 			return $this->user;
 		}

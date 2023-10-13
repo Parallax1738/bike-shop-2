@@ -10,11 +10,14 @@
 		private string $password;
 		private int $userRoleId;
 		
-		public function __construct(string $username, string $password, ApplicationState $state, int $userRoleId = 1)
+		private array $userRoles;
+		
+		public function __construct(string $username, string $password, ApplicationState | null $state, array $userRoles, int $userRoleId = 1)
 		{
 			$this->username = $username;
 			$this->password = $password;
 			$this->userRoleId = $userRoleId;
+			$this->userRoles = $userRoles;
 			parent::__construct($state);
 		}
 		
@@ -26,6 +29,11 @@
 		public function getPassword() : string
 		{
 			return $this->password;
+		}
+		
+		public function getUserRoles() : array
+		{
+			return $this->userRoles;
 		}
 		
 		public function getRoleId()

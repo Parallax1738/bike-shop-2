@@ -1,21 +1,21 @@
 <?php
-	
 	namespace bikeshop\app\models;
 	
 	use bikeshop\app\core\ApplicationState;
+	use bikeshop\app\core\authentication\JwtToken;
 	
-	class CreateStaffMemberModel extends ModelBase
+	class LoginSuccessModel extends ModelBase
 	{
 		public function __construct(
-			private array $userRoleIdsAvailable,
+			private JwtToken $token,
 			ApplicationState $state
 		)
 		{
 			parent::__construct($state);
 		}
 		
-		public function getAvailableUserRoleIds(): array
+		public function getToken()
 		{
-			return $this->userRoleIdsAvailable;
+			return $this->token;
 		}
 	}
