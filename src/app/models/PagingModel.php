@@ -2,10 +2,12 @@
 	
 	namespace bikeshop\app\models;
 	
+	use bikeshop\app\core\ApplicationState;
+	
 	/**
 	 * A base class that will display a list of items from the database
 	 */
-	class PagingModel
+	class PagingModel extends ModelBase
 	{
 		/**
 		 * @param array $list The list of things to be displayed
@@ -17,8 +19,9 @@
 			private array $list,
 			private int   $currentPage,
 			private int   $pageCount,
-			private int   $maxResults) {
-			
+			private int   $maxResults,
+			ApplicationState $state) {
+			parent::__construct($state);
 		}
 		
 		/**

@@ -2,13 +2,16 @@
 	
 	namespace bikeshop\app\models;
 	
-	class CreateStaffMemberModel
+	use bikeshop\app\core\ApplicationState;
+	
+	class CreateStaffMemberModel extends ModelBase
 	{
 		public function __construct(
-			private array $userRoleIdsAvailable
+			private array $userRoleIdsAvailable,
+			ApplicationState $state
 		)
 		{
-		
+			parent::__construct($state);
 		}
 		
 		public function getAvailableUserRoleIds(): array
