@@ -1,5 +1,6 @@
 <?php
 	namespace bikeshop\app\controller;
+	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\authentication\JwtPayload;
 	use bikeshop\app\core\authentication\JwtToken;
 	use bikeshop\app\core\Controller;
@@ -42,7 +43,7 @@
 		/**
 		 * @throws Exception
 		 */
-		public function login() : void
+		public function login(ApplicationState $state) : void
 		{
 			if ($_SERVER[ "REQUEST_METHOD" ] == "GET") {
 				$this->view('auth', 'login');
@@ -79,7 +80,7 @@
 			$this->view('auth', 'login', $token);
 		}
 		
-		public function createAccount() : void
+		public function createAccount(ApplicationState $state) : void
 		{
 			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
 			{
@@ -90,7 +91,7 @@
 				$account = null;
 				// get data
 				try {
-					$account = $this->getCreateAccountDetails($_POST);
+					$account = $this->getCreateAccountDetails($_POST, $state);
 				} catch (Exception $e) {
 					echo $e->getMessage();
 				}
@@ -111,7 +112,7 @@
 		 * @param $arr array The array that contains the request method
 		 * @throws Exception if a GET request was performed instead of a POST or if username/password fileds are wrong
 		 */
-		private function getCreateAccountDetails(array $arr) : CreateAccountModel | null
+		private function getCreateAccountDetails(array $arr, ApplicationState $state) : CreateAccountModel | null
 		{
 			// TODO - Instead of throwing exceptions, reroute to login() and show errors.
 			// TODO - Rename 'emailAddress' to 'email' like a sensible person
@@ -136,7 +137,7 @@
 			if (empty($password) || strlen($password) > 50)
 				throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
 			
-			return new CreateAccountModel($emailAddress, $password);
+			return new CreateAccountModel($emailAddress, $password, $state);
 		}
 		
 		/**

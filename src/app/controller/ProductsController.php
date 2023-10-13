@@ -16,7 +16,7 @@
 		
 		}
 		
-		public function index(ApplicationState $params) : void
+		public function index(ApplicationState $state) : void
 		{
 			// Get Page Index and Result Count. If they are not found, set to defaults
 			if (!array_key_exists('page', $_GET) || empty($_GET[ 'page' ]))
@@ -40,7 +40,7 @@
 				return;
 			}
 			
-			$model = new PagingModel($bikes, $currentPage, $maxPages, $resultCount);
+			$model = new PagingModel($bikes, $currentPage, $maxPages, $resultCount, $state);
 			$this->view('bikes', 'index', $model);
 		}
 		
