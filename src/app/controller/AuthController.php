@@ -53,7 +53,7 @@
 			$credentials = null;
 			
 			try {
-				$credentials = $this->getLoginCredentials($_POST);
+				$credentials = $this->getLoginCredentials($_POST, $state);
 			} catch (Exception $e) {
 				echo $e->getMessage();
 			}
@@ -118,7 +118,7 @@
 			// TODO - Rename 'emailAddress' to 'email' like a sensible person
 			
 			// Check if emailAddress exists, and if it is of correct length
-			if (!array_key_exists("email", $arr))
+			if (!array_key_exists("email", $arr, $state))
 				throw new Exception("No emailAddress was provided");
 			
 			$emailAddress = $arr[ "email" ];
@@ -146,7 +146,7 @@
 		 * @throws Exception if a GET request was performed instead of a POST or if username/password fileds are wrong
 		 * @returns LoginModel coming from the array, filtered and sanatised
 		 */
-		private function getLoginCredentials(array $arr) : LoginModel | null
+		private function getLoginCredentials(array $arr, ApplicationState $state) : LoginModel | null
 		{
 			// TODO - Instead of throwing exceptions, reroute to login() and show errors.
 			// TODO - Rename 'emailAddress' to 'email' like a sensible person
@@ -171,7 +171,7 @@
 			if (empty($password) || strlen($password) > 50)
 				throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
 			
-			return new LoginModel($emailAddress, $password);
+			return new LoginModel($emailAddress, $password, $state);
 		}
 		
 		/**

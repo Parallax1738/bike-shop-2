@@ -46,4 +46,6 @@
         <a href="/src/public/index.php">Apparel</a>
         <a href="/src/public/index.php">Components</a>
     </div>
+    <div>
+    </div>
 </nav>

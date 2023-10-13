@@ -18,17 +18,18 @@
 
 <body>
     <?php
+		$bootstrapper = new Bootstrapper();
+		
+		// Get Application State Information
+		$loggedInUser = $bootstrapper->InitAuth();
+		$state = new ApplicationState($loggedInUser);
+        
+        // Initialise bootstrap before loading navbar for application state
         include_once './ui-components/navbar.php';
     ?>
     <main>
         <?php
-            // Create Bootstrapper Object
-            $bootstrapper = new Bootstrapper();
-            
-            // Get Application State Information
-			$loggedInUser = $bootstrapper->InitAuth();
-			$state = new ApplicationState($loggedInUser);
-            
+            // Begin Program
             $bootstrapper->Start($state);
 		?>
     </main>
