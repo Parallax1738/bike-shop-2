@@ -81,28 +81,29 @@
 		
 		public function createAccount() : void
 		{
-			if (!$_SERVER[ "REQUEST_METHOD" ] == "POST") {
-				return;
+			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
+			{
+				$this->view('auth', 'create-account');
 			}
-			
-			$account = null;
-			// get data
-			try {
-				$account = $this->getCreateAccountDetails($_POST);
-			} catch (Exception $e) {
-				echo $e->getMessage();
-			}
-			
-			if ($account instanceof CreateAccountModel) {
-				// User is not null, insert it into the database
+			else
+			{
+				$account = null;
+				// get data
 				try {
-					$this->databaseConnector->insertUser($account);
+					$account = $this->getCreateAccountDetails($_POST);
 				} catch (Exception $e) {
-					echo "<p>An account with this email address already exists. Either log in or reset your password</p>";
+					echo $e->getMessage();
+				}
+				
+				if ($account instanceof CreateAccountModel) {
+					// User is not null, insert it into the database
+					try {
+						$this->databaseConnector->insertUser($account);
+					} catch (Exception $e) {
+						echo "<p>An account with this email address already exists. Either log in or reset your password</p>";
+					}
 				}
 			}
-			
-			//			$this->view('auth', 'create-account');
 		}
 		
 		/**

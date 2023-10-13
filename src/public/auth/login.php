@@ -29,10 +29,5 @@
 
 <!-- Add line break because Tailwind CSS is annoying -->
 <br><hr><br>
-
-<h1>Create Account</h1>
-<form action="/auth/create-account" method="post">
-    <input type="text" placeholder="Email Address" name="email" />
-    <input type="password" placeholder="Password" name="password" />
-	<input type="submit" value="Create Account Button" />
-</form>
+<h1>Don't have an account?</h1>
+<a href="/auth/create-account" style="color: blue; text-decoration: underline;">Create an account</a>

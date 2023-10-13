@@ -12,7 +12,7 @@
 				 trying to display is inside src/public/" . $controller . "/" . $action . ".php.");
 			} else {
 				// Loads the file, which is where the HTML/CSS will be loaded for the user
-				require_once $fileName;
+				include $fileName;
 			}
 		}
 		
