@@ -60,12 +60,12 @@
 			$sql->bind_param("s", $sqlEmail);
 			$sqlEmail = $emailToFind;
 			
-			if ($sql->execute()) {
+			if ($sql->execute())
+			{
 				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				while ($sql->fetch()) {
-					$this->disconnect();
-					return new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				}
+				$sql->fetch();
+				$this->disconnect();
+				return new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 			}
 			$this->disconnect();
 			return null;
@@ -84,10 +84,12 @@
 			$offsetSql = $offset;
 			$limitSql = $count;
 			
-			if ($stmt->execute()) {
+			if ($stmt->execute())
+			{
 				$records = [];
 				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultPrice);
-				while ($record = $stmt->fetch()) {
+				while ($stmt->fetch())
+				{
 					$p = new DbProduct($resultId, $resultCategory, $resultName, new Money($resultPrice, new Currency('AUD')));
 					$records[] = $p;
 				}
@@ -109,15 +111,20 @@
 			$stmt->bind_param('i', $sqlProdId);
 			$sqlProdId = $prodId;
 			
-			if ($stmt->execute()) {
+			if ($stmt->execute())
+			{
 				$stmt->bind_result($c);
-				if ($stmt->fetch()) {
+				if ($stmt->fetch())
+				{
 					return $c;
 				}
 			}
 			return 0;
 		}
 		
+		/**
+		 * @throws Exception
+		 */
 		public function selectProducts(int $prodId, int $offset = 0, int $count = 0, string $query = "") : array
 		{
 			$this->connect();
@@ -129,10 +136,12 @@
 			$offsetSql = $offset;
 			$limitSql = $count;
 			
-			if ($stmt->execute()) {
+			if ($stmt->execute())
+			{
 				$records = [];
 				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultPrice);
-				while ($record = $stmt->fetch()) {
+				while ($record = $stmt->fetch())
+				{
 					$p = new DbProduct($resultId, $resultCategory, $resultName, new Money($resultPrice, new Currency('AUD')));
 					$records[] = $p;
 				}
@@ -148,7 +157,8 @@
 		{
 			// make sure a user does not exist already
 			$foundUser = $this->findUserWithEmailAddress($newAcc->getEmail());
-			if ($foundUser instanceof DbUserModel) {
+			if ($foundUser instanceof DbUserModel)
+			{
 				throw new Exception("An account with the email address " . $foundUser->getEmailAddress() . " already exists!");
 			}
 			
@@ -172,7 +182,8 @@
 		 */
 		private function connect() : void
 		{
-			if ($this->isConnected()) {
+			if ($this->isConnected())
+			{
 				return;
 			}
 			
@@ -193,7 +204,8 @@
 		 */
 		private function disconnect() : void
 		{
-			if (!$this->isConnected()) {
+			if (!$this->isConnected())
+			{
 				return;
 			}
 			

@@ -5,7 +5,6 @@
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
-	use bikeshop\app\models\CreateStaffMemberModel;
 	
 	class SysAdminController extends Controller implements IHasIndexPage
 	{

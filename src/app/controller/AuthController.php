@@ -1,6 +1,7 @@
 <?php
 	namespace bikeshop\app\controller;
 	use bikeshop\app\core\ApplicationState;
+	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\core\authentication\JwtPayload;
 	use bikeshop\app\core\authentication\JwtToken;
 	use bikeshop\app\core\Controller;
@@ -21,24 +22,18 @@
 		public function __construct()
 		{
 			$this->databaseConnector = new DatabaseConnector("user", "password", "BIKE_SHOP");
+		
+			// Check to make sure that there is a SYSADMIN user
+			$env = new ArrayWrapper($_ENV);
 			
-			if ($this->checkArray($_ENV, '__SYSADMIN_EMAIL') && $this->checkArray($_ENV, '__SYSADMIN_PASS'))
+			if ($env->keyExists('__SYSADMIN_EMAIL') && $env->keyExists('__SYSADMIN_PASS'))
 			{
-				$email = $_ENV['__SYSADMIN_EMAIL'];
-				$password = $_ENV['__SYSADMIN_PASS'];
-				if (!$this->databaseConnector->findUserWithEmailAddress($email, $password))
+				$email = $env->getValueWithKey('__SYSADMIN_EMAIL');
+				$password = $env->getValueWithKey('__SYSADMIN_PASS');
+				if (!$this->databaseConnector->findUserWithEmailAddress($email))
 				{
 					$this->databaseConnector->insertUser(new CreateAccountModel($email, $password, null, [], 4));
-					echo 'Created Sysadmin User';
 				}
-				else
-				{
-					// Account Exists
-				}
-			}
-			else
-			{
-				echo 'Email and Pass does not exist';
 			}
 		}
 		
@@ -54,8 +49,9 @@
 			
 			$credentials = null;
 			
+			// Get Login Credentials
 			try {
-				$credentials = $this->getLoginCredentials($_POST, $state);
+				$credentials = $this->getLoginCredentials(new ArrayWrapper($_POST), $state);
 			} catch (Exception $e) {
 				echo $e->getMessage();
 			}
@@ -63,8 +59,8 @@
 			if (!( $credentials instanceof LoginModel ))
 				throw new Exception("An error occurred while trying to gather user credentials (cannot convert " . $credentials::class . " to " . LoginModel::class . ").");
 			
+			// If the credentials are correct, ensure that it was retrieved correctly
 			$foundUser = $this->validateCredentials($credentials);
-			echo $foundUser->getId();
 			
 			if (!( $foundUser instanceof DbUserModel )) {
 				throw new Exception("This account doesn't exist, or was deleted. Please sign in again or create an account");
@@ -94,7 +90,7 @@
 				$account = null;
 				// get data
 				try {
-					$account = $this->getCreateAccountDetails($_POST, $state);
+					$account = $this->getCreateAccountDetails(new ArrayWrapper($_POST), $state);
 				} catch (Exception $e) {
 					echo $e->getMessage();
 				}
@@ -115,34 +111,23 @@
 		 * @param $arr array The array that contains the request method
 		 * @throws Exception if a GET request was performed instead of a POST or if username/password fileds are wrong
 		 */
-		private function getCreateAccountDetails(array $arr, ApplicationState $state) : CreateAccountModel | null
+		private function getCreateAccountDetails(ArrayWrapper $arr, ApplicationState $state) : CreateAccountModel | null
 		{
 			// TODO - Instead of throwing exceptions, reroute to login() and show errors.
 			// TODO - Rename 'emailAddress' to 'email' like a sensible person
 			
 			// Check if emailAddress exists, and if it is of correct length
-			if (!array_key_exists("email", $arr))
-				throw new Exception("No emailAddress was provided");
-			
-			$emailAddress = $arr[ "email" ];
-			
+			$emailAddress = $arr->getValueWithKey('email');
 			if (empty($emailAddress) || strlen($emailAddress) > 50)
 				throw new Exception("Username has invalid size. Must be between 1 - 50 letters long");
 			$emailAddress = filter_var($emailAddress, FILTER_SANITIZE_EMAIL);
 			
 			// Check if password exists, and if it is of correct length
-			if (!array_key_exists("password", $arr))
-				throw new Exception("No password was provided");
-			
-			$password = $arr[ "password" ];
-			
-			// TODO - Password (and email) should have infinite string length (or at least 256)
-			if (empty($password) || strlen($password) > 50)
-				throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
+			$password = $arr->getValueWithKey('password');
 			
 			// Check User Role Id. Can be null
-			if (array_key_exists("user-role", $arr))
-				$userRole = $arr[ "user-role" ];
+			if ($arr->keyExists('user-role'))
+				$userRole = $arr->getValueWithKey('user-role');
 			else
 				$userRole = null;
 			
@@ -155,29 +140,20 @@
 		 * @throws Exception if a GET request was performed instead of a POST or if username/password fileds are wrong
 		 * @returns LoginModel coming from the array, filtered and sanatised
 		 */
-		private function getLoginCredentials(array $arr, ApplicationState $state) : LoginModel | null
+		private function getLoginCredentials(ArrayWrapper $arr, ApplicationState $state) : LoginModel | null
 		{
 			// TODO - Instead of throwing exceptions, reroute to login() and show errors.
 			// TODO - Rename 'emailAddress' to 'email' like a sensible person
 			
 			// Check if emailAddress exists, and if it is of correct length
-			if (!array_key_exists("email", $arr))
-				throw new Exception("No emailAddress was provided");
-			
-			$emailAddress = $arr[ "email" ];
-			
-			if (empty($emailAddress) || strlen($emailAddress) > 50)
+			$emailAddress = $arr->getValueWithKey('email');
+			if (strlen($emailAddress) > 50)
 				throw new Exception("Username has invalid size. Must be between 1 - 50 letters long");
 			$emailAddress = filter_var($emailAddress, FILTER_SANITIZE_EMAIL);
 			
 			// Check if password exists, and if it is of correct length
-			if (!array_key_exists("password", $arr))
-				throw new Exception("No password was provided");
-			
-			$password = $arr[ "password" ];
-			
-			// TODO - Password (and email) should have infinite string length (or at least 256)
-			if (empty($password) || strlen($password) > 50)
+			$password = $arr->getValueWithKey('password');
+			if (strlen($password) > 50)
 				throw new Exception("Password has invalid size. Must be between 1 - 50 letters long");
 			
 			return new LoginModel($emailAddress, $password, $state);
@@ -196,10 +172,5 @@
 			if (password_verify($credentials->getPassword(), $user->getPassword()))
 				return $user; else
 				throw new Exception("Invalid email or password");
-		}
-		
-		private function checkArray(array $arr, string $key): bool
-		{
-			return array_key_exists($key, $arr) && !empty($arr[$key]);
 		}
 	}

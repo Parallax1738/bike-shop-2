@@ -38,24 +38,30 @@
 			$uri = $this->getUri();
 			
 			// If no controller, go to /
-			if (empty($uri->getControllerName())) {
+			if (empty($uri->getControllerName()))
+			{
 				$this->displayIndex($this->state);
 				return;
 			}
 			
 			// Otherwise, get controller and go to /{controllerName}
 			$c = $this->getControllerFromStr($uri->getControllerName());
-			if (is_null($c)) {
+			if (is_null($c))
+			{
 				$this->notFound("app\core\Controller could not be found");
 				return;
 			}
 			
 			$a = $this->getActionFromStr($c, $uri->getActionName());
-			if (empty($a)) {
+			if (empty($a))
+			{
 				// No action, go to index page if it exists
 				if ($c instanceof IHasIndexPage) {
+					
 					$c->index($this->state);
-				} else {
+				}
+				else
+				{
 					$this->notFound("Page not found");
 				}
 				return;
@@ -67,13 +73,19 @@
 		
 		private function displayIndex(ApplicationState $state) : void
 		{
-			try {
-				if ($this->indexController instanceof IHasIndexPage) {
+			try
+			{
+				if ($this->indexController instanceof IHasIndexPage)
+				{
 					$this->indexController->index($state);
-				} else {
+				}
+				else
+				{
 					$this->notFound("No index page found");
 				}
-			} catch (Exception $exception) {
+			}
+			catch (Exception $exception)
+			{
 				$this->notFound("For fucks sake the home controller doesn't have an index method: " . $exception);
 			}
 		}
