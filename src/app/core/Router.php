@@ -49,7 +49,7 @@
 			$c = $this->getControllerFromStr($uri->getControllerName());
 			if (is_null($c))
 			{
-				$this->notFound("app\core\Controller could not be found");
+				include(__DIR__ . "/../../public/error/http404.php");
 				return;
 			}
 			
@@ -63,7 +63,7 @@
 				}
 				else
 				{
-					$this->notFound("Page not found");
+					include(__DIR__ . "/../../public/error/http404.php");
 				}
 				return;
 			}
@@ -82,12 +82,12 @@
 				}
 				else
 				{
-					$this->notFound("No index page found");
+					include(__DIR__ . "/../../public/error/http404.php");
 				}
 			}
 			catch (Exception $exception)
 			{
-				$this->notFound("For fucks sake the home controller doesn't have an index method: " . $exception);
+				include(__DIR__ . "/../../public/error/http404.php");
 			}
 		}
 		
@@ -126,22 +126,6 @@
 		private function removeParams(string $str) : string
 		{
 			return explode('?', $str)[ 0 ];
-		}
-		
-		private function notFound($message) : void
-		{
-			echo '<div style="display: flex; height: 100vh; justify-content: center; align-items: center; flex-direction: column;">';
-			echo '<h1 style="color: red !important; font-size: 3rem; font-weight: bold;">404 Not Found 😭</h1>';
-			echo '<p><b>Message: </b>' . $message . '</p>';
-			echo '</div>';
-		}
-		
-		private function serverError($message) : void
-		{
-			echo '<div style="display: flex; height: 100vh; justify-content: center; align-items: center; flex-direction: column;">';
-			echo '<h1 style="color: red !important; font-size: 3rem; font-weight: bold;">Server Error 😭</h1>';
-			echo '<p><b>Message: </b>' . $message . '</p>';
-			echo '</div>';
 		}
 		
 		private function getControllerFromStr($controllerName) : Controller | null
