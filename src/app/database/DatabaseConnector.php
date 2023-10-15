@@ -140,14 +140,14 @@
 			{
 				$records = [];
 				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultPrice);
-				while ($record = $stmt->fetch())
+				while ($stmt->fetch())
 				{
 					$p = new DbProduct($resultId, $resultCategory, $resultName, new Money($resultPrice, new Currency('AUD')));
 					$records[] = $p;
 				}
 				return $records;
 			}
-			throw new Exception("Unable to do something with the database");
+			return [ ];
 		}
 		
 		/**

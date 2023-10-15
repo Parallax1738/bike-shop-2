@@ -1,5 +1,6 @@
 <?php
 	namespace bikeshop\app\controller;
+	use bikeshop\app\core\ActionResult;
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\core\Controller;
@@ -38,11 +39,6 @@
 			}
 			
 			$model = new PagingModel($bikes, $currentPage, $maxPages, $resultCount, $state);
-			$this->deprecatedView('bikes', 'index', $model);
-		}
-		
-		public function test() : void
-		{
-			echo "<h1>Test</h1>";
+			$this->view(new ActionResult('bikes', 'index', $model));
 		}
 	}
