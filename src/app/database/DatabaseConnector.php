@@ -1,7 +1,6 @@
 <?php
 	namespace bikeshop\app\database;
 	use bikeshop\app\database\models\DbProduct;
-	use bikeshop\app\database\models\DbProductOutput;
 	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\app\models\CreateAccountModel;
 	use Exception;
@@ -219,7 +218,7 @@
 		 * @param int $userId Id to find
 		 * @return DbUserModel|null Null if no user was found
 		 */
-		public function findUserWithIdAddress(int $userId): DbUserModel | null
+		public function findUserWithId(int $userId): DbUserModel | null
 		{
 			$this->connect();
 			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER.ID = ?");

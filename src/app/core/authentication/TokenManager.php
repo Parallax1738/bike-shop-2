@@ -61,7 +61,7 @@
 				throw new Exception("Invalid token provided. Please login again");
 			}
 			
-			return $this->db->findUserWithIdAddress($payload['data']['user-id']);
+			return $this->db->findUserWithId($payload['data']['user-id']);
 		}
 		
 		public function createDefaultSysAdmin()

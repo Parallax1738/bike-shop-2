@@ -24,7 +24,7 @@
 		{
 			if (!$manager instanceof DbUserModel) continue;
 			echo '<p>' . $manager->getEmailAddress() . ' <a style="color:blue; text-decoration: underline"
-			                                                href="/sys-admin/edit-manager?m=' . $manager->getId() . '">
+			                                                href="/sys-admin/edit-staff?m=' . $manager->getId() . '">
 			                                                Edit
                                                          </a></p>';
 		}
