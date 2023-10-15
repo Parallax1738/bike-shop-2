@@ -16,8 +16,9 @@
     <link href="../../output.css" rel="stylesheet">
 </head>
 
-<body>
-    <?php
+<body class="flex flex-col min-h-screen">
+    <div class="flex-grow">
+        <?php
 		$bootstrapper = new Bootstrapper();
 		
 		// Get Application State Information
@@ -27,12 +28,16 @@
         // Initialise bootstrap before loading navbar for application state
         include_once './ui-components/navbar.php';
     ?>
-    <main>
-        <?php
+        <main>
+            <?php
             // Begin Program
             $bootstrapper->Start($state);
 		?>
-    </main>
+        </main>
+    </div>
+    <?php
+        include_once './ui-components/footer.php';
+    ?>
 </body>
 
 </html>

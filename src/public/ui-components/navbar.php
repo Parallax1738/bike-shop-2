@@ -2,7 +2,7 @@
     <div class="flex items-center justify-between">
         <div class="w-1/4"></div>
         <div class="w-1/2 font-bold text-center text-white text-7xl">
-            <a href="/">Bike shop</a>
+            <a class="hover:text-gray-300" href="/">Bike shop</a>
         </div>
         <div class="w-1/4 flex justify-end items-center space-x-4 gap-2">
             <?php
@@ -63,11 +63,11 @@
         </div>
     </div>
     <div class="mt-4 text-center text-white space-x-4">
-        <a href="/src/public/index.php">Bikes</a>
-        <a href="/src/public/index.php">Scooters</a>
-        <a href="/src/public/index.php">Accessories</a>
-        <a href="/src/public/index.php">Apparel</a>
-        <a href="/src/public/index.php">Components</a>
+        <a class="hover:text-gray-300" href="/bikes">Bikes</a>
+        <a class="hover:text-gray-300" href="/scooters">Scooters</a>
+        <a class="hover:text-gray-300" href="/accessories">Accessories</a>
+        <a class="hover:text-gray-300" href="/apparel">Apparel</a>
+        <a class="hover:text-gray-300" href="/components">Components</a>
     </div>
     <div>
     </div>
