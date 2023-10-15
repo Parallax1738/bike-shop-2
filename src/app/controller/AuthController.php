@@ -90,20 +90,28 @@
 			{
 				$account = null;
 				// get data
-				try {
+				try
+				{
 					$account = $this->getCreateAccountDetails(new ArrayWrapper($_POST), $state);
-				} catch (Exception $e) {
+				}
+				catch (Exception $e)
+				{
 					echo $e->getMessage();
 				}
 				
 				if ($account instanceof CreateAccountModel) {
 					// User is not null, insert it into the database
-					try {
+					try
+					{
 						$this->db->insertUser($account);
-					} catch (Exception $e) {
+					}
+					catch (Exception $e)
+					{
 						echo "<p>An account with this email address already exists. Either log in or reset your password</p>";
 					}
 				}
+				
+				$this->view("auth", "login");
 			}
 		}
 		
