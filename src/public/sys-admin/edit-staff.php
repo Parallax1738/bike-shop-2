@@ -12,7 +12,7 @@
 		return '
 		<div>
 		<label>' . $label . '</label>
-		<input name="' . $htmlName . '" value="' . $value . '" type="' . $fieldType . '"/>
+		<input name="' . $htmlName . '" value="' . $value . '" type="' . $fieldType . '" style="background-color: lightgrey"/>
 		</div>';
 	}
 	
