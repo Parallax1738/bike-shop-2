@@ -7,25 +7,48 @@
         <div class="w-1/4 flex justify-end items-center space-x-4 gap-2">
             <?php
 				use bikeshop\app\database\models\DbUserModel;
-				
 				include( 'button.php' );
-            button([
-              'text' => 'Login',
-              'targetPage' => '/auth/login',
-              'isLoggedIn' => false
-            ]);
-            if (isset($loggedInUser) &&
-                $loggedInUser instanceof DbUserModel &&
-                $loggedInUser->getUserRoleId() == 4)
-            {
-				// 4 = Sysadmin in database. I know it's hard-coded, but it's the same in the init.sql file
                 
-                button([
-                    'text' => 'View Sysadmin',
-                    'targetPage' => '/sys-admin',
-                    'isLoggedIn' => false
-                ]);
-            }
+                if (isset($loggedInUser) && $loggedInUser instanceof DbUserModel)
+				{
+                    // We are logged in!
+					button([
+						'text' => 'Login',
+						'targetPage' => '/auth/login',
+						'isLoggedIn' => true
+					]);
+					
+					button([
+						'text' => 'Logout',
+						'targetPage' => '/auth/logout',
+					]);
+                    
+                    if ($loggedInUser->getUserRoleId() == 4)
+					{
+                        // User is a system administrator -> allow them to access sys-admin pages. Remember, sys-admin
+                        // role has a USER_ROLE_ID = 4
+						
+						button([
+							'text' => 'SysAdmin',
+							'targetPage' => '/sys-admin'
+						]);
+                    }
+                }
+                else
+				{
+                    // Not logged in. Give the user an option to login or create an account
+                    button([
+                        'text' => 'Login',
+                        'targetPage' => '/auth/login',
+                        'isLoggedIn' => false
+                    ]);
+                    
+					button([
+						'text' => 'Create an account',
+						'targetPage' => '/auth/create-account',
+						'isLoggedIn' => false
+					]);
+                }
             ?>
             <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
                 <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->

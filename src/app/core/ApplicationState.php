@@ -9,15 +9,18 @@
 	 */
 	class ApplicationState
 	{
-		public function __construct(
-			private DbUserModel | null $user
-		)
+		public function __construct(private DbUserModel | null $user)
 		{
 		
 		}
 		
-		public function getUser(): DbUserModel | null
+		public function getUser() : DbUserModel | null
 		{
 			return $this->user;
+		}
+		
+		public function setUser(DbUserModel | null $user): void
+		{
+			$this->user = $user;
 		}
 	}

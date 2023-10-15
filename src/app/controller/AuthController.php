@@ -79,6 +79,15 @@
 			$this->view('auth', 'login', new LoginSuccessModel($token, $state));
 		}
 		
+		public function logout(ApplicationState $state): void
+		{
+			if ($state->getUser())
+			{
+				$state->setUser(null);
+				$this->view('auth', 'logout');
+			}
+		}
+		
 		public function createAccount(ApplicationState $state) : void
 		{
 			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")

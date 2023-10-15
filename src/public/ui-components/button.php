@@ -6,7 +6,7 @@
     $isLoggedIn = $params['isLoggedIn'] ?? false;
 ?>
 <div>
-    <a href="<?php echo $isLoggedIn ? 'account.php' : $targetPage; ?>"
+    <a href="<?php echo $isLoggedIn ? '/auth/edit-account' : $targetPage; ?>"
         class="bg-orange-500 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
         <?php if ($iconSVG): ?>
         <div class="h-6 w-6 mr-2 flex items-center justify-center"><?php echo $iconSVG; ?></div>
