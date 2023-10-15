@@ -41,7 +41,7 @@
 		 */
 		public function editStaff(ApplicationState $state)
 		{
-			// Get Manager Id
+			// Get Manager id
 			$get = new ArrayWrapper($_GET);
 			$managerId = $get->getValueWithKey('m') ?? null;
 			
