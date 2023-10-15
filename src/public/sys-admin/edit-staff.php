@@ -25,9 +25,19 @@
 	}
 	$user = $data->getUserModel();
 	
+	echo '<form method="post">';
 	echo '<h1><b>Edit ' . $user->getEmailAddress() . '</b></h1>';
+	echo createInputField('id', "", $user->getId(), "hidden");
 	echo createInputField('first-name', "First Name", $user->getFirstName());
-	echo createInputField('first-name', "Last Name", $user->getLastName());
-	echo createInputField('first-name', "Email Address", $user->getFirstName());
-	echo createInputField('first-name', "Password", null, "password");
+	echo createInputField('last-name', "Last Name", $user->getLastName());
+	echo createInputField('email', "Email Address", $user->getEmailAddress());
+	echo createInputField('address', "Address", $user->getAddress());
+	echo createInputField('suburb', "Suburb", $user->getSuburb());
+	echo createInputField('state', "State", $user->getState());
+	echo createInputField('postcode', "Postcode", $user->getPostcode(), "number");
+	echo createInputField('country', "Country", $user->getCountry());
+	echo createInputField('phone', "Phone", $user->getPhone());
 	
+	echo createInputField('password', "Password", null, "password");
+	echo '<input type=submit value="Update User" style="color: blue; text-decoration: underline"/>';
+	echo '</form>';

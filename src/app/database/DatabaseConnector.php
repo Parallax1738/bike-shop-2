@@ -268,4 +268,40 @@
 				return null;
 			}
 		}
+		
+		/**
+		 * @throws Exception when user was not found in the database
+		 */
+		public function updateUser(DbUserModel $user)
+		{
+			// Check if user exists
+			if (!$this->findUserWithId($user->getId()))
+				throw new Exception("User with id was not found");
+			
+			$this->connect();
+			$sql = $this->mysqli->prepare("UPDATE USER SET EMAIL_ADDRESS=?, FIRST_NAME=?, LAST_NAME=?, PASSWORD=?,
+                ADDRESS=?, SUBURB=?, STATE=?, POSTCODE=?, COUNTRY=?, PHONE=? WHERE ID=?");
+			
+			$sql->bind_param('ssssssssssi', $sqlEmail, $sqlFirstName, $sqlLastName, $sqlPassword, $sqlAddress, $sqlSuburb, $sqlState, $sqlPostcode, $sqlCountry, $sqlPhone, $sqlId);
+			$sqlEmail = $user->getEmailAddress();
+			$sqlFirstName = $user->getFirstName();
+			$sqlLastName = $user->getLastName();
+			$sqlPassword = $user->getPassword();
+			$sqlAddress = $user->getAddress();
+			$sqlSuburb = $user->getSuburb();
+			$sqlState = $user->getState();
+			$sqlPostcode = $user->getPostcode();
+			$sqlCountry = $user->getCountry();
+			$sqlPhone = $user->getPhone();
+			$sqlId = $user->getId();
+			
+			if ($sql->execute())
+			{
+				echo "Successful!";
+			}
+			else
+			{
+				echo "Unsuccessful";
+			}
+		}
 	}
