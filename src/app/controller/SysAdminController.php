@@ -1,6 +1,7 @@
 <?php
 	namespace bikeshop\app\controller;
 	
+	use bikeshop\app\core\ActionResult;
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\core\Controller;
@@ -22,7 +23,7 @@
 		
 		public function index(ApplicationState $state)
 		{
-			$this->deprecatedView('sys-admin', 'index');
+			$this->view(new ActionResult('sys-admin', 'index'));
 		}
 		
 		public function staffManagement(ApplicationState $state)
@@ -33,7 +34,7 @@
 			
 			$data = new StaffManagementModel($staffMembers, $managers, $state);
 			
-			$this->deprecatedView('sys-admin', 'staff-management', $data);
+			$this->view(new ActionResult('sys-admin', 'staff-management', $data));
 		}
 		
 	}
