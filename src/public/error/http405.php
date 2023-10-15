@@ -1,0 +1,3 @@
+<h1>HTTP405</h1>
+<p>You tried to read/write data to the wrong place in the server :(</p>
+<p><a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" style="color: blue; text-decoration: underline">Wikipedia Definition:</a> A request method is not supported for the requested resource; for example, a GET request on a form that requires data to be presented via POST, or a PUT request on a read-only resource.</p>

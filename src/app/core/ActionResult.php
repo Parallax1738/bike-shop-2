@@ -19,7 +19,7 @@
 			$processedViewDir = $viewDir;
 			
 			// If the $viewDir parameter does not have '/', add it
-			if ($viewDir[strlen($viewDir)] != '/')
+			if ($viewDir[strlen($viewDir) - 1] != '/')
 				$processedViewDir .= '/';
 			return $processedViewDir . $this->getController() . '/' . $this->getAction() . '.php';
 		}

@@ -1,10 +1,10 @@
 <?php
 	namespace bikeshop\app\core;
 	use bikeshop\app\controller\AuthController;
+	use bikeshop\app\controller\ErrorController;
 	use bikeshop\app\controller\ProductsController;
 	use bikeshop\app\controller\HomeController;
 	use bikeshop\app\controller\SysAdminController;
-	use bikeshop\app\controller\TestController;
 	use Exception;
 	use ReflectionClass;
 	
@@ -23,6 +23,7 @@
 			$this->controllerMap[ "home" ] = $homeController;
 			$this->controllerMap[ "auth" ] = new AuthController();
 			$this->controllerMap[ "sys-admin" ] = new SysAdminController();
+			$this->controllerMap[ "error" ] = new ErrorController();
 			
 			// Products
 			$this->controllerMap[ "bikes" ] = new ProductsController(1);
