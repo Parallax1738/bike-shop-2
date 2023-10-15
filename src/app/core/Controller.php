@@ -3,8 +3,15 @@
 	namespace bikeshop\app\core;
 	class Controller
 	{
-		
-		protected function view(string $controller, string $action, $data = null) : void
+		/**
+		 * Finds the view for the controller and action. Deprecated, please use Controller::view
+		 * @param string $controller Controller name to look for. Example for `TestController` class would be `test`
+		 * @param string $action The action or view you want to load
+		 * @param mixed $data to be passed into the function. Optional
+		 * @return void
+		 * @deprecated Please use Controller::view
+		 */
+		protected function deprecatedView(string $controller, string $action, mixed $data = null) : void
 		{
 			$fileName = __DIR__ . "/../../public/" . $controller . "/" . $action . ".php";
 			if (!file_exists($fileName)) {
@@ -14,6 +21,11 @@
 				// Loads the file, which is where the HTML/CSS will be loaded for the user
 				include $fileName;
 			}
+		}
+		
+		protected function view(ActionResult $result)
+		{
+		
 		}
 		
 		private function viewError($message) : void

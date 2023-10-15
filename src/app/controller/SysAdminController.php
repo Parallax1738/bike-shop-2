@@ -22,7 +22,7 @@
 		
 		public function index(ApplicationState $state)
 		{
-			$this->view('sys-admin', 'index');
+			$this->deprecatedView('sys-admin', 'index');
 		}
 		
 		public function staffManagement(ApplicationState $state)
@@ -33,7 +33,7 @@
 			
 			$data = new StaffManagementModel($staffMembers, $managers, $state);
 			
-			$this->view('sys-admin', 'staff-management', $data);
+			$this->deprecatedView('sys-admin', 'staff-management', $data);
 		}
 		
 	}

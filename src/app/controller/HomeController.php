@@ -9,7 +9,7 @@
 	{
 		public function index(ApplicationState $state) : void
 		{
-			$this->view('home', 'index', $state);
+			$this->deprecatedView('home', 'index', $state);
 		}
 		
 		public function test() : void

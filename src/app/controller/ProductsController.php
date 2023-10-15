@@ -38,7 +38,7 @@
 			}
 			
 			$model = new PagingModel($bikes, $currentPage, $maxPages, $resultCount, $state);
-			$this->view('bikes', 'index', $model);
+			$this->deprecatedView('bikes', 'index', $model);
 		}
 		
 		public function test() : void

@@ -44,7 +44,7 @@
 		public function login(ApplicationState $state) : void
 		{
 			if ($_SERVER[ "REQUEST_METHOD" ] == "GET") {
-				$this->view('auth', 'login');
+				$this->deprecatedView('auth', 'login');
 				return;
 			}
 			
@@ -76,7 +76,7 @@
 			
 			$token = new JwtToken([], $payload);
 			
-			$this->view('auth', 'login', new LoginSuccessModel($token, $state));
+			$this->deprecatedView('auth', 'login', new LoginSuccessModel($token, $state));
 		}
 		
 		public function logout(ApplicationState $state): void
@@ -84,7 +84,7 @@
 			if ($state->getUser())
 			{
 				$state->setUser(null);
-				$this->view('auth', 'logout');
+				$this->deprecatedView('auth', 'logout');
 			}
 		}
 		
@@ -93,7 +93,7 @@
 			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
 			{
 				$userRoles = $this->db->selectAllUserRoles();
-				$this->view('auth', 'create-account', new CreateAccountModel("", "", $state, $userRoles));
+				$this->deprecatedView('auth', 'create-account', new CreateAccountModel("", "", $state, $userRoles));
 			}
 			else
 			{
@@ -120,7 +120,7 @@
 					}
 				}
 				
-				$this->view("auth", "login");
+				$this->deprecatedView("auth", "login");
 			}
 		}
 		
@@ -146,7 +146,7 @@
 				$model = new EditUserModel($user, $state);
 				
 				// Return view
-				$this->view('auth', 'edit-account', $model);
+				$this->deprecatedView('auth', 'edit-account', $model);
 			}
 			else
 			{
