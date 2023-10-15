@@ -63,12 +63,13 @@
 			if ($sql->execute())
 			{
 				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				$sql->fetch();
-				$this->disconnect();
-				return new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				while ($sql->fetch())
+				{
+					$user = new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				}
 			}
 			$this->disconnect();
-			return null;
+			return $user ?? null;
 		}
 		
 		/**
@@ -237,5 +238,35 @@
 			
 			$this->disconnect();
 			return null;
+		}
+		
+		
+		/**
+		 * Selects all users in the database who have the user role provided in the parameter $userRoles
+		 * @param $userRole int of the roles that the database should query
+		 * @return array | null All users in the database, null if error
+		 */
+		public function selectAllUsers(int $userRole): array | null
+		{
+			$this->connect();
+			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER_ROLE_ID = ?");
+			$sql->bind_param('i', $sqlUserRole);
+			$sqlUserRole = $userRole;
+			
+			if ($sql->execute())
+			{
+				$records = [];
+				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+				while ($sql->fetch())
+				{
+					$p = new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+					$records[] = $p;
+				}
+				return $records;
+			}
+			else
+			{
+				return null;
+			}
 		}
 	}
