@@ -129,7 +129,7 @@
 			if ($arr->keyExists('user-role'))
 				$userRole = $arr->getValueWithKey('user-role');
 			else
-				$userRole = null;
+				$userRole = 1;
 			
 			return new CreateAccountModel($emailAddress, $password, $state, [], $userRole);
 		}
