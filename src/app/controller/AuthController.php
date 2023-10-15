@@ -1,5 +1,6 @@
 <?php
 	namespace bikeshop\app\controller;
+	use bikeshop\app\core\ActionResult;
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\core\authentication\JwtPayload;
@@ -23,7 +24,7 @@
 		public function __construct()
 		{
 			$this->db = new DatabaseConnector("user", "password", "BIKE_SHOP");
-		
+			
 			// Check to make sure that there is a SYSADMIN user
 			$env = new ArrayWrapper($_ENV);
 			
@@ -43,48 +44,67 @@
 		 */
 		public function login(ApplicationState $state) : void
 		{
-			if ($_SERVER[ "REQUEST_METHOD" ] == "GET") {
-				$this->deprecatedView('auth', 'login');
+			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
+			{
+				$this->view(new ActionResult('auth', 'login'));
 				return;
 			}
-			
-			$credentials = null;
-			
-			// Get Login Credentials
-			try {
-				$credentials = $this->getLoginCredentials(new ArrayWrapper($_POST), $state);
-			} catch (Exception $e) {
-				echo $e->getMessage();
+			else if ($_SERVER[ "REQUEST_METHOD"] == "POST")
+			{
+				$credentials = null;
+				
+				// Get Login Credentials
+				try
+				{
+					$credentials = $this->getLoginCredentials(new ArrayWrapper($_POST), $state);
+				}
+				catch (Exception $e)
+				{
+					$this->view(parent::http400ResponseAction());
+					return;
+				}
+				
+				if (!( $credentials instanceof LoginModel ))
+				{
+					$this->view(parent::http400ResponseAction());
+					return;
+				}
+				
+				// If the credentials are correct, ensure that it was retrieved correctly
+				$foundUser = $this->validateCredentials($credentials);
+				
+				if (!( $foundUser instanceof DbUserModel ))
+				{
+					$this->view(parent::http401ResponseAction());
+					return;
+				}
+				
+				// Create Jwt
+				$expiry = new DateTime();
+				$expiryTime = new DateInterval("P1M"); // 30M = 30 minutes, P is required for date intervals
+				$expiry->add($expiryTime);
+				
+				$payload = new JwtPayload('localhost', new DateTime(), $expiry, $foundUser->getId());
+				
+				$token = new JwtToken([], $payload);
+				
+				$this->view(new ActionResult('auth', 'login', new LoginSuccessModel($token, $state)));
 			}
-			
-			if (!( $credentials instanceof LoginModel ))
-				throw new Exception("An error occurred while trying to gather user credentials (cannot convert " . $credentials::class . " to " . LoginModel::class . ").");
-			
-			// If the credentials are correct, ensure that it was retrieved correctly
-			$foundUser = $this->validateCredentials($credentials);
-			
-			if (!( $foundUser instanceof DbUserModel )) {
-				throw new Exception("This account doesn't exist, or was deleted. Please sign in again or create an account");
+			else
+			{
+				$this->view($this->http405ResponseAction());
 			}
-			
-			// Create Jwt
-			$expiry = new DateTime();
-			$expiryTime = new DateInterval("P1M"); // 30M = 30 minutes, P is required for date intervals
-			$expiry->add($expiryTime);
-			
-			$payload = new JwtPayload('localhost', new DateTime(), $expiry, $foundUser->getId());
-			
-			$token = new JwtToken([], $payload);
-			
-			$this->deprecatedView('auth', 'login', new LoginSuccessModel($token, $state));
 		}
 		
 		public function logout(ApplicationState $state): void
 		{
+			if ($_SERVER["REQUEST_METHOD"] != 'GET')
+				$this->view($this->http405ResponseAction());
+			
 			if ($state->getUser())
 			{
 				$state->setUser(null);
-				$this->deprecatedView('auth', 'logout');
+				$this->view(new ActionResult('auth', 'logout'));
 			}
 		}
 		
@@ -93,9 +113,9 @@
 			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
 			{
 				$userRoles = $this->db->selectAllUserRoles();
-				$this->deprecatedView('auth', 'create-account', new CreateAccountModel("", "", $state, $userRoles));
+				$this->view(new ActionResult('auth', 'create-account', new CreateAccountModel("", "", $state, $userRoles)));
 			}
-			else
+			else if ($_SERVER["REQUEST_METHOD"] == "POST")
 			{
 				$account = null;
 				// get data
@@ -105,7 +125,8 @@
 				}
 				catch (Exception $e)
 				{
-					echo $e->getMessage();
+					$this->view(parent::http403ResponseAction());
+					return;
 				}
 				
 				if ($account instanceof CreateAccountModel) {
@@ -116,11 +137,21 @@
 					}
 					catch (Exception $e)
 					{
-						echo "<p>An account with this email address already exists. Either log in or reset your password</p>";
+						$this->view(parent::http401ResponseAction());
+						return;
 					}
 				}
+				else
+				{
+					$this->view(parent::http403ResponseAction());
+					return;
+				}
 				
-				$this->deprecatedView("auth", "login");
+				$this->view(new ActionResult("auth", "login"));
+			}
+			else
+			{
+				$this->view($this->http405ResponseAction());
 			}
 		}
 		
@@ -134,30 +165,43 @@
 				// Get Account Id
 				$get = new ArrayWrapper($_GET);
 				$accountId = $this->getAccountIdToEdit($state);
-				if ($accountId == null) throw new Exception("Unauthorised");
+				if ($accountId == null)
+				{
+					$this->view($this->http401ResponseAction());
+					return;
+				}
 				
 				
 				// Make sure manager exists in database
 				$user = $this->db->findUserWithId($accountId);
 				
 				if ($user == null)
-					throw new Exception("No manager found with provided ID " . $accountId);
+				{
+					$this->view($this->http405ResponseAction());
+					return;
+				}
 				
 				$model = new EditUserModel($user, $state);
 				
 				// Return view
-				$this->deprecatedView('auth', 'edit-account', $model);
+				$this->view(new ActionResult('auth', 'edit-account', $model));
 			}
-			else
-			{
+			else {
 				// Make sure user id and the user itself exists in the database
 				$post = new ArrayWrapper($_POST);
 				
 				$id = $post->getValueWithKey('id');
-				if ($id == null) throw new Exception("Cannot edit user without an ID");
+				if ($id == null) {
+					$this->view($this->http405ResponseAction());
+					return;
+				}
 				
 				$user = $this->db->findUserWithId($id);
-				if ($user == null) throw new Exception("No user found with provided Id" . $id);
+				if ($user == null)
+				{
+					$this->view($this->http405ResponseAction());
+					return;
+				}
 				
 				# region Setting Values
 				
@@ -262,7 +306,6 @@
 		private function getLoginCredentials(ArrayWrapper $arr, ApplicationState $state) : LoginModel | null
 		{
 			// TODO - Instead of throwing exceptions, reroute to login() and show errors.
-			// TODO - Rename 'emailAddress' to 'email' like a sensible person
 			
 			// Check if emailAddress exists, and if it is of correct length
 			$emailAddress = $arr->getValueWithKey('email');
@@ -278,18 +321,16 @@
 			return new LoginModel($emailAddress, $password, $state);
 		}
 		
-		/**
-		 * @throws Exception if the user puts in the wrong password
-		 */
 		private function validateCredentials(LoginModel $credentials) : DbUserModel | null
 		{
 			// Check if user exists
 			$user = $this->db->findUserWithEmailAddress($credentials->getEmail());
 			if (empty($user))
-				throw new Exception("Invalid email or password");
+				return null;
 			
 			if (password_verify($credentials->getPassword(), $user->getPassword()))
-				return $user; else
-				throw new Exception("Invalid email or password");
+				return $user;
+			else
+				return null;
 		}
 	}

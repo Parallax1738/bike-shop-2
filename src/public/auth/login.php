@@ -7,10 +7,9 @@
 	if (!empty($data) && $data instanceof LoginSuccessModel)
     {
         echo "
-        <p>"  . $data->getToken()->getPayload()->toJson() . "</p>
         <script>
         cookieStore.set('token', '" . $data->getToken()->encode() . "');
-//        location.href = '/';
+        location.href = '/';
         </script>
         ";
 	}

@@ -38,6 +38,9 @@
 			}
 			else
 			{
+				// Ensure to load data before including the PHP file so that the PHP file can read the data
+				// (that sentence was needlessly long)
+				$data = $result->getData();
 				include $fileName;
 			}
 		}
