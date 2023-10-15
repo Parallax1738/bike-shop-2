@@ -23,14 +23,33 @@
 			}
 		}
 		
+		/**
+		 * Finds the view for the controller and action
+		 * @param ActionResult $result Contains information about the view to load, and the model it needs
+		 * @return void
+		 */
 		protected function view(ActionResult $result)
 		{
-		
+			$fileName = $result->getViewFile(__DIR__ . "/../../public/");
+			if (!file_exists($fileName))
+			{
+				$this->view($this->http404ResponseAction());
+				return;
+			}
+			else
+			{
+				include $fileName;
+			}
 		}
 		
 		private function viewError($message) : void
 		{
 			echo '<h1 style="font-size: 2.5rem; font-weight: bold; color: red;">Error with views :)</h1>';
 			echo '<p>' . $message . "</p>";
+		}
+		
+		protected function http404ResponseAction(): ActionResult
+		{
+			return new ActionResult('error', '404');
 		}
 	}
