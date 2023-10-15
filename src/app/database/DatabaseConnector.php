@@ -304,4 +304,14 @@
 				echo "Unsuccessful";
 			}
 		}
+		
+		public function deleteUser(int $accountId)
+		{
+			$this->connect();
+			$sql = $this->mysqli->prepare("DELETE FROM USER WHERE ID = ?");
+			$sql->bind_param('i', $sqlId);
+			$sqlId = $accountId;
+			$sql->execute();
+			$this->disconnect();
+		}
 	}

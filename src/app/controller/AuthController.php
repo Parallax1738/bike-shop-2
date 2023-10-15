@@ -266,6 +266,31 @@
 				$this->db->updateUser($user);
 			}
 		}
+		
+		public function deleteAccount(ApplicationState $state)
+		{
+			if ($_SERVER['REQUEST_METHOD'])
+			{
+				// Get Account Id
+				$get = new ArrayWrapper($_GET);
+				$accountId = $this->getAccountIdToEdit($state);
+				if ($accountId == null)
+				{
+					$this->view($this->http401ResponseAction());
+					return;
+				}
+				
+				// If it is a sysadmin, and there is only 1 sysadmin account left, stop the user from deleteing it
+				
+				
+				if ($this->db->findUserWithId($accountId))
+				{
+					$this->db->deleteUser($accountId);
+					// Going to logout page will clear the token and redirect to home page
+					$this->view(new ActionResult('auth', 'logout'));
+				}
+			}
+		}
 
 		/**
 		 * Gets the account id from the user, whether it be as a parameter from the URL or the logged in account

@@ -40,4 +40,6 @@
 	
 	echo createInputField('password', "Password", null, "password");
 	echo '<input type=submit value="Update User" style="color: blue; text-decoration: underline"/>';
+	echo '<br>';
+	echo '<a type=submit href="/auth/delete-account" style="color: blue; text-decoration: underline">Delete Account</a>';
 	echo '</form>';
