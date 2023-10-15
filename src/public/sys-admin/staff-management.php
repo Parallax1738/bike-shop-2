@@ -23,8 +23,8 @@
 		foreach ($data->getManagers() as $manager)
 		{
 			if (!$manager instanceof DbUserModel) continue;
-			echo '<p>' . $manager->getEmailAddress() . ' <a style="color:blue; text-decoration: underline"
-			                                                href="/sys-admin/edit-staff?m=' . $manager->getId() . '">
+			echo '<p>' . $manager->getFirstName() . ' ' . $manager->getLastName() . ' <a style="color:blue; text-decoration: underline"
+			                                                href="/auth/edit-account?a=' . $manager->getId() . '">
 			                                                Edit
                                                          </a></p>';
 		}
@@ -41,7 +41,10 @@
         foreach ($data->getStaffMembers() as $staff)
 		{
             if (!$staff instanceof DbUserModel) continue;
-            echo '<p>' . $staff->getEmailAddress() . '</p>';
+			echo '<p>' . $staff->getFirstName() . ' ' . $staff->getLastName() . ' <a style="color:blue; text-decoration: underline"
+                    href="/auth/edit-account?a=' . $staff->getId() . '">
+                    Edit
+                  </a></p>';
         }
     }
 ?>

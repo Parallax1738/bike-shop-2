@@ -26,7 +26,7 @@
 	$user = $data->getUserModel();
 	
 	echo '<form method="post">';
-	echo '<h1><b>Edit ' . $user->getEmailAddress() . '</b></h1>';
+	echo '<h1><b>Edit ' . $user->getFirstName() . ' ' . $user->getLastName() . '</b></h1>';
 	echo createInputField('id', "", $user->getId(), "hidden");
 	echo createInputField('first-name', "First Name", $user->getFirstName());
 	echo createInputField('last-name', "Last Name", $user->getLastName());
