@@ -28,7 +28,7 @@
 		 * @param ActionResult $result Contains information about the view to load, and the model it needs
 		 * @return void
 		 */
-		protected function view(ActionResult $result)
+		protected function view(ActionResult $result): void
 		{
 			$fileName = $result->getViewFile(__DIR__ . "/../../public/");
 			if (!file_exists($fileName))
