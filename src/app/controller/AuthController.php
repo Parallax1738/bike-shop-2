@@ -129,7 +129,37 @@
 					return;
 				}
 				
-				if ($account instanceof CreateAccountModel) {
+				if ($account instanceof CreateAccountModel)
+				{
+					// Sysadmins (id = 4) can create any account
+					// Managers (id = 3) can only create other managers and staff
+					// Staff (id = 2) can only create member accounts
+					// Members (id = 1) are only allowed to create a member account
+					$user = $state->getUser();
+					if ($user)
+					{
+						switch ($user->getUserRoleId())
+						{
+							case 3:
+								if ($account->getRoleId() == 4)
+								{
+									$this->view($this->http401ResponseAction());
+									return;
+								}
+								break;
+							case 2:
+							case 1:
+								if ($account->getRoleId() != 1)
+								{
+									$this->view($this->http401ResponseAction());
+									return;
+								}
+								break;
+							default:
+								break;
+						}
+					}
+					
 					// User is not null, insert it into the database
 					try
 					{
