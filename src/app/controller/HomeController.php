@@ -1,6 +1,7 @@
 <?php
 	
 	namespace bikeshop\app\controller;
+	use bikeshop\app\core\ActionResult;
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
@@ -9,7 +10,7 @@
 	{
 		public function index(ApplicationState $state) : void
 		{
-			$this->deprecatedView('home', 'index', $state);
+			$this->view(new ActionResult('home', 'index', $state));
 		}
 		
 		public function test() : void
