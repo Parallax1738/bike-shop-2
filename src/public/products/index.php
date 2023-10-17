@@ -61,7 +61,10 @@
 		}
 
         // Add item to products list
-		cart.push(productId);
+		cart.push({
+            'p-id': productId,
+            'q': 1
+        });
 
         // Convert to json, then to base 64
         let cartJson = JSON.stringify(cart)
