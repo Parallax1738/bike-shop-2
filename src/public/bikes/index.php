@@ -19,12 +19,12 @@
 	if ($data->getCurrentPage() > 0)
 	{
 		// Display Left Arrow because if it is greater than 0, user can go back a page
-		$newPage = $this->currentPage - 1;
+		$newPage = $data->getCurrentPage() - 1;
 		
 		echo '<form method="get" action="/bikes">
 			<input type="hidden" name="page" value="' . $newPage . '" />
 			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
-			<input type="submit" value="_>_" style="background-color: darkgrey" />
+			<input type="submit" value="_<_" style="background-color: darkgrey" />
 			</form>';
 	}
 	
