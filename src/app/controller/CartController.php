@@ -3,6 +3,7 @@
 	namespace bikeshop\app\controller;
 	
 	use ArrayObject;
+	use bikeshop\app\core\ActionResult;
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\core\Controller;
@@ -45,7 +46,7 @@
 				];
 				
 				// Send of to view
-				return new CartModel($products, $state);
+				$this->view(new ActionResult('cart', 'index', (new CartModel($products, $state))));
 			}
 			else
 			{
