@@ -44,7 +44,8 @@
 			echo '<p>' . $staff->getFirstName() . ' ' . $staff->getLastName() . ' <a style="color:blue; text-decoration: underline"
                     href="/auth/edit-account?a=' . $staff->getId() . '">
                     Edit
-                  </a></p>';
+                  </a> <a style="color:blue; text-decoration: underline"
+                    href="/auth/delete-account?a=' . $staff->getId() . '"></p>';
         }
     }
 ?>
