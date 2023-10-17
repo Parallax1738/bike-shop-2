@@ -7,12 +7,13 @@
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\models\PagingModel;
+	use bikeshop\app\models\ProductsViewModel;
 	use Exception;
 	
 	class ProductsController extends Controller implements IHasIndexPage
 	{
 		
-		public function __construct(private int $productId)
+		public function __construct(private string $productName, private int $productId)
 		{
 		
 		}
@@ -38,7 +39,7 @@
 				return;
 			}
 			
-			$model = new PagingModel($bikes, $currentPage, $maxPages, $resultCount, $state);
-			$this->view(new ActionResult('bikes', 'index', $model));
+			$model = new ProductsViewModel($this->productName, $this->productName, $bikes, $currentPage, $maxPages, $resultCount, $state);
+			$this->view(new ActionResult('products', 'index', $model));
 		}
 	}

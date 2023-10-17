@@ -26,11 +26,11 @@
 			$this->controllerMap[ "error" ] = new ErrorController();
 			
 			// Products
-			$this->controllerMap[ "bikes" ] = new ProductsController(1);
-			$this->controllerMap[ "scooters" ] = new ProductsController(2);
-			$this->controllerMap[ "accessories" ] = new ProductsController(3);
-			$this->controllerMap[ "apparel" ] = new ProductsController(4);
-			$this->controllerMap[ "components" ] = new ProductsController(5);
+			$this->controllerMap[ "bikes" ] = new ProductsController("bikes", 1);
+			$this->controllerMap[ "scooters" ] = new ProductsController("scooters", 2);
+			$this->controllerMap[ "accessories" ] = new ProductsController("accessories", 3);
+			$this->controllerMap[ "apparel" ] = new ProductsController("apparel", 4);
+			$this->controllerMap[ "components" ] = new ProductsController("components", 5);
 			
 		}
 		

@@ -99,7 +99,7 @@
 		}
 		
 		/**
-		 * Gets the amount of bikes that were returned from a search query
+		 * Gets the amount of products that were returned from a search query
 		 * @param string $query What to search for in the db
 		 * @return int the amount of records found
 		 */

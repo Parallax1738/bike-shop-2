@@ -1,11 +1,14 @@
 <?php
 	use bikeshop\app\database\models\DbProduct;
-	use bikeshop\app\models\PagingModel;
+	use bikeshop\app\models\ProductsViewModel;
 	
-	if (!isset($data) || !($data instanceof PagingModel))
+	if (!isset($data) || !($data instanceof ProductsViewModel))
 	{
 		echo '<p>Well the data parameter isn\'t set for some reason. Good luck!</p>';
+		die;
 	}
+
+	echo "<h1><b>" . $data->getProductDisplayName() . "</b></h1><br>";
 	
 	foreach ($data->getList() as $item)
 	{
@@ -21,7 +24,7 @@
 		// Display Left Arrow because if it is greater than 0, user can go back a page
 		$newPage = $data->getCurrentPage() - 1;
 		
-		echo '<form method="get" action="/bikes">
+		echo '<form method="get" action="/' . $data->getProductHtmlName() . '">
 			<input type="hidden" name="page" value="' . $newPage . '" />
 			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
 			<input type="submit" value="_<_" style="background-color: darkgrey" />
@@ -34,7 +37,7 @@
 	{
 		$newPage = $data->getCurrentPage() + 1;
 		
-		echo '<form method="get" action="/bikes">
+		echo '<form method="get" action="/' . $data->getProductHtmlName() . '">
 			<input type="hidden" name="page" value="' . $newPage . '" />
 			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
 			<input type="submit" value="_>_" style="background-color: darkgrey" />
