@@ -20,7 +20,11 @@
 		private string $serverName;
 		private mysqli | null $mysqli;
 		
-		public function __construct(string $user, string $pwd, string $dbname, string $serverName = "bike-shop-database")
+		public function __construct(
+			string $user = "user",
+			string $pwd = "password",
+			string $dbname = "BIKE_SHOP",
+			string $serverName = "bike-shop-database")
 		{
 			$this->databaseUser = $user;
 			$this->databasePwd = $pwd;
@@ -74,28 +78,9 @@
 		/**
 		 * @throws Exception
 		 */
-		public function selectAllProducts(int $offset = 0, int $count = 0) : array
+		public function selectAllProducts(array $ids) : array
 		{
-			$this->connect();
-			
-			$stmt = $this->mysqli->prepare("SELECT * FROM PRODUCT LIMIT ? OFFSET ?");
-			$stmt->bind_param('ii', $limitSql, $offsetSql);
-			
-			$offsetSql = $offset;
-			$limitSql = $count;
-			
-			if ($stmt->execute())
-			{
-				$records = [];
-				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultPrice);
-				while ($stmt->fetch())
-				{
-					$p = new DbProduct($resultId, $resultCategory, $resultName, new Money($resultPrice, new Currency('AUD')));
-					$records[] = $p;
-				}
-				return $records;
-			}
-			throw new Exception("Unable to do somtehming with the database");
+			return [ ];
 		}
 		
 		/**
