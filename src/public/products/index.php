@@ -14,7 +14,7 @@
 	{
 		if ($item instanceof DbProduct)
 		{
-			echo '<p>' . $item->getName() . '</p>';
+			echo '<p>' . $item->getName() . '</p> <button onclick="addToCart(' . $item->getId() . ')">Add To Cart</button><br>';
 		}
 	}
 	
@@ -43,5 +43,31 @@
 			<input type="submit" value="_>_" style="background-color: darkgrey" />
 			</form>';
 	}
-	
+	echo __DIR__ . "/../ui-components/javascript/cart-management.js";
 ?>
+<script>
+	// Adds a product id to the cart. It is stored in an array for simplicity
+    async function addToCart(productId) {
+        // Get current cart cookie and store it from base 64. Don't worry if not exists
+        let cartCookie = (await cookieStore.get('cart'))
+		let cart;
+        if (cartCookie) {
+            // Convert from json into js object. Create new object if cookie doesn't exist
+			let cartCookieValue = atob(cartCookie['value'])
+			cart = JSON.parse(cartCookieValue)
+		} else {
+            cart = [ ];
+			console.log("New Cart");
+		}
+
+        // Add item to products list
+		cart.push(productId);
+
+        // Convert to json, then to base 64
+        let cartJson = JSON.stringify(cart)
+        cartCookie = btoa(cartJson)
+
+        // Set new cookie
+        await cookieStore.set('cart', cartCookie)
+    }
+</script>
