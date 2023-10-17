@@ -43,15 +43,6 @@ CREATE TABLE USER(
     FOREIGN KEY (USER_ROLE_ID) REFERENCES USER_ROLES(ID)
 );
 
-DROP TABLE IF EXISTS SHOPPING_CART;
-CREATE TABLE SHOPPING_CART(
-                              USER_ID INT NOT NULL,
-                              PRODUCT_ID INT NOT NULL,
-                              PRIMARY KEY (USER_ID, PRODUCT_ID),
-                              FOREIGN KEY (USER_ID) REFERENCES USER (ID),
-                              FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT (ID)
-);
-
 -- Test Data
 INSERT INTO CATEGORY (ID, NAME)
 VALUES (1, 'Bikes'),
