@@ -137,14 +137,22 @@
 		/**
 		 * @throws Exception
 		 */
-		public function selectProducts(int $prodId, int $offset = 0, int $count = 0, string $query = "") : array
+		public function selectProducts(int | null $prodId, int $offset = 0, int $count = 0, string $query = "") : array
 		{
 			$this->connect();
 			
-			$stmt = $this->mysqli->prepare("SELECT * FROM BIKE_SHOP.`PRODUCT` WHERE CATEGORY_ID = ? LIMIT ? OFFSET ?");
-			$stmt->bind_param('iii', $sqlProdId, $limitSql, $offsetSql);
+			if ($prodId == null)
+			{
+				$stmt = $this->mysqli->prepare("SELECT * FROM BIKE_SHOP.`PRODUCT` LIMIT ? OFFSET ?");
+				$stmt->bind_param('ii', $limitSql, $offsetSql);
+			}
+			else
+			{
+				$stmt = $this->mysqli->prepare("SELECT * FROM BIKE_SHOP.`PRODUCT` WHERE CATEGORY_ID = ? LIMIT ? OFFSET ?");
+				$stmt->bind_param('iii', $sqlProdId, $limitSql, $offsetSql);
+				$sqlProdId = $prodId;
+			}
 			
-			$sqlProdId = $prodId;
 			$offsetSql = $offset;
 			$limitSql = $count;
 			

@@ -13,7 +13,7 @@
 	class ProductsController extends Controller implements IHasIndexPage
 	{
 		
-		public function __construct(private string $productName, private int $productId)
+		public function __construct(private string $productName, private int | null $productId)
 		{
 		
 		}
