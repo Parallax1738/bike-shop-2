@@ -11,36 +11,42 @@
 		die;
 	}
 	
-	$total = 0;
-	echo '
-		<h1>Cart</h1>
-		<table>
-		<thead>
-			<tr>
-				<th>Name</th>
-				<th>Price</th>
-				<th>Quantity</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>';
-	foreach ($data->getProducts() as $p)
+	if (count($data->getProducts()) == 0)
 	{
-		if ($p instanceof DbProduct)
-		{
-			echo '<tr>';
-			echo '<td>' . $p->getName() . '</td>';
-			echo '<td>$' . $p->getPrice()->getAmount() . '</td>';
-			echo '<td><input class="quantity" min=0 data-id="'.$p->getId().'" type="number" value="-1" step="1"/></td>';
-			echo '<td><a href="/products/details?id=' . $p->getId() . '">View Details</a></td>';
-			echo '<tr>';
-		}
+		echo '<p>No Products in your cart.</p>';
 	}
-	echo '
-		</tbody>
-		</table>
-		<br><hr><br><p>Total: $' . $total . '</p>
-		<a style="color: blue; text-decoration: underline">Purchase</a>';
+	else {
+        $total = 0;
+        echo '
+            <h1>Cart</h1>
+            <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>';
+        foreach ($data->getProducts() as $p)
+        {
+            if ($p instanceof DbProduct)
+            {
+                echo '<tr>';
+                echo '<td>' . $p->getName() . '</td>';
+                echo '<td>$' . $p->getPrice()->getAmount() . '</td>';
+                echo '<td><input class="quantity" min=0 data-id="'.$p->getId().'" type="number" value="-1" step="1"/></td>';
+                echo '<td><a href="/products/details?id=' . $p->getId() . '">View Details</a></td>';
+                echo '<tr>';
+            }
+        }
+        echo '
+            </tbody>
+            </table>
+            <br><hr><br><p>Total: $' . $total . '</p>
+            <a style="color: blue; text-decoration: underline">Purchase</a>';
+    }
 	?>
 <script>
 	let inputs = document.querySelectorAll('.quantity')

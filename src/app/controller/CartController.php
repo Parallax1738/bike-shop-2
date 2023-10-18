@@ -30,6 +30,11 @@
 			{
 				// Get cookie
 				$cookies = new ArrayWrapper($_COOKIE);
+				if (!$cookies->keyExists('cart')) {
+					$this->view(new ActionResult('cart', 'index', (new CartModel([ ], $state))));
+					return;
+				}
+				
 				$cartDecoded = base64_decode($cookies->getValueWithKey('cart'));
 				$cartJson = json_decode($cartDecoded, true);
 				
