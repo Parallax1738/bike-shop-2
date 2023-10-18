@@ -29,23 +29,7 @@
 			if ($_SERVER ["REQUEST_METHOD"] == "GET")
 			{
 				// Get cookie
-				$cookies = new ArrayWrapper($_COOKIE);
-				if (!$cookies->keyExists('cart')) {
-					$this->view(new ActionResult('cart', 'index', (new CartModel([ ], $state))));
-					return;
-				}
-				
-				$cartDecoded = base64_decode($cookies->getValueWithKey('cart'));
-				$cartJson = json_decode($cartDecoded, true);
-				
-				// Convert it into PHP objects by looking at p-id in database
-				$ids = [ ];
-				foreach ($cartJson as $item)
-				{
-					$ids[] = $item['p-id'];
-				}
-				
-				$products = $this->db->selectAllProducts($ids);
+				$products = $this->db->selectAllProducts($this->getProductIdsFromCart());
 				
 				// Send of to view
 				$this->view(new ActionResult('cart', 'index', (new CartModel($products, $state))));
@@ -56,8 +40,39 @@
 			}
 		}
 		
-		public function checkout()
+		public function checkout(ApplicationState $state): void
 		{
-			$this->view(new ActionResult('cart', 'checkout'));
+			if ($_SERVER ["REQUEST_METHOD"] == "GET")
+			{
+				// Get cookie
+				$products = $this->db->selectAllProducts($this->getProductIdsFromCart());
+				
+				// Send of to view
+				$this->view(new ActionResult('cart', 'checkout', (new CartModel($products, $state))));
+			}
+			else
+			{
+				$this->view($this->http405ResponseAction());
+			}
+		}
+		
+		private function getProductIdsFromCart(): array
+		{
+			$cookies = new ArrayWrapper($_COOKIE);
+			if (!$cookies->keyExists('cart')) {
+				return [ ];
+			}
+			
+			$cartDecoded = base64_decode($cookies->getValueWithKey('cart'));
+			$cartJson = json_decode($cartDecoded, true);
+			
+			// Convert it into PHP objects by looking at p-id in database
+			$ids = [ ];
+			foreach ($cartJson as $item)
+			{
+				$ids[] = $item['p-id'];
+			}
+			
+			return $ids;
 		}
 	}
