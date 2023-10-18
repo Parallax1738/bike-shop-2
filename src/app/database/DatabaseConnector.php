@@ -186,11 +186,11 @@
 			
 			$this->connect();
 			$sql = $this->mysqli->prepare("INSERT INTO BIKE_SHOP.`USER`(`USER_ROLE_ID`, `EMAIL_ADDRESS`, `PASSWORD`) VALUES(?, ?, ?)");
-			$sql->bind_param("iss", $sqlRoleId, $sqlEmail, $hashedPassword);
+			$sql->bind_param("iss", $sqlRoleId, $sqlEmail, $sqlPass);
 			
 			$sqlRoleId = $newAcc->getRoleId();
 			$sqlEmail = $newAcc->getEmail();
-			$sqlPass = $newAcc->getPassword();
+			$sqlPass = $hashedPassword;
 			
 			$sql->execute();
 			$this->disconnect();
