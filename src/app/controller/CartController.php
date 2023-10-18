@@ -11,6 +11,7 @@
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\models\DbProduct;
 	use bikeshop\app\models\CartModel;
+	use bikeshop\app\models\CartProductModel;
 	use Money\Currency;
 	use Money\Money;
 	
@@ -38,12 +39,8 @@
 				{
 					$ids[] = $item['p-id'];
 				}
-				// TODO - Call to database using $ids
-//				$products = $this->db->selectAllProducts($ids);
-				$products = [
-					new DbProduct(1, 1, 'test', new Money(10, new Currency('AUD'))),
-					new DbProduct(2, 3, 'test 2', new Money(20, new Currency('AUD'))),
-				];
+				
+				$products = $this->db->selectAllProducts($ids);
 				
 				// Send of to view
 				$this->view(new ActionResult('cart', 'index', (new CartModel($products, $state))));

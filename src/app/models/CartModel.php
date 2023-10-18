@@ -3,7 +3,9 @@
 	namespace bikeshop\app\models;
 	
 	use bikeshop\app\core\ApplicationState;
+	use bikeshop\app\database\models\DbProduct;
 	use bikeshop\app\models\ModelBase;
+	use Money\Money;
 	
 	class CartModel extends ModelBase
 	{
@@ -20,3 +22,5 @@
 			return $this->products;
 		}
 	}
+	
+	

@@ -80,7 +80,34 @@
 		 */
 		public function selectAllProducts(array $ids) : array
 		{
-			return [ ];
+			$this->connect();
+			
+			if (empty($ids)) {
+				return [ ];
+			}
+			
+			// If there are 3 ids in the array, $placeholders = (???)
+			$placeholders = implode(',', array_fill(0, count($ids), '?'));
+			$sql = "SELECT * FROM PRODUCT WHERE ID IN ($placeholders)";
+			$stmt = $this->mysqli->prepare($sql);
+			
+			// If there are 3 ids in the array, $types = (iii)
+			$types = str_repeat('i', count($ids)); // Assumes all IDs are integers
+			$stmt->bind_param($types, ...$ids);
+			
+			$products = [ ];
+			
+			if ($stmt->execute())
+			{
+				$records = $stmt->bind_result($id, $catId, $name, $price);
+				while ($stmt->fetch())
+				{
+					$products[] = new DbProduct($id, $catId, $name, new Money($price, new Currency('AUD')));
+				}
+			}
+			
+			$this->disconnect();
+			return $products;
 		}
 		
 		/**

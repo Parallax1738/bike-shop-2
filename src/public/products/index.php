@@ -54,12 +54,12 @@
         if (cartCookie) {
             // Convert from json into js object. Create new object if cookie doesn't exist
 			let cartCookieValue = atob(cartCookie['value'])
-			cart = JSON.parse(cartCookieValue)
+			cart = JSON.parse(cartCookieValue) ?? [ ]
 		} else {
             cart = [ ];
 			console.log("New Cart");
 		}
-
+        
         // Add item to products list
 		cart.push({
             'p-id': productId,
