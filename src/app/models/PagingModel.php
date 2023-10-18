@@ -50,44 +50,4 @@
 		public function getMaxResults(): int {
 			return $this->maxResults;
 		}
-		
-		/**
-		 * Displays a single product
-		 */
-		public function displayItem(int $index): string {
-			return "<div>" . $this->list[$index] . "</div>";
-		}
-		
-		/**
-		 * Displays all products, and arrows to move left and right
-		 */
-		public function displayItemsHTML() {
-			for ($i = 0; $i < count($this->list); $i++) {
-				echo $this->displayItem($i);
-			}
-			
-			$results = $this->maxResults;
-			
-			// Previous Button
-			if ($this->currentPage > 0)
-			{
-				// Display Left Arrow because if it is greater than 0, user can go back a page
-				$newPage = $this->currentPage - 1;
-				echo '<form method="get" action="http://localhost/bikes?page=' . $newPage . '&results=' . $results . '">
-					<input type="submit" value="_<_" style="background-color: darkgrey" />
-				</form>';
-			}
-			
-			echo "<div style='background-color: orange'>" . $this->currentPage + 1 . " / " . $this->pageCount;
-			
-			// Next Button
-			if ($this->currentPage < $this->pageCount - 1)
-			{
-				// Oposite to if statement above
-				$newPage = $this->currentPage + 1;
-				echo '<form method="get" action="http://localhost/bikes?page=' . $newPage . '&results=' . $results . '">
-					<input type="submit" value="_>_" style="background-color: darkgrey"/>
-				</form>';
-			}
-		}
 	}

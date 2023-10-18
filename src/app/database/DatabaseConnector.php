@@ -20,7 +20,11 @@
 		private string $serverName;
 		private mysqli | null $mysqli;
 		
-		public function __construct(string $user, string $pwd, string $dbname, string $serverName = "bike-shop-database")
+		public function __construct(
+			string $user = "user",
+			string $pwd = "password",
+			string $dbname = "BIKE_SHOP",
+			string $serverName = "bike-shop-database")
 		{
 			$this->databaseUser = $user;
 			$this->databasePwd = $pwd;
@@ -74,32 +78,40 @@
 		/**
 		 * @throws Exception
 		 */
-		public function selectAllProducts(int $offset = 0, int $count = 0) : array
+		public function selectAllProducts(array $ids) : array
 		{
 			$this->connect();
 			
-			$stmt = $this->mysqli->prepare("SELECT * FROM PRODUCT LIMIT ? OFFSET ?");
-			$stmt->bind_param('ii', $limitSql, $offsetSql);
+			if (empty($ids)) {
+				return [ ];
+			}
 			
-			$offsetSql = $offset;
-			$limitSql = $count;
+			// If there are 3 ids in the array, $placeholders = (???)
+			$placeholders = implode(',', array_fill(0, count($ids), '?'));
+			$sql = "SELECT * FROM PRODUCT WHERE ID IN ($placeholders)";
+			$stmt = $this->mysqli->prepare($sql);
+			
+			// If there are 3 ids in the array, $types = (iii)
+			$types = str_repeat('i', count($ids)); // Assumes all IDs are integers
+			$stmt->bind_param($types, ...$ids);
+			
+			$products = [ ];
 			
 			if ($stmt->execute())
 			{
-				$records = [];
-				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultPrice);
+				$records = $stmt->bind_result($id, $catId, $name, $price);
 				while ($stmt->fetch())
 				{
-					$p = new DbProduct($resultId, $resultCategory, $resultName, new Money($resultPrice, new Currency('AUD')));
-					$records[] = $p;
+					$products[] = new DbProduct($id, $catId, $name, new Money($price, new Currency('AUD')));
 				}
-				return $records;
 			}
-			throw new Exception("Unable to do somtehming with the database");
+			
+			$this->disconnect();
+			return $products;
 		}
 		
 		/**
-		 * Gets the amount of bikes that were returned from a search query
+		 * Gets the amount of products that were returned from a search query
 		 * @param string $query What to search for in the db
 		 * @return int the amount of records found
 		 */
