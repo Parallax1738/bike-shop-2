@@ -1,6 +1,5 @@
 <?php
 	namespace bikeshop\app\core;
-	use bikeshop\app\controller\AboutController;
 	use bikeshop\app\controller\AuthController;
 	use bikeshop\app\controller\CartController;
 	use bikeshop\app\controller\ErrorController;
@@ -27,9 +26,9 @@
 			$this->controllerMap[ "sys-admin" ] = new SysAdminController();
 			$this->controllerMap[ "error" ] = new ErrorController();
 			$this->controllerMap[ "cart" ] = new CartController();
-			$this->controllerMap[ "about" ] = new AboutController();
 			
 			// Products
+			$this->controllerMap[ "products" ] = new ProductsController("products");
 			$this->controllerMap[ "bikes" ] = new ProductsController("bikes", 1);
 			$this->controllerMap[ "scooters" ] = new ProductsController("scooters", 2);
 			$this->controllerMap[ "accessories" ] = new ProductsController("accessories", 3);
