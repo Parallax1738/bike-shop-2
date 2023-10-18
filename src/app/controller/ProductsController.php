@@ -13,7 +13,7 @@
 	class ProductsController extends Controller implements IHasIndexPage
 	{
 		
-		public function __construct(private string $productName, private int | null $productId)
+		public function __construct(private string $productName, private int | null $productId = null)
 		{
 		
 		}
@@ -48,10 +48,5 @@
 			{
 				$this->view($this->http405ResponseAction());
 			}
-		}
-		
-		public function cart(ApplicationState $state) : void
-		{
-		
 		}
 	}

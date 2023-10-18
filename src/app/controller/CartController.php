@@ -55,4 +55,9 @@
 				$this->view($this->http405ResponseAction());
 			}
 		}
+		
+		public function checkout()
+		{
+			$this->view(new ActionResult('cart', 'checkout'));
+		}
 	}
