@@ -35,7 +35,7 @@
             {
                 echo '<tr>';
                 echo '<td>' . $p->getName() . '</td>';
-                echo '<td>$' . $p->getPrice()->getAmount() . '</td>';
+                echo '<td>$' . $p->getPrice() . '</td>';
                 echo '<td><input class="quantity" min=0 data-id="'.$p->getId().'" type="number" value="-1" step="1"/></td>';
                 echo '<td><a href="/products/details?id=' . $p->getId() . '">View Details</a></td>';
                 echo '<tr>';

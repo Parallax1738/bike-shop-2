@@ -5,17 +5,14 @@
 	
 	class DbProduct
 	{
-		private int $id;
-		private int $categoryId;
-		private string $name;
-		private Money $price;
-		
-		public function __construct(int $id, int $categoryId, string $name, Money $price)
+		public function __construct(
+			private int $id,
+			private int $categoryId,
+			private string $name,
+			private string $description,
+			private float $price
+		)
 		{
-			$this->id = $id;
-			$this->categoryId = $categoryId;
-			$this->name = $name;
-			$this->price = $price;
 		}
 		
 		public function getId() : int
@@ -28,18 +25,23 @@
 			return $this->categoryId;
 		}
 		
+		public function getDescription() : string
+		{
+			return $this->description;
+		}
+		
 		public function getName() : string
 		{
 			return $this->name;
 		}
 		
-		public function getPrice() : Money
+		public function getPrice() : float
 		{
 			return $this->price;
 		}
 		
 		public function __toString() : string
 		{
-			return $this->name . ': $' . $this->price->getAmount();
+			return $this->name . ': $' . $this->price;
 		}
 	}

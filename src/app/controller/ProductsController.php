@@ -27,6 +27,9 @@
 				$currentPage = $get->getValueWithKey('page') ?? 0;
 				$resultCount = $get->getValueWithKey('results') ?? $_ENV['__DEFAULT_SEARCH_RESULT_COUNT'];
 				
+				$query = $get->getValueWithKey('q');
+				$filters = $get->getValueWithKey('filters');
+				
 				// Connect to database to get data from it
 				$db = new DatabaseConnector('user', 'password', 'BIKE_SHOP');
 				try

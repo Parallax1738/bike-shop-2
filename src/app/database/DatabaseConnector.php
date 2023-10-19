@@ -99,10 +99,10 @@
 			
 			if ($stmt->execute())
 			{
-				$records = $stmt->bind_result($id, $catId, $name, $price);
+				$records = $stmt->bind_result($id, $catId, $name, $description, $price);
 				while ($stmt->fetch())
 				{
-					$products[] = new DbProduct($id, $catId, $name, new Money($price, new Currency('AUD')));
+					$products[] = new DbProduct($id, $catId, $name, $description, $price);
 				}
 			}
 			
@@ -159,10 +159,10 @@
 			if ($stmt->execute())
 			{
 				$records = [];
-				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultPrice);
+				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultDescription, $resultPrice);
 				while ($stmt->fetch())
 				{
-					$p = new DbProduct($resultId, $resultCategory, $resultName, new Money($resultPrice, new Currency('AUD')));
+					$p = new DbProduct($resultId, $resultCategory, $resultName, $resultDescription, $resultPrice);
 					$records[] = $p;
 				}
 				return $records;
