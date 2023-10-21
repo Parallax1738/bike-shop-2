@@ -1,6 +1,7 @@
 <?php
 	namespace bikeshop\app\database;
 	use bikeshop\app\database\models\DbProduct;
+	use bikeshop\app\database\models\DbProductFilter;
 	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\app\models\CreateAccountModel;
 	use Exception;
@@ -164,6 +165,62 @@
 				{
 					$p = new DbProduct($resultId, $resultCategory, $resultName, $resultDescription, $resultPrice);
 					$records[] = $p;
+				}
+				return $records;
+			}
+			return [ ];
+		}
+		
+		/**
+		 * This function returns an array of DbProductFilters coming from a SQL query. For each product, it selects
+		 * finds all PRODUCT_FILTER ids, and groups them together.
+		 * @param int|null $prodId
+		 * @param int $offset
+		 * @param int $count
+		 * @param string $query
+		 * @return array
+		 */
+		public function selectFiltersFromProductsQuery(int | null $prodId, int $offset = 0, int $count = 0, string $query = "") : array
+		{
+			$this->connect();
+			
+			if ($prodId == null)
+			{
+				// Selects all products in between $count and $offset, only returning the PRODUCT_FILTER.ID grouped
+				$stmt = $this->mysqli->prepare("
+				SELECT PRODUCT_FILTER.ID, PRODUCT_FILTER.NAME
+				FROM BIKE_SHOP.`PRODUCT`
+				INNER JOIN PRODUCT_FILTER_LINK ON PRODUCT.ID = PRODUCT_FILTER_LINK.PRODUCT_ID
+				INNER JOIN PRODUCT_FILTER ON PRODUCT_FILTER_LINK.PRODUCT_FILTER_ID = PRODUCT_FILTER.ID
+				GROUP BY PRODUCT_FILTER.ID
+				LIMIT ? OFFSET ?");
+				
+				$stmt->bind_param('ii', $limitSql, $offsetSql);
+			}
+			else
+			{
+				$stmt = $this->mysqli->prepare("SELECT PRODUCT_FILTER.ID, PRODUCT_FILTER.NAME
+				FROM BIKE_SHOP.`PRODUCT`
+				INNER JOIN PRODUCT_FILTER_LINK ON PRODUCT.ID = PRODUCT_FILTER_LINK.PRODUCT_ID
+				INNER JOIN PRODUCT_FILTER ON PRODUCT_FILTER_LINK.PRODUCT_FILTER_ID = PRODUCT_FILTER.ID
+				WHERE PRODUCT.CATEGORY_ID = ?
+				GROUP BY PRODUCT_FILTER.ID
+				LIMIT ? OFFSET ?"
+				);
+				$stmt->bind_param('iii', $sqlProdId, $limitSql, $offsetSql);
+				$sqlProdId = $prodId;
+			}
+			
+			$offsetSql = $offset;
+			$limitSql = $count;
+			
+			if ($stmt->execute())
+			{
+				$records = [];
+				$stmt->bind_result($id, $name);
+				while ($stmt->fetch())
+				{
+					$records[] = new DbProductFilter($id, $name);
 				}
 				return $records;
 			}

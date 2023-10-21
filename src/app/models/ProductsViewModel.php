@@ -20,6 +20,7 @@
 		public function __construct(
 			private string $productDisplayName,
 			private string $productHtmlName,
+			private array $productFilterList,
 			array $list,
 			int   $currentPage,
 			int   $pageCount,
@@ -37,5 +38,10 @@
 		public function getProductHtmlName(): string
 		{
 			return $this->productHtmlName;
+		}
+		
+		public function getProductsFilterList(): array
+		{
+			return $this->productFilterList;
 		}
 	}

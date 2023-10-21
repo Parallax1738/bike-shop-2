@@ -1,5 +1,7 @@
 <?php
+	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\database\models\DbProduct;
+	use bikeshop\app\database\models\DbProductFilter;
 	use bikeshop\app\models\ProductsViewModel;
 	
 	if (!isset($data) || !($data instanceof ProductsViewModel))
@@ -10,6 +12,26 @@
 
 	echo "<h1><b>" . $data->getProductDisplayName() . "</b></h1><br>";
 	
+    echo "<ul>";
+    foreach ($data->getProductsFilterList() as $filter)
+	{
+        if ($filter instanceof DbProductFilter)
+		{
+            $get = new ArrayWrapper($_GET);
+            $id = "fil-" . $filter->getId();
+            
+            if ($val = $get->getValueWithKey($id))
+                if ($val == 1)
+                    echo '<li><input class="' . $id . '" checked type="checkbox">'.$filter->getName().'</input><l/>';
+                else
+					echo '<li><input class="' . $id . '" type="checkbox">'.$filter->getName().'</input><l/>';
+            
+            else
+				echo '<li><input id='. $id . ' name="' . $id . '" checked type="checkbox">'.$filter->getName().'</input><l/>';
+        }
+    }
+    echo "</ul><br>";
+    
 	foreach ($data->getList() as $item)
 	{
 		if ($item instanceof DbProduct)
@@ -46,4 +68,10 @@
 	echo __DIR__ . "/../ui-components/javascript/cart-management.js";
 ?>
 <script>
+    function onCheckChecked(event) {
+        const val = event.target.checked;
+        if (val) {
+        
+        }
+    }
 </script>
