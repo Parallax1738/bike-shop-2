@@ -1,45 +1,53 @@
 <?php
-	/**
-	 * Creates an input field, with a label and default value
-	 * @param string $htmlName The name that will appear in POST
-     * @param string $label Text to go aside the field
-	 * @param mixed|null $value The value to put in it
-	 * @param string $fieldType The type of data to be put in the field. For example, "text", "password", or "number"
-     * @return void
-	 */
-	function createInputField(string $htmlName, string $label, mixed $value = null, string $fieldType = "text"): string
-	{
-		return '
-		<div>
-		<label>' . $label . '</label>
-		<input name="' . $htmlName . '" value="' . $value . '" type="' . $fieldType . '" style="background-color: lightgrey"/>
-		</div>';
-	}
-	
-	use bikeshop\app\models\EditUserModel;
-	
-	if (!isset($data) || !($data instanceof EditUserModel))
-	{
-		echo "Data is not set";
-		die;
-	}
-	$user = $data->getUserModel();
-	
-	echo '<form method="post">';
-	echo '<h1><b>Edit ' . $user->getFirstName() . ' ' . $user->getLastName() . '</b></h1>';
-	echo createInputField('id', "", $user->getId(), "hidden");
-	echo createInputField('first-name', "First Name", $user->getFirstName());
-	echo createInputField('last-name', "Last Name", $user->getLastName());
-	echo createInputField('email', "Email Address", $user->getEmailAddress());
-	echo createInputField('address', "Address", $user->getAddress());
-	echo createInputField('suburb', "Suburb", $user->getSuburb());
-	echo createInputField('state', "State", $user->getState());
-	echo createInputField('postcode', "Postcode", $user->getPostcode(), "number");
-	echo createInputField('country', "Country", $user->getCountry());
-	echo createInputField('phone', "Phone", $user->getPhone());
-	
-	echo createInputField('password', "Password", null, "password");
-	echo '<input type=submit value="Update User" style="color: blue; text-decoration: underline"/>';
-	echo '<br>';
-	echo '<a type=submit href="/auth/delete-account" style="color: blue; text-decoration: underline">Delete Account</a>';
-	echo '</form>';
+
+require '/var/www/html/src/public/ui-components/input.php';
+
+use bikeshop\app\models\EditUserModel;
+
+if (!isset($data) || !($data instanceof EditUserModel)) {
+    echo "Data is not set";
+    die;
+}
+
+$user = $data->getUserModel();
+
+$idInput = input('id', "", $user->getId(), "hidden");
+$firstNameInput = input('first-name', "First Name", $user->getFirstName());
+$lastNameInput = input('last-name', "Last Name", $user->getLastName());
+$emailInput = input('email', "Email Address", $user->getEmailAddress());
+$addressInput = input('address', "Address", $user->getAddress());
+$suburbInput = input('suburb', "Suburb", $user->getSuburb());
+$stateInput = input('state', "State", $user->getState());
+$postcodeInput = input('postcode', "Postcode", $user->getPostcode(), "number");
+$countryInput = input('country', "Country", $user->getCountry());
+$phoneInput = input('phone', "Phone", $user->getPhone());
+$passwordInput = input('password', "Password", null, "password");
+
+echo <<<HTML
+<div class="flex pt-10 justify-center">
+    <div class="bg-white p-10 rounded shadow-lg w-full max-w-2xl space-y-8">
+        <h1 class="text-2xl font-bold mb-2">Edit account</h1>
+        <form method="post" class="space-y-2">
+            $idInput
+
+            <div class="flex flex-wrap -mx-2 mb-2 py-2">
+                <div class="w-full md:w-1/2 py-2">$firstNameInput</div>
+                <div class="w-full md:w-1/2 py-2">$lastNameInput</div>
+                <div class="w-full py-2">$emailInput</div>
+                <div class="w-full py-2">$addressInput</div>
+                <div class="w-full md:w-1/3 py-2">$suburbInput</div>
+                <div class="w-full md:w-1/3 py-2">$stateInput</div>
+                <div class="w-full md:w-1/3 py-2">$postcodeInput</div>
+                <div class="w-full md:w-1/2 py-2">$countryInput</div>
+                <div class="w-full md:w-1/2 py-2">$phoneInput</div>
+                <div class="w-full">$passwordInput</div>
+            </div>
+
+            <div class="mt-8">
+                <input type="submit" value="Update User" class="mb-4 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transform transition-all duration-100 hover:shadow-lg hover:scale-105">
+                <a href="/auth/delete-account" class="block text-center text-red-600 hover:text-white border-solid border-2 border-red-600 hover:bg-red-600 transform transition-all duration-100 hover:shadow-lg hover:scale-105 py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">Delete Account</a>
+            </div>
+        </form>
+    </div>
+</div>
+HTML;
