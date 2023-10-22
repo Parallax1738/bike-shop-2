@@ -58,7 +58,6 @@
 				->addCategory()
 				->addCurrentPage()
 				->addResultCount()
-				->addQuery()
 				->getHtml();
 			
 			$html .= "</form>";
