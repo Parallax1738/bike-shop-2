@@ -1,12 +1,11 @@
 <?php
 	namespace bikeshop\app\database;
+	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\database\entity\ProductEntity;
 	use bikeshop\app\database\entity\ProductFilterEntity;
 	use bikeshop\app\database\entity\UserEntity;
 	use bikeshop\app\models\CreateAccountModel;
 	use Exception;
-	use Money\Currency;
-	use Money\Money;
 	use mysqli;
 	
 	require_once 'entity/ProductEntity.php';
@@ -21,16 +20,23 @@
 		private string $serverName;
 		private mysqli | null $mysqli;
 		
-		public function __construct(
-			string $user = "user",
-			string $pwd = "password",
-			string $dbname = "BIKE_SHOP",
-			string $serverName = "bike-shop-database")
+		public function __construct()
 		{
-			$this->databaseUser = $user;
-			$this->databasePwd = $pwd;
-			$this->databaseName = $dbname;
-			$this->serverName = $serverName;
+			$env = new ArrayWrapper($_ENV);
+			
+			if (!$env->keyExists('MYSQL_USER'))
+				die ("Must set MYSQL_USER environment variable");
+			
+			if (!$env->keyExists('MYSQL_PASSWORD'))
+				die ("Must set MYSQL_USER environment variable");
+			
+			if (!$env->keyExists('MYSQL_DATABASE'))
+				die ("Must set MYSQL_USER environment variable");
+			
+			$this->databaseUser = $env->getValueWithKey('MYSQL_USER');
+			$this->databasePwd = $env->getValueWithKey('MYSQL_PASSWORD');
+			$this->databaseName = $env->getValueWithKey('MYSQL_DATABASE');
+			$this->serverName = "bike-shop-database";
 		}
 		
 		public function __destruct()
@@ -100,7 +106,7 @@
 			
 			if ($stmt->execute())
 			{
-				$records = $stmt->bind_result($id, $catId, $name, $description, $price);
+				$stmt->bind_result($id, $catId, $name, $description, $price);
 				while ($stmt->fetch())
 				{
 					$products[] = new ProductEntity($id, $catId, $name, $description, $price);
@@ -113,7 +119,7 @@
 		
 		/**
 		 * Gets the amount of products that were returned from a search query
-		 * @param string $query What to search for in the db
+		 * @param int|null $categoryId
 		 * @return int the amount of records found
 		 */
 		public function selectProductCount(int | null $categoryId) : int
@@ -142,110 +148,6 @@
 					return $c;
 				}
 			}
-			return 0;
-		}
-		
-		public function selectProductCountWithQuery(string $query, int | null $categoryId, array | null $productFilters) : int
-		{
-			if (empty($query)) return 0;
-			
-			// Filter and sanatise query before inserting into query
-			$query = str_replace('+', ' ', $query);
-			$query = '%' . $query . '%';
-			
-			$this->connect();
-			
-			// -- QUERY GENERATION --
-			// Initialise base sql query
-			$hasCategoryId = $categoryId != null;
-			$hasProductFilters = $productFilters != null && count($productFilters) > 0;
-			$params = "";
-			
-			if (!$hasProductFilters)
-				$sql = "SELECT COUNT(*) FROM PRODUCT AS _P";
-			else
-				$sql = "SELECT COUNT(*) FROM PRODUCT AS _P
-						INNER JOIN PRODUCT_FILTER_LINK AS _PFL ON _P.ID = _PFL.PRODUCT_ID";
-			
-			// If category exists, ensure to add it to WHERE clause
-			if ($hasCategoryId) {
-				$sql .= " WHERE _P.CATEGORY_ID = ?";
-				$params .= "i";
-			}
-			
-			// If product filters exist, ensure to check if PRODUCT_FILTER_ID IN []
-			if ($hasProductFilters) {
-				if ($hasCategoryId)
-					$sql .= " AND";
-				else
-					$sql .= " WHERE";
-				
-				$placeholders = implode(',', array_fill(0, count($productFilters), '?'));
-				
-				$sql .= " _PFL.PRODUCT_FILTER_ID IN (" . $placeholders . ")";
-				$params .= str_repeat('i', count($productFilters));
-			}
-			
-			// Where clause already included
-			if ($hasCategoryId || $hasProductFilters)
-			{
-				$sql .= ' AND _P.`NAME` LIKE ?;';
-			}
-			else
-			{
-				$sql .= ' WHERE _P.`NAME` LIKE ?';
-			}
-			
-			$params .= 's';
-			$stmt = $this->mysqli->prepare($sql);
-			
-			// Bind Params
-			if ($hasCategoryId) {
-				if ($hasProductFilters)
-				{
-					// Convert $productFilters into int array instead of DbProductFilter array so that it can be
-					// properly binded
-					$productFilterIds = [];
-					foreach ($productFilters as $p)
-						if ($p instanceof ProductFilterEntity)
-							$productFilterIds[] = $p->getId();
-					
-					// Forcefully add query to bind_params because PHP is fucking annoying
-					$productFilterIds[] = $query;
-					
-					$stmt->bind_param($params, $categoryId, ...$productFilterIds);
-				}
-				else
-					$stmt->bind_param($params, $categoryId, $query);
-			} else {
-				if ($hasProductFilters)
-				{
-					// Convert $productFilters into int array instead of DbProductFilter array so that it can be
-					// properly binded
-					$productFilterIds = [];
-					foreach ($productFilters as $p)
-						if ($p instanceof ProductFilterEntity)
-							$productFilterIds[] = $p->getId();
-					
-					// Forcefully add query to bind_params because PHP is fucking annoying
-					$productFilterIds[] = $query;
-					
-					$stmt->bind_param($params, ...$productFilterIds);
-				}
-				else
-				{
-					$stmt->bind_param($params, $query);
-				}
-			}
-			
-			// Execute Query
-			if ($stmt->execute())
-			{
-				$stmt->bind_result($count);
-				if ($stmt->fetch())
-					return $count;
-			}
-			
 			return 0;
 		}
 		
@@ -454,11 +356,6 @@
 		/**
 		 * This function returns an array of DbProductFilters coming from a SQL query. For each product, it selects
 		 * finds all PRODUCT_FILTER ids, and groups them together.
-		 * @param int|null $categoryId
-		 * @param int $offset
-		 * @param int $count
-		 * @param string $query
-		 * @return array
 		 */
 		public function selectFiltersFromProducts(int | null $categoryId, string $query = "") : array
 		{
@@ -589,7 +486,7 @@
 		
 		/**
 		 * Finds a user from the database that has a specific id
-		 * @param int $userId Id to find
+		 * @param int $userId ID to find
 		 * @return UserEntity|null Null if no user was found
 		 */
 		public function findUserWithId(int $userId): UserEntity | null
@@ -646,7 +543,7 @@
 		/**
 		 * @throws Exception when user was not found in the database
 		 */
-		public function updateUser(UserEntity $user)
+		public function updateUser(UserEntity $user) : void
 		{
 			// Check if user exists
 			if (!$this->findUserWithId($user->getId()))
@@ -679,7 +576,7 @@
 			}
 		}
 		
-		public function deleteUser(int $accountId)
+		public function deleteUser(int $accountId) : void
 		{
 			$this->connect();
 			$sql = $this->mysqli->prepare("DELETE FROM USER WHERE ID = ?");
