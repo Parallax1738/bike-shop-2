@@ -194,7 +194,6 @@
 			}
 			
 			// Execute Query
-			echo $sql;
 			$records = [];
 			if ($stmt->execute())
 			{

@@ -13,18 +13,22 @@
 		
 		public function index(ApplicationState $state) : void
 		{
-			$get = new ArrayWrapper($_GET);
-			$query = $get->getValueWithKey('q');
-			$filters = $get->getValueWithKey('filters');
-			
-			if (empty($query))
+			if ($_SERVER["REQUEST_METHOD"] == "POST")
 			{
-				$this->view(new ActionResult('home', 'index'));
-				return;
+			
+				$get = new ArrayWrapper($_GET);
+				$query = $get->getValueWithKey('q');
+				$filters = $get->getValueWithKey('filters');
+				
+				if (empty($query))
+				{
+					$this->view(new ActionResult('home', 'index'));
+					return;
+				}
+			
 			}
-			
-			
-			
-			$this->view(new ActionResult('search', 'index'));
+			else
+			{
+			}
 		}
 	}
