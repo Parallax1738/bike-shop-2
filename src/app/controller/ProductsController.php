@@ -67,4 +67,25 @@
 				$this->view($this->http405ResponseAction());
 			}
 		}
+		
+		public function details()
+		{
+			if ($_SERVER["REQUEST_METHOD"] == "GET")
+			{
+				$get = new ArrayWrapper($_GET);
+				
+				if (!($productId = $get->getValueWithKey('product')))
+				{
+					$this->view($this->http403ResponseAction());
+					return;
+				}
+				
+				$product = $this->db->selectProduct($productId);
+				$this->view(new ActionResult('products', 'details', $product));
+			}
+			else
+			{
+				$this->view($this->http405ResponseAction());
+			}
+		}
 	}

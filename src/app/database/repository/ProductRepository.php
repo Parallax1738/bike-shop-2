@@ -452,4 +452,26 @@
 			$this->disconnect();
 			return null;
 		}
+		
+		/**
+		 * Selects a product from an ID
+		 * @param int $productId Product ID to search for
+		 * @return ProductEntity | null The product that was found. Null if not found
+		 */
+		public function selectProduct(int $productId) : ProductEntity | null
+		{
+			$this->connect();
+			$stmt = $this->mysqli->prepare("SELECT * FROM PRODUCT WHERE PRODUCT.ID = ?;");
+			
+			$stmt->bind_param("i", $productId);
+			$stmt->bind_result($id, $catId, $name, $description, $price);
+			
+			$product = null;
+			if ($stmt->execute() && $stmt->fetch())
+			{
+				$product = new ProductEntity($id, $catId, $name, $description, $price);
+			}
+			$this->disconnect();
+			return $product;
+		}
 	}
