@@ -15,7 +15,7 @@
 	class ProductsController extends Controller implements IHasIndexPage
 	{
 		
-		public function __construct(private string $productName, private int | null $productId = null)
+		public function __construct(private string $productName, private int | null $categoryId = null)
 		{
 		
 		}
@@ -34,7 +34,7 @@
 				
 				// Get filters. Using the filter ids, convert them into fil-1, fil-2, etc...
 				// If they exist in the _GET array, then add them into the $db->selectProducts call
-				$allProductFilterList = $db->selectFiltersFromProductsQuery($this->productId, $currentPage * $resultCount, $resultCount);
+				$allProductFilterList = $db->selectFiltersFromProductsQuery($this->categoryId, $currentPage * $resultCount, $resultCount);
 				$userSelectedFilters = [];
 				foreach ($allProductFilterList as $p)
 				{
@@ -45,8 +45,8 @@
 				}
 				
 				// pageIndex * resultCount = amount of results the user has already viewed. Skip them.
-				$bikes = $db->selectProducts($this->productId, $userSelectedFilters,$currentPage * $resultCount, $resultCount);
-				$maxPages = ceil($db->selectProductCount($this->productId) / $resultCount);
+				$bikes = $db->selectProducts($this->categoryId, $userSelectedFilters,$currentPage * $resultCount, $resultCount);
+				$maxPages = ceil($db->selectProductCount($this->categoryId) / $resultCount);
 				
 				
 				$model = new ProductsViewModel($this->productName, $this->productName, $allProductFilterList, $bikes, $currentPage, $maxPages, $resultCount, $state);

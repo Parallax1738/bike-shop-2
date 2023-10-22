@@ -116,13 +116,23 @@
 		 * @param string $query What to search for in the db
 		 * @return int the amount of records found
 		 */
-		public function selectProductCount(int $prodId) : int
+		public function selectProductCount(int | null $categoryId) : int
 		{
 			$this->connect();
 			
-			$stmt = $this->mysqli->prepare("SELECT COUNT(*) FROM BIKE_SHOP.`PRODUCT` WHERE CATEGORY_ID = ?");
-			$stmt->bind_param('i', $sqlProdId);
-			$sqlProdId = $prodId;
+			$sql = "SELECT COUNT(*) FROM BIKE_SHOP.`PRODUCT`";
+			
+			if ($categoryId)
+			{
+				$sql .= " WHERE PRODUCT.CATEGORY_ID = ?";
+			}
+			
+			$stmt = $this->mysqli->prepare($sql);
+			
+			if ($categoryId)
+			{
+				$stmt->bind_param('i', $categoryId);
+			}
 			
 			if ($stmt->execute())
 			{
@@ -140,6 +150,8 @@
 		 */
 		public function selectProducts(int | null $categoryId, array | null $productFilters, int $offset = 0, int $count = 0, string $query = "") : array
 		{
+			$this->connect();
+			
 			// -- QUERY GENERATION --
 			// Initialise base sql query
 			$hasCategoryId = $categoryId != null;
