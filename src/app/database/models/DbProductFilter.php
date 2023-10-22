@@ -1,8 +1,8 @@
 <?php
 	
-	namespace bikeshop\app\database\entities;
+	namespace bikeshop\app\database\models;
 	
-	class ProductFilterEntity
+	class DbProductFilter
 	{
 		public function __construct(
 			private int $id,

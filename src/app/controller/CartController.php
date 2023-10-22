@@ -9,9 +9,9 @@
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
-	use bikeshop\app\database\entities\ProductEntity;
+	use bikeshop\app\database\models\DbProduct;
 	use bikeshop\app\models\CartModel;
-	use bikeshop\app\models\CartProductEntityModel;
+	use bikeshop\app\models\CartProductModel;
 	use Money\Currency;
 	use Money\Money;
 	

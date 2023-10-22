@@ -2,7 +2,7 @@
     namespace public;
 	require "../../vendor/autoload.php";
 	use bikeshop\app\core\ApplicationState;
-	use bikeshop\app\database\entities\UserEntity;
+	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\public\Bootstrapper;
 ?>
 

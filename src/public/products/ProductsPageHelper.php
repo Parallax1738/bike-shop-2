@@ -3,8 +3,8 @@
 	namespace bikeshop\public\products;
 	
 	use bikeshop\app\core\ArrayWrapper;
-	use bikeshop\app\database\entities\ProductEntity;
-	use bikeshop\app\database\entities\ProductFilterEntity;
+	use bikeshop\app\database\models\DbProduct;
+	use bikeshop\app\database\models\DbProductFilter;
 	use bikeshop\app\models\ProductsModel;
 	
 	/**
@@ -42,7 +42,7 @@
 			$html .= "<ul>";
 			foreach ($this->data->getProductsFilterList() as $filter)
 			{
-				if ($filter instanceof ProductFilterEntity)
+				if ($filter instanceof DbProductFilter)
 				{
 					$html .= $this->convertFilterIntoCheckbox($filter);
 				}
@@ -75,7 +75,7 @@
 			echo "<div>";
 			foreach ($this->data->getList() as $item)
 			{
-				if ($item instanceof ProductEntity)
+				if ($item instanceof DbProduct)
 				{
 					echo $this->displaySingleProduct($item);
 				}
@@ -148,10 +148,10 @@
 		/**
 		 * Has a look at $_GET. If the filter was found inside it, it means the user has selected the checkbox and the
 		 * function will add said checkbox automatically checked.
-		 * @param ProductFilterEntity $filter
+		 * @param DbProductFilter $filter
 		 * @return string
 		 */
-		private function convertFilterIntoCheckbox(ProductFilterEntity $filter) : string
+		private function convertFilterIntoCheckbox(DbProductFilter $filter) : string
 		{
 			$html = "";
 			$foundFilterId = "fil-" . $filter->getId();
@@ -187,10 +187,10 @@
 		
 		/**
 		 * Displays a single product.
-		 * @param ProductEntity $product
+		 * @param DbProduct $product
 		 * @return string
 		 */
-		private function displaySingleProduct(ProductEntity $product) : string
+		private function displaySingleProduct(DbProduct $product) : string
 		{
 			return '<p>' . $product->getName() . '</p><hr>';
 		}

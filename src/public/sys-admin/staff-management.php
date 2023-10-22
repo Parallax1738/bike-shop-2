@@ -2,7 +2,7 @@
 <p>Create, Modify, and Delete Staff Members</p>
 
 <?php
-	use bikeshop\app\database\entities\UserEntity;
+	use bikeshop\app\database\models\DbUserModel;
 	use bikeshop\app\models\StaffManagementModel;
 	
     // Ensure data exists
@@ -22,7 +22,7 @@
 	{
 		foreach ($data->getManagers() as $manager)
 		{
-			if (!$manager instanceof UserEntity) continue;
+			if (!$manager instanceof DbUserModel) continue;
 			echo '<p>' . $manager->getFirstName() . ' ' . $manager->getLastName() . ' <a style="color:blue; text-decoration: underline"
 			                                                href="/auth/edit-account?a=' . $manager->getId() . '">
 			                                                Edit
@@ -40,7 +40,7 @@
 	{
         foreach ($data->getStaffMembers() as $staff)
 		{
-            if (!$staff instanceof UserEntity) continue;
+            if (!$staff instanceof DbUserModel) continue;
 			echo '<p>' . $staff->getFirstName() . ' ' . $staff->getLastName() . ' <a style="color:blue; text-decoration: underline"
                     href="/auth/edit-account?a=' . $staff->getId() . '">
                     Edit
