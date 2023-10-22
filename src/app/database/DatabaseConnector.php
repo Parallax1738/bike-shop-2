@@ -672,4 +672,17 @@
 			$sql->execute();
 			$this->disconnect();
 		}
+		
+		public function getCategoryName(int $categoryId): string | null
+		{
+			$this->connect();
+			$sql = $this->mysqli->prepare("SELECT `NAME` FROM CATEGORY WHERE ID = ?");
+			$sql->bind_param('i', $categoryId);
+			$sql->execute();
+			if ($sql->execute() && $sql->fetch()) {
+				$sql->bind_result($categoryName);
+				return $categoryName;
+			}
+			return null;
+		}
 	}

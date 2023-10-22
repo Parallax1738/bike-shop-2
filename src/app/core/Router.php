@@ -21,20 +21,17 @@
 			$this->state = $state;
 			
 			$homeController = new HomeController();
+			$productsController = new ProductsController();
+			
 			$this->indexController = $homeController;
 			$this->controllerMap[ "home" ] = $homeController;
 			$this->controllerMap[ "auth" ] = new AuthController();
 			$this->controllerMap[ "sys-admin" ] = new SysAdminController();
 			$this->controllerMap[ "error" ] = new ErrorController();
 			$this->controllerMap[ "cart" ] = new CartController();
-			$this->controllerMap[ "search" ] = new SearchController();
 			
 			// Products
-			$this->controllerMap[ "bikes" ] = new ProductsController("bikes", 1);
-			$this->controllerMap[ "scooters" ] = new ProductsController("scooters", 2);
-			$this->controllerMap[ "accessories" ] = new ProductsController("accessories", 3);
-			$this->controllerMap[ "apparel" ] = new ProductsController("apparel", 4);
-			$this->controllerMap[ "components" ] = new ProductsController("components", 5);
+			$this->controllerMap[ "products" ] = new ProductsController();
 			
 		}
 		

@@ -19,7 +19,6 @@
 		 */
 		public function __construct(
 			private string $productDisplayName,
-			private string $productHtmlName,
 			private array $productFilterList,
 			array $list,
 			int   $currentPage,
@@ -33,11 +32,6 @@
 		public function getProductDisplayName(): string
 		{
 			return $this->productDisplayName;
-		}
-		
-		public function getProductHtmlName(): string
-		{
-			return $this->productHtmlName;
 		}
 		
 		public function getProductsFilterList(): array

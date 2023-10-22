@@ -12,7 +12,7 @@
 
 	echo "<h1><b>" . $data->getProductDisplayName() . "</b></h1><br>";
 	
-	echo '<form method="GET" action="/' . $data->getProductHtmlName() . '/" >';
+	echo '<form method="GET" action="/products" >';
     echo "<ul>";
     foreach ($data->getProductsFilterList() as $filter)
 	{
@@ -48,7 +48,7 @@
 		// Display Left Arrow because if it is greater than 0, user can go back a page
 		$newPage = $data->getCurrentPage() - 1;
 		
-		echo '<form method="get" action="/' . $data->getProductHtmlName() . '">
+		echo '<form method="get" action="/products">
 			<input type="hidden" name="page" value="' . $newPage . '" />
 			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
 			<input type="submit" value="_<_" style="background-color: darkgrey" />
@@ -61,7 +61,7 @@
 	{
 		$newPage = $data->getCurrentPage() + 1;
 		
-		echo '<form method="get" action="/' . $data->getProductHtmlName() . '">
+		echo '<form method="get" action="/products">
 			<input type="hidden" name="page" value="' . $newPage . '" />
 			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
 			<input type="submit" value="_>_" style="background-color: darkgrey" />
