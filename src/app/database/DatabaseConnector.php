@@ -392,7 +392,6 @@
 			}
 			
 			$params .= 'sii';
-			echo $sql;
 			$stmt = $this->mysqli->prepare($sql);
 			
 			// Bind Params
@@ -461,7 +460,7 @@
 		 * @param string $query
 		 * @return array
 		 */
-		public function selectFiltersFromProductsQuery(int | null $categoryId, string $query = "") : array
+		public function selectFiltersFromProducts(int | null $categoryId, string $query = "") : array
 		{
 			if ($query)
 			{
@@ -470,6 +469,7 @@
 			}
 			$this->connect();
 			
+			// I ACTUALLY WANT TO KILL MYSELF. It is this long because prepared statements are not easy at all
 			if ($categoryId == null)
 			{
 				// Selects all products in between $count and $offset, only returning the PRODUCT_FILTER.ID grouped

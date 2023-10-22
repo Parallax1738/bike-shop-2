@@ -9,7 +9,7 @@
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\models\DbProductFilter;
 	use bikeshop\app\models\PagingModel;
-	use bikeshop\app\models\ProductsViewModel;
+	use bikeshop\app\models\ProductsModel;
 	use Exception;
 	
 	class ProductsController extends Controller implements IHasIndexPage
@@ -29,13 +29,17 @@
 				$currentPage = $get->getValueWithKey('page') ?? 0;
 				$resultCount = $get->getValueWithKey('results') ?? $_ENV[ '__DEFAULT_SEARCH_RESULT_COUNT' ];
 				$categoryId = $get->getValueWithKey('category') ?? null;
+				$query = $get->getValueWithKey('q');
 				
 				// Connect to database to get data from it
 				$db = new DatabaseConnector('user', 'password', 'BIKE_SHOP');
 				
 				// Get filters. Using the filter ids, convert them into fil-1, fil-2, etc...
 				// If they exist in the _GET array, then add them into the $db->selectProducts call
-				$allProductFilterList = $db->selectFiltersFromProductsQuery($categoryId);
+				$allProductFilterList = $query
+					? $db->selectFiltersFromProducts($categoryId, $query)
+					: $db->selectFiltersFromProducts($categoryId);
+				
 				$userSelectedFilters = [];
 				foreach ($allProductFilterList as $p) {
 					if ($p instanceof DbProductFilter && $get->keyExists("fil-" . $p->getId())) {
@@ -44,47 +48,19 @@
 				}
 				
 				// pageIndex * resultCount = amount of results the user has already viewed. Skip them.
-				$bikes = $db->selectProducts($categoryId, $userSelectedFilters, $currentPage * $resultCount, $resultCount);
+				$bikes = $query
+					? $db->selectProductsWithQuery($query, $categoryId, $userSelectedFilters, $currentPage * $resultCount, $resultCount)
+					: $db->selectProducts($categoryId, $userSelectedFilters, $currentPage * $resultCount, $resultCount);
 				$maxPages = ceil($db->selectProductCount($categoryId) / $resultCount);
 				
-				echo $db->getCategoryName(1);
-				
+				// If no category id was passed, just use Products
 				$pageName = $categoryId
 					? $db->getCategoryName($categoryId)
 					: "Products";
 				
-				$model = new ProductsViewModel($pageName, $allProductFilterList, $bikes, $currentPage, $maxPages, $resultCount, $state);
+				$model = new ProductsModel($pageName, $allProductFilterList, $bikes, $currentPage, $maxPages, $resultCount, $state);
 				$this->view(new ActionResult('products', 'index', $model));
 			} else {
-				$this->view($this->http405ResponseAction());
-			}
-		}
-		
-		public function search(ApplicationState $state) : void
-		{
-			if ($_SERVER["REQUEST_METHOD"] == "GET")
-			{
-				// Get data requried for queries and such
-				$get = new ArrayWrapper($_GET);
-				$query = $get->getValueWithKey('q');
-				$filters = $get->getValueWithKey('filters') ?? [ ];
-				$currentPage = $get->getValueWithKey('page') ?? 0;
-				$resultCount = $get->getValueWithKey('results') ?? $_ENV['__DEFAULT_SEARCH_RESULT_COUNT'];
-				
-				// Make sure query exists
-				if (empty($query))
-				{
-					$this->view(new ActionResult('products', 'search'));
-					return;
-				}
-				
-				$products = $this->db->selectProductsWithQuery($query, null, $filters, $currentPage * $resultCount, $resultCount);
-				$maxPages = ceil($this->db->selectProductCountWithQuery($query, null, $filters) / $resultCount);
-				$model = new SearchModel($query, $products, $currentPage, $maxPages, $resultCount, $state);
-				$this->view(new ActionResult('products', 'search', $model));
-			}
-			else
-			{
 				$this->view($this->http405ResponseAction());
 			}
 		}

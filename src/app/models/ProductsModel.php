@@ -5,7 +5,7 @@
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\models\PagingModel;
 	
-	class ProductsViewModel extends PagingModel
+	class ProductsModel extends PagingModel
 	{
 		/**
 		 * Model that displays a subset of products, and splits them into pages

@@ -2,83 +2,36 @@
 	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\database\models\DbProduct;
 	use bikeshop\app\database\models\DbProductFilter;
-	use bikeshop\app\models\ProductsViewModel;
+	use bikeshop\app\models\ProductsModel;
+	use bikeshop\public\products\ProductsPageHelper;
 	
-	if (!isset($data) || !($data instanceof ProductsViewModel))
+	if (!isset($data) || !($data instanceof ProductsModel))
 	{
 		echo '<p>Well the data parameter isn\'t set for some reason. Good luck!</p>';
 		die;
 	}
 	$get = new ArrayWrapper($_GET);
+    $productsHelper = new ProductsPageHelper($data, $get);
 
-	echo "<h1><b>" . $data->getProductDisplayName() . "</b></h1><br>";
-	
-	echo '<form method="GET" action="/products" >';
-    echo "<ul>";
-    echo count($data->getProductsFilterList());
-    foreach ($data->getProductsFilterList() as $filter)
-	{
-        if ($filter instanceof DbProductFilter)
-		{
-            $id = "fil-" . $filter->getId();
-            
-            if ($val = $get->getValueWithKey($id)) {
-                if ($val == 'on')
-                    echo '<li><input onChange="this.form.submit()" name="'.$id.'" name="'.$id.'" checked type="checkbox">'.$filter->getName().'<input/><l/>';
-                else
-					echo '<li><input onChange="this.form.submit()"  name="'.$id.'" type="checkbox">'.$filter->getName().'<input/><l/>';
-            }
-            else
-				echo '<li><input onChange="this.form.submit()" name="'.$id.'" type="checkbox">'.$filter->getName().'</input><l/>';
-        
-        }
-    }
-    echo "</ul><br></form><div>";
+    echo "<div>";
     
-	foreach ($data->getList() as $item)
-	{
-		if ($item instanceof DbProduct)
-		{
-			echo '<p>' . $item->getName() . '</p> <button onclick="addToCart(' . $item->getId() . ')">Add To Cart</button><br>';
-		}
-	}
+    // -- HEADER --
+	$productsHelper->displayHeader();
+    
+    // -- SEARCH --
+    $productsHelper->displaySearchBar();
+    
+    echo "</div><br><hr><br><div>";
+    
+    // -- PRODUCT LIST --
+    $productsHelper->displayProductsList();
 	
-	// Previous Button
-	if ($data->getCurrentPage() > 0)
-	{
-		// Display Left Arrow because if it is greater than 0, user can go back a page
-		$newPage = $data->getCurrentPage() - 1;
-		
-		echo '<form method="get" action="/products">
-			<input type="hidden" name="page" value="' . $newPage . '" />
-			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
-			<input type="submit" value="_<_" style="background-color: darkgrey" />';
-        
-        $c = $get->getValueWithKey('category');
-        if ($c)
-            echo '<input type="hidden" name="category" value="'. $c .'" />';
-        
-		echo '</form>';
-	}
-	
-	echo "<div style='background-color: orange'>" . $data->getCurrentPage() + 1 . " / " . $data->getMaxPage();
+	echo "</div>";
  
-	if ($data->getCurrentPage() < $data->getMaxPage() - 1)
-	{
-		$newPage = $data->getCurrentPage() + 1;
-		
-		echo '<form method="get" action="/products">
-			<input type="hidden" name="page" value="' . $newPage . '" />
-			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
-			<input type="submit" value="_>_" style="background-color: darkgrey" />';
-		
-		$c = $get->getValueWithKey('category');
-		if ($c)
-			echo '<input type="hidden" name="category" value="'. $c .'" />';
-        
-        echo '</form>';
-	}
-    echo "</div>";
+	// -- PAGE CONTROL --
+	$productsHelper->displayPreviousButton();
+	$productsHelper->displayPageCount();
+    $productsHelper->displayNextButton();
 ?>
 <script>
     function onCheckChecked(event) {
