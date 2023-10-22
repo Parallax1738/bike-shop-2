@@ -63,11 +63,11 @@
         </div>
     </div>
     <div class="mt-4 text-center text-white space-x-4">
-        <a class="hover:text-gray-300" href="/bikes">Bikes</a>
-        <a class="hover:text-gray-300" href="/scooters">Scooters</a>
-        <a class="hover:text-gray-300" href="/accessories">Accessories</a>
-        <a class="hover:text-gray-300" href="/apparel">Apparel</a>
-        <a class="hover:text-gray-300" href="/components">Components</a>
+        <a class="hover:text-gray-300" href="/products?category=1">Bikes</a>
+        <a class="hover:text-gray-300" href="/products?category=2">Scooters</a>
+        <a class="hover:text-gray-300" href="/products?category=3">Accessories</a>
+        <a class="hover:text-gray-300" href="/products?category=4">Apparel</a>
+        <a class="hover:text-gray-300" href="/products?category=5">Components</a>
     </div>
     <div>
     </div>

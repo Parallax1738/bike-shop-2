@@ -5,7 +5,7 @@
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\models\PagingModel;
 	
-	class ProductsViewModel extends PagingModel
+	class ProductsModel extends PagingModel
 	{
 		/**
 		 * Model that displays a subset of products, and splits them into pages
@@ -19,7 +19,7 @@
 		 */
 		public function __construct(
 			private string $productDisplayName,
-			private string $productHtmlName,
+			private array $productFilterList,
 			array $list,
 			int   $currentPage,
 			int   $pageCount,
@@ -34,8 +34,8 @@
 			return $this->productDisplayName;
 		}
 		
-		public function getProductHtmlName(): string
+		public function getProductsFilterList(): array
 		{
-			return $this->productHtmlName;
+			return $this->productFilterList;
 		}
 	}

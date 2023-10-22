@@ -5,6 +5,7 @@
 	use bikeshop\app\controller\ErrorController;
 	use bikeshop\app\controller\ProductsController;
 	use bikeshop\app\controller\HomeController;
+	use bikeshop\app\controller\SearchController;
 	use bikeshop\app\controller\SysAdminController;
 	use Exception;
 	use ReflectionClass;
@@ -20,6 +21,8 @@
 			$this->state = $state;
 			
 			$homeController = new HomeController();
+			$productsController = new ProductsController();
+			
 			$this->indexController = $homeController;
 			$this->controllerMap[ "home" ] = $homeController;
 			$this->controllerMap[ "auth" ] = new AuthController();
@@ -28,12 +31,7 @@
 			$this->controllerMap[ "cart" ] = new CartController();
 			
 			// Products
-			$this->controllerMap[ "products" ] = new ProductsController("products");
-			$this->controllerMap[ "bikes" ] = new ProductsController("bikes", 1);
-			$this->controllerMap[ "scooters" ] = new ProductsController("scooters", 2);
-			$this->controllerMap[ "accessories" ] = new ProductsController("accessories", 3);
-			$this->controllerMap[ "apparel" ] = new ProductsController("apparel", 4);
-			$this->controllerMap[ "components" ] = new ProductsController("components", 5);
+			$this->controllerMap[ "products" ] = new ProductsController();
 			
 		}
 		
