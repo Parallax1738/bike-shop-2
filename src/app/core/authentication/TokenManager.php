@@ -3,15 +3,16 @@
 	
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\entity\UserEntity;
+	use bikeshop\app\database\repository\UserRepository;
 	use Exception;
 	
 	class TokenManager
 	{
-		private DatabaseConnector $db;
+		private UserRepository $db;
 		
 		public function __construct()
 		{
-			$this->db = new DatabaseConnector("user", "password", "BIKE_SHOP");
+			$this->db = new UserRepository();
 		}
 		
 		/**

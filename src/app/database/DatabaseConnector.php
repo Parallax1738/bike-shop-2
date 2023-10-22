@@ -18,7 +18,7 @@
 		private string $databasePwd;
 		private string $databaseName;
 		private string $serverName;
-		private mysqli | null $mysqli;
+		protected mysqli | null $mysqli;
 		
 		public function __construct()
 		{
@@ -43,43 +43,6 @@
 		{
 			// Ensure to delete all active connections
 			$this->disconnect();
-		}
-		
-		/**
-		 * @return array Key=UserRoleId, Value=UserRoleName
-		 */
-		public function selectAllUserRoles(): array
-		{
-			$this->connect();
-			$sql = $this->mysqli->prepare("SELECT * FROM USER_ROLES");
-			$userRoles = [];
-			if ($sql->execute()) {
-				$sql->bind_result($id, $name);
-				while ($sql->fetch())
-				{
-					$userRoles[$id] = $name;
-				}
-			}
-			return $userRoles;
-		}
-		
-		public function findUserWithEmailAddress($emailToFind) : UserEntity | null
-		{
-			$this->connect();
-			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER.EMAIL_ADDRESS = ?");
-			$sql->bind_param("s", $sqlEmail);
-			$sqlEmail = $emailToFind;
-			
-			if ($sql->execute())
-			{
-				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				while ($sql->fetch())
-				{
-					$user = new UserEntity($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				}
-			}
-			$this->disconnect();
-			return $user ?? null;
 		}
 		
 		/**
@@ -422,36 +385,10 @@
 		}
 		
 		/**
-		 * @throws Exception When an account already exists with a specified email address
-		 */
-		public function insertUser(CreateAccountModel $newAcc) : void
-		{
-			// make sure a user does not exist already
-			$foundUser = $this->findUserWithEmailAddress($newAcc->getEmail());
-			if ($foundUser instanceof UserEntity)
-			{
-				throw new Exception("An account with the email address " . $foundUser->getEmailAddress() . " already exists!");
-			}
-			
-			$hashedPassword = password_hash($newAcc->getPassword(), PASSWORD_BCRYPT);
-			
-			$this->connect();
-			$sql = $this->mysqli->prepare("INSERT INTO BIKE_SHOP.`USER`(`USER_ROLE_ID`, `EMAIL_ADDRESS`, `PASSWORD`) VALUES(?, ?, ?)");
-			$sql->bind_param("iss", $sqlRoleId, $sqlEmail, $sqlPass);
-			
-			$sqlRoleId = $newAcc->getRoleId();
-			$sqlEmail = $newAcc->getEmail();
-			$sqlPass = $hashedPassword;
-			
-			$sql->execute();
-			$this->disconnect();
-		}
-		
-		/**
 		 * Connects to the database
 		 * @return void
 		 */
-		private function connect() : void
+		protected function connect() : void
 		{
 			if ($this->isConnected())
 			{
@@ -464,7 +401,7 @@
 		/**
 		 * @return bool If the database is connected to PHP ocl
 		 */
-		private function isConnected() : bool
+		protected function isConnected() : bool
 		{
 			return !empty($this->mysqli);
 		}
@@ -473,7 +410,7 @@
 		 * Disconnects from the database if the connection is still active
 		 * @return void
 		 */
-		private function disconnect() : void
+		protected function disconnect() : void
 		{
 			if (!$this->isConnected())
 			{
@@ -482,108 +419,6 @@
 			
 			$this->mysqli->close();
 			$this->mysqli = null;
-		}
-		
-		/**
-		 * Finds a user from the database that has a specific id
-		 * @param int $userId ID to find
-		 * @return UserEntity|null Null if no user was found
-		 */
-		public function findUserWithId(int $userId): UserEntity | null
-		{
-			$this->connect();
-			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER.ID = ?");
-			$sql->bind_param("i", $sqlId);
-			$sqlId = $userId;
-			
-			if ($sql->execute())
-			{
-				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				if ($sql->fetch())
-				{
-					$this->disconnect();
-					return new UserEntity($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				}
-			}
-			
-			$this->disconnect();
-			return null;
-		}
-		
-		
-		/**
-		 * Selects all users in the database who have the user role provided in the parameter $userRoles
-		 * @param $userRole int of the roles that the database should query
-		 * @return array | null All users in the database, null if error
-		 */
-		public function selectAllUsers(int $userRole): array | null
-		{
-			$this->connect();
-			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER_ROLE_ID = ?");
-			$sql->bind_param('i', $sqlUserRole);
-			$sqlUserRole = $userRole;
-			
-			if ($sql->execute())
-			{
-				$records = [];
-				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-				while ($sql->fetch())
-				{
-					$p = new UserEntity($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
-					$records[] = $p;
-				}
-				return $records;
-			}
-			else
-			{
-				return null;
-			}
-		}
-		
-		/**
-		 * @throws Exception when user was not found in the database
-		 */
-		public function updateUser(UserEntity $user) : void
-		{
-			// Check if user exists
-			if (!$this->findUserWithId($user->getId()))
-				throw new Exception("User with id was not found");
-			
-			$this->connect();
-			$sql = $this->mysqli->prepare("UPDATE USER SET EMAIL_ADDRESS=?, FIRST_NAME=?, LAST_NAME=?, PASSWORD=?,
-                ADDRESS=?, SUBURB=?, STATE=?, POSTCODE=?, COUNTRY=?, PHONE=? WHERE ID=?");
-			
-			$sql->bind_param('ssssssssssi', $sqlEmail, $sqlFirstName, $sqlLastName, $sqlPassword, $sqlAddress, $sqlSuburb, $sqlState, $sqlPostcode, $sqlCountry, $sqlPhone, $sqlId);
-			$sqlEmail = $user->getEmailAddress();
-			$sqlFirstName = $user->getFirstName();
-			$sqlLastName = $user->getLastName();
-			$sqlPassword = $user->getPassword();
-			$sqlAddress = $user->getAddress();
-			$sqlSuburb = $user->getSuburb();
-			$sqlState = $user->getState();
-			$sqlPostcode = $user->getPostcode();
-			$sqlCountry = $user->getCountry();
-			$sqlPhone = $user->getPhone();
-			$sqlId = $user->getId();
-			
-			if ($sql->execute())
-			{
-				echo "Successful!";
-			}
-			else
-			{
-				echo "Unsuccessful";
-			}
-		}
-		
-		public function deleteUser(int $accountId) : void
-		{
-			$this->connect();
-			$sql = $this->mysqli->prepare("DELETE FROM USER WHERE ID = ?");
-			$sql->bind_param('i', $sqlId);
-			$sqlId = $accountId;
-			$sql->execute();
-			$this->disconnect();
 		}
 		
 		public function getCategoryName(int $categoryId): string | null
