@@ -148,7 +148,7 @@
 		/**
 		 * @throws Exception
 		 */
-		public function selectProducts(int | null $categoryId, array | null $productFilters, int $offset = 0, int $count = 0, string $query = "") : array
+		public function selectProducts(int | null $categoryId, array | null $productFilters, int $offset = 0, int $count = 0) : array
 		{
 			$this->connect();
 			
@@ -173,7 +173,8 @@
 			// If product filters exist, ensure to check if PRODUCT_FILTER_ID IN []
 			if ($hasProductFilters) {
 				if ($hasCategoryId)
-					$sql .= " AND"; else
+					$sql .= " AND";
+				else
 					$sql .= " WHERE";
 				
 				$placeholders = implode(',', array_fill(0, count($productFilters), '?'));
@@ -203,6 +204,124 @@
 			} else {
 				if ($hasProductFilters)
 					$stmt->bind_param($params, ...$productFilters);
+			}
+			
+			// Execute Query
+			$records = [];
+			if ($stmt->execute())
+			{
+				$stmt->bind_result($resultId, $resultName, $resultPrice, $resultDescription, $resultCategoryId);
+				while ($stmt->fetch())
+				{
+					$records[] = new DbProduct($resultId, $resultCategoryId, $resultName, $resultDescription, $resultPrice);
+				}
+			}
+			
+			return $records;
+		}
+		
+		/**
+		 * The only reason this is in a different function is because of that fucking $query. It is very hard to have
+		 * multiple different optional parameters inside prepared statements :(
+		 * @param string $query
+		 * @param int|null $categoryId
+		 * @param array|null $productFilters
+		 * @param int $offset
+		 * @param int $count
+		 * @return array
+		 */
+		public function selectProductsWithQuery(string $query, int | null $categoryId, array | null $productFilters, int $offset = 0, int $count = 0) : array
+		{
+			if  (empty($query)) return [];
+			
+			// Filter and sanatise query before inserting into query
+			$query = str_replace('+', ' ', $query);
+			$query = '%' . $query . '%';
+			
+			$this->connect();
+			
+			// -- QUERY GENERATION --
+			// Initialise base sql query
+			$hasCategoryId = $categoryId != null;
+			$hasProductFilters = $productFilters != null && count($productFilters) > 0;
+			$params = "";
+			
+			if (!$hasProductFilters)
+				$sql = "SELECT _P.ID, _P.`NAME`, _P.PRICE, _P.DESCRIPTION, _P.CATEGORY_ID FROM PRODUCT AS _P";
+			else
+				$sql = "SELECT _P.ID, _P.`NAME`, _P.PRICE, _P.DESCRIPTION, _P.CATEGORY_ID FROM PRODUCT AS _P
+						INNER JOIN PRODUCT_FILTER_LINK AS _PFL ON _P.ID = _PFL.PRODUCT_ID";
+			
+			// If category exists, ensure to add it to WHERE clause
+			if ($hasCategoryId) {
+				$sql .= " WHERE _P.CATEGORY_ID = ?";
+				$params .= "i";
+			}
+			
+			// If product filters exist, ensure to check if PRODUCT_FILTER_ID IN []
+			if ($hasProductFilters) {
+				if ($hasCategoryId)
+					$sql .= " AND";
+				else
+					$sql .= " WHERE";
+				
+				$placeholders = implode(',', array_fill(0, count($productFilters), '?'));
+				
+				$sql .= " _PFL.PRODUCT_FILTER_ID IN (" . $placeholders . ")";
+				$params .= str_repeat('i', count($productFilters));
+			}
+			
+			// Where clause already included
+			if ($hasCategoryId || $hasProductFilters)
+			{
+				$sql .= ' AND _P.`NAME` LIKE ?';
+				$params .= 's';
+			}
+			else
+			{
+				$sql .= ' WHERE _P.`NAME` LIKE ?;';
+				$params .= 's';
+			}
+			
+			$stmt = $this->mysqli->prepare($sql);
+			
+			// Bind Params
+			if ($hasCategoryId) {
+				if ($hasProductFilters)
+				{
+					// Convert $productFilters into int array instead of DbProductFilter array so that it can be
+					// properly binded
+					$productFilterIds = [];
+					foreach ($productFilters as $p)
+						if ($p instanceof DbProductFilter)
+							$productFilterIds[] = $p->getId();
+					
+					// Forcefully add query to bind_params because PHP is fucking annoying
+					$productFilterIds[] = $query;
+					
+					$stmt->bind_param($params, $categoryId, ...$productFilterIds);
+				}
+				else
+					$stmt->bind_param($params, $categoryId, $query);
+			} else {
+				if ($hasProductFilters)
+				{
+					// Convert $productFilters into int array instead of DbProductFilter array so that it can be
+					// properly binded
+					$productFilterIds = [];
+					foreach ($productFilters as $p)
+						if ($p instanceof DbProductFilter)
+							$productFilterIds[] = $p->getId();
+					
+					// Forcefully add query to bind_params because PHP is fucking annoying
+					$productFilterIds[] = $query;
+					
+					$stmt->bind_param($params, ...$productFilterIds);
+				}
+				else
+				{
+					$stmt->bind_param($params, $query);
+				}
 			}
 			
 			// Execute Query

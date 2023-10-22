@@ -39,9 +39,8 @@
 					return;
 				}
 				
-				$products = $this->db->selectProducts(null, $filters, $currentPage * $resultCount, $resultCount);
+				$products = $this->db->selectProductsWithQuery($query, null, $filters, $currentPage * $resultCount, $resultCount);
 				$maxPages = ceil($this->db->selectProductCount(null) / $resultCount);
-				
 				$model = new SearchModel($query, $products, $currentPage, $maxPages, $resultCount, $state);
 				$this->view(new ActionResult('search', 'index', $model));
 			}
