@@ -145,6 +145,110 @@
 			return 0;
 		}
 		
+		public function selectProductCountWithQuery(string $query, int | null $categoryId, array | null $productFilters) : int
+		{
+			if (empty($query)) return [];
+			
+			// Filter and sanatise query before inserting into query
+			$query = str_replace('+', ' ', $query);
+			$query = '%' . $query . '%';
+			
+			$this->connect();
+			
+			// -- QUERY GENERATION --
+			// Initialise base sql query
+			$hasCategoryId = $categoryId != null;
+			$hasProductFilters = $productFilters != null && count($productFilters) > 0;
+			$params = "";
+			
+			if (!$hasProductFilters)
+				$sql = "SELECT COUNT(*) FROM PRODUCT AS _P";
+			else
+				$sql = "SELECT COUNT(*) FROM PRODUCT AS _P
+						INNER JOIN PRODUCT_FILTER_LINK AS _PFL ON _P.ID = _PFL.PRODUCT_ID";
+			
+			// If category exists, ensure to add it to WHERE clause
+			if ($hasCategoryId) {
+				$sql .= " WHERE _P.CATEGORY_ID = ?";
+				$params .= "i";
+			}
+			
+			// If product filters exist, ensure to check if PRODUCT_FILTER_ID IN []
+			if ($hasProductFilters) {
+				if ($hasCategoryId)
+					$sql .= " AND";
+				else
+					$sql .= " WHERE";
+				
+				$placeholders = implode(',', array_fill(0, count($productFilters), '?'));
+				
+				$sql .= " _PFL.PRODUCT_FILTER_ID IN (" . $placeholders . ")";
+				$params .= str_repeat('i', count($productFilters));
+			}
+			
+			// Where clause already included
+			if ($hasCategoryId || $hasProductFilters)
+			{
+				$sql .= ' AND _P.`NAME` LIKE ?;';
+			}
+			else
+			{
+				$sql .= ' WHERE _P.`NAME` LIKE ?';
+			}
+			
+			$params .= 's';
+			$stmt = $this->mysqli->prepare($sql);
+			
+			// Bind Params
+			if ($hasCategoryId) {
+				if ($hasProductFilters)
+				{
+					// Convert $productFilters into int array instead of DbProductFilter array so that it can be
+					// properly binded
+					$productFilterIds = [];
+					foreach ($productFilters as $p)
+						if ($p instanceof DbProductFilter)
+							$productFilterIds[] = $p->getId();
+					
+					// Forcefully add query to bind_params because PHP is fucking annoying
+					$productFilterIds[] = $query;
+					
+					$stmt->bind_param($params, $categoryId, ...$productFilterIds);
+				}
+				else
+					$stmt->bind_param($params, $categoryId, $query);
+			} else {
+				if ($hasProductFilters)
+				{
+					// Convert $productFilters into int array instead of DbProductFilter array so that it can be
+					// properly binded
+					$productFilterIds = [];
+					foreach ($productFilters as $p)
+						if ($p instanceof DbProductFilter)
+							$productFilterIds[] = $p->getId();
+					
+					// Forcefully add query to bind_params because PHP is fucking annoying
+					$productFilterIds[] = $query;
+					
+					$stmt->bind_param($params, ...$productFilterIds);
+				}
+				else
+				{
+					$stmt->bind_param($params, $query);
+				}
+			}
+			
+			// Execute Query
+			if ($stmt->execute())
+			{
+				$stmt->bind_result($count);
+				if ($stmt->fetch())
+					return $count;
+			}
+			
+			return 0;
+		}
+		
 		/**
 		 * @throws Exception
 		 */
@@ -220,17 +324,7 @@
 			return $records;
 		}
 		
-		/**
-		 * The only reason this is in a different function is because of that fucking $query. It is very hard to have
-		 * multiple different optional parameters inside prepared statements :(
-		 * @param string $query
-		 * @param int|null $categoryId
-		 * @param array|null $productFilters
-		 * @param int $offset
-		 * @param int $count
-		 * @return array
-		 */
-		public function selectProductsWithQuery(string $query, int | null $categoryId, array | null $productFilters, int $offset = 0, int $count = 0) : array
+		public function selectProductsWithQuery(string $query, int | null $categoryId, array | null $productFilters, int $offset = 0, int $limit = 0) : array
 		{
 			if  (empty($query)) return [];
 			
@@ -274,15 +368,15 @@
 			// Where clause already included
 			if ($hasCategoryId || $hasProductFilters)
 			{
-				$sql .= ' AND _P.`NAME` LIKE ?';
-				$params .= 's';
+				$sql .= ' AND _P.`NAME` LIKE ? LIMIT ? OFFSET ?;';
 			}
 			else
 			{
-				$sql .= ' WHERE _P.`NAME` LIKE ?;';
-				$params .= 's';
+				$sql .= ' WHERE _P.`NAME` LIKE ? LIMIT ? OFFSET ?;';
 			}
 			
+			$params .= 'sii';
+			echo $sql;
 			$stmt = $this->mysqli->prepare($sql);
 			
 			// Bind Params
@@ -298,11 +392,13 @@
 					
 					// Forcefully add query to bind_params because PHP is fucking annoying
 					$productFilterIds[] = $query;
+					$productFilterIds[] = $limit;
+					$productFilterIds[] = $offset;
 					
 					$stmt->bind_param($params, $categoryId, ...$productFilterIds);
 				}
 				else
-					$stmt->bind_param($params, $categoryId, $query);
+					$stmt->bind_param($params, $categoryId, $query, $limit, $offset);
 			} else {
 				if ($hasProductFilters)
 				{
@@ -315,12 +411,14 @@
 					
 					// Forcefully add query to bind_params because PHP is fucking annoying
 					$productFilterIds[] = $query;
+					$productFilterIds[] = $limit;
+					$productFilterIds[] = $offset;
 					
 					$stmt->bind_param($params, ...$productFilterIds);
 				}
 				else
 				{
-					$stmt->bind_param($params, $query);
+					$stmt->bind_param($params, $query, $limit, $offset);
 				}
 			}
 			

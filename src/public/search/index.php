@@ -60,6 +60,7 @@
 		$newPage = $data->getCurrentPage() - 1;
 		
 		echo '<form method="get" action="/search">
+            <input type="hidden" name="q" value="' . $data->getSearchQuery() . '" />
 			<input type="hidden" name="page" value="' . $newPage . '" />
 			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
 			<input type="submit" value="_<_" style="background-color: darkgrey" />
@@ -73,6 +74,7 @@
 		$newPage = $data->getCurrentPage() + 1;
 		
 		echo '<form method="get" action="/search">
+            <input type="hidden" name="q" value="' . $data->getSearchQuery() . '" />
 			<input type="hidden" name="page" value="' . $newPage . '" />
 			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
 			<input type="submit" value="_>_" style="background-color: darkgrey" />

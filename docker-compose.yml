@@ -6,7 +6,7 @@ services:
       - "80:80"
     build: './build/php'
     environment:
-      - __DEFAULT_SEARCH_RESULT_COUNT=20
+      - __DEFAULT_SEARCH_RESULT_COUNT=10
       - __SYSADMIN_EMAIL=sa@mail.com
       - __SYSADMIN_PASS=password
     volumes:

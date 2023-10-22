@@ -31,7 +31,6 @@
 				$currentPage = $get->getValueWithKey('page') ?? 0;
 				$resultCount = $get->getValueWithKey('results') ?? $_ENV['__DEFAULT_SEARCH_RESULT_COUNT'];
 				
-				
 				// Make sure query exists
 				if (empty($query))
 				{
@@ -40,7 +39,7 @@
 				}
 				
 				$products = $this->db->selectProductsWithQuery($query, null, $filters, $currentPage * $resultCount, $resultCount);
-				$maxPages = ceil($this->db->selectProductCount(null) / $resultCount);
+				$maxPages = ceil($this->db->selectProductCountWithQuery($query, null, $filters) / $resultCount);
 				$model = new SearchModel($query, $products, $currentPage, $maxPages, $resultCount, $state);
 				$this->view(new ActionResult('search', 'index', $model));
 			}
