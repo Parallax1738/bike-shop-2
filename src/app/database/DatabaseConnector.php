@@ -678,9 +678,8 @@
 			$this->connect();
 			$sql = $this->mysqli->prepare("SELECT `NAME` FROM CATEGORY WHERE ID = ?");
 			$sql->bind_param('i', $categoryId);
-			$sql->execute();
+			$sql->bind_result($categoryName);
 			if ($sql->execute() && $sql->fetch()) {
-				$sql->bind_result($categoryName);
 				return $categoryName;
 			}
 			return null;

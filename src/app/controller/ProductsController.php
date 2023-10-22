@@ -47,6 +47,8 @@
 				$bikes = $db->selectProducts($categoryId, $userSelectedFilters, $currentPage * $resultCount, $resultCount);
 				$maxPages = ceil($db->selectProductCount($categoryId) / $resultCount);
 				
+				echo $db->getCategoryName(1);
+				
 				$pageName = $categoryId
 					? $db->getCategoryName($categoryId)
 					: "Products";
