@@ -7,7 +7,7 @@
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
-	use bikeshop\app\database\models\DbProductFilter;
+	use bikeshop\app\database\entity\ProductFilterEntity;
 	use bikeshop\app\models\PagingModel;
 	use bikeshop\app\models\ProductsModel;
 	use Exception;
@@ -42,7 +42,7 @@
 				
 				$userSelectedFilters = [];
 				foreach ($allProductFilterList as $p) {
-					if ($p instanceof DbProductFilter && $get->keyExists("fil-" . $p->getId())) {
+					if ($p instanceof ProductFilterEntity && $get->keyExists("fil-" . $p->getId())) {
 						$userSelectedFilters[] = $p;
 					}
 				}

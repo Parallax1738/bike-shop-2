@@ -4,7 +4,7 @@
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\authentication\TokenManager;
 	use bikeshop\app\core\Router;
-	use bikeshop\app\database\models\DbUserModel;
+	use bikeshop\app\database\entity\UserEntity;
 	use Exception;
 	
 	/**
@@ -21,7 +21,7 @@
 		 * Initialises authentication for the application; it firstly creates a new authManager instance, and detects
 		 * if the user has logged in or not
 		 */
-		public function InitAuth(): null | DbUserModel
+		public function InitAuth(): null | UserEntity
 		{
 			// TODO - Move this into AuthManager, and rename it to AuthService
 			$manager = new TokenManager();
