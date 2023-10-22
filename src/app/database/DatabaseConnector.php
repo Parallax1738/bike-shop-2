@@ -252,7 +252,7 @@
 		/**
 		 * @throws Exception
 		 */
-		public function selectProducts(int | null $categoryId, array | null $productFilters, int $offset = 0, int $count = 0) : array
+		public function selectProducts(int | null $categoryId, array | null $productFilters, int $offset = 0, int $limit = 0) : array
 		{
 			$this->connect();
 			
@@ -287,7 +287,8 @@
 				$params .= str_repeat('i', count($productFilters));
 			}
 			
-			$sql .= ';';
+			$sql .= ' LIMIT ? OFFSET ?;';
+			$params .= 'ii';
 			$stmt = $this->mysqli->prepare($sql);
 			
 			// Bind Params
@@ -300,14 +301,29 @@
 					foreach ($productFilters as $p)
 						if ($p instanceof DbProductFilter)
 							$productFilterIds[] = $p->getId();
+					$productFilterIds[] = $limit;
+					$productFilterIds[] = $offset;
 					
 					$stmt->bind_param($params, $categoryId, ...$productFilterIds);
 				}
 				else
-					$stmt->bind_param($params, $categoryId);
+					$stmt->bind_param($params, $categoryId, $limit, $offset);
 			} else {
 				if ($hasProductFilters)
-					$stmt->bind_param($params, ...$productFilters);
+				{
+					$productFilterIds = [];
+					foreach ($productFilters as $p)
+						if ($p instanceof DbProductFilter)
+							$productFilterIds[] = $p->getId();
+					$productFilterIds[] = $limit;
+					$productFilterIds[] = $offset;
+					
+					$stmt->bind_param($params, ...$productFilterIds);
+				}
+				else
+				{
+					$stmt->bind_param($params, $limit, $offset);
+				}
 			}
 			
 			// Execute Query
