@@ -138,37 +138,74 @@
 		/**
 		 * @throws Exception
 		 */
-		public function selectProducts(int | null $prodId, int $offset = 0, int $count = 0, string $query = "") : array
+		public function selectProducts(int | null $categoryId, array | null $productFilters, int $offset = 0, int $count = 0, string $query = "") : array
 		{
-			$this->connect();
+			// -- QUERY GENERATION --
+			// Initialise base sql query
+			$hasCategoryId = $categoryId != null;
+			$hasProductFilters = $productFilters != null && count($productFilters) > 0;
+			$params = "";
 			
-			if ($prodId == null)
-			{
-				$stmt = $this->mysqli->prepare("SELECT * FROM BIKE_SHOP.`PRODUCT` LIMIT ? OFFSET ?");
-				$stmt->bind_param('ii', $limitSql, $offsetSql);
-			}
+			if (!$hasProductFilters)
+				$sql = "SELECT _P.ID, _P.NAME, _P.PRICE, _P.DESCRIPTION, _P.CATEGORY_ID FROM PRODUCT AS _P";
 			else
-			{
-				$stmt = $this->mysqli->prepare("SELECT * FROM BIKE_SHOP.`PRODUCT` WHERE CATEGORY_ID = ? LIMIT ? OFFSET ?");
-				$stmt->bind_param('iii', $sqlProdId, $limitSql, $offsetSql);
-				$sqlProdId = $prodId;
+				$sql = "SELECT _P.ID, _P.NAME, _P.PRICE, _P.DESCRIPTION, _P.CATEGORY_ID FROM PRODUCT AS _P
+						INNER JOIN PRODUCT_FILTER_LINK AS _PFL ON _P.ID = _PFL.PRODUCT_ID";
+			
+			// If category exists, ensure to add it to WHERE clause
+			if ($hasCategoryId) {
+				$sql .= " WHERE _P.CATEGORY_ID = ?";
+				$params .= "i";
 			}
 			
-			$offsetSql = $offset;
-			$limitSql = $count;
+			// If product filters exist, ensure to check if PRODUCT_FILTER_ID IN []
+			if ($hasProductFilters) {
+				if ($hasCategoryId)
+					$sql .= " AND"; else
+					$sql .= " WHERE";
+				
+				$placeholders = implode(',', array_fill(0, count($productFilters), '?'));
+				
+				$sql .= " _PFL.PRODUCT_FILTER_ID IN (" . $placeholders . ")";
+				$params .= str_repeat('i', count($productFilters));
+			}
 			
+			$sql .= ';';
+			$stmt = $this->mysqli->prepare($sql);
+			
+			// Bind Params
+			if ($hasCategoryId) {
+				if ($hasProductFilters)
+				{
+					// Convert $productFilters into int array instead of DbProductFilter array so that it can be
+					// properly binded
+					$productFilterIds = [];
+					foreach ($productFilters as $p)
+						if ($p instanceof DbProductFilter)
+							$productFilterIds[] = $p->getId();
+					
+					$stmt->bind_param($params, $categoryId, ...$productFilterIds);
+				}
+				else
+					$stmt->bind_param($params, $categoryId);
+			} else {
+				if ($hasProductFilters)
+					$stmt->bind_param($params, ...$productFilters);
+			}
+			
+			// Execute Query
+			echo $sql;
+			$records = [];
 			if ($stmt->execute())
 			{
-				$records = [];
-				$stmt->bind_result($resultId, $resultCategory, $resultName, $resultDescription, $resultPrice);
+				$stmt->bind_result($resultId, $resultName, $resultPrice, $resultDescription, $resultCategoryId);
 				while ($stmt->fetch())
 				{
-					$p = new DbProduct($resultId, $resultCategory, $resultName, $resultDescription, $resultPrice);
-					$records[] = $p;
+					$records[] = new DbProduct($resultId, $resultCategoryId, $resultName, $resultDescription, $resultPrice);
 				}
-				return $records;
 			}
-			return [ ];
+			
+			return $records;
 		}
 		
 		/**

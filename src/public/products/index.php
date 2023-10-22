@@ -12,6 +12,7 @@
 
 	echo "<h1><b>" . $data->getProductDisplayName() . "</b></h1><br>";
 	
+	echo '<form method="GET" action="/' . $data->getProductHtmlName() . '/" >';
     echo "<ul>";
     foreach ($data->getProductsFilterList() as $filter)
 	{
@@ -20,17 +21,18 @@
             $get = new ArrayWrapper($_GET);
             $id = "fil-" . $filter->getId();
             
-            if ($val = $get->getValueWithKey($id))
-                if ($val == 1)
-                    echo '<li><input class="' . $id . '" checked type="checkbox">'.$filter->getName().'</input><l/>';
+            if ($val = $get->getValueWithKey($id)) {
+                if ($val == 'on')
+                    echo '<li><input onChange="this.form.submit()" name="'.$id.'" name="'.$id.'" checked type="checkbox">'.$filter->getName().'<input/><l/>';
                 else
-					echo '<li><input class="' . $id . '" type="checkbox">'.$filter->getName().'</input><l/>';
-            
+					echo '<li><input onChange="this.form.submit()"  name="'.$id.'" type="checkbox">'.$filter->getName().'<input/><l/>';
+            }
             else
-				echo '<li><input id='. $id . ' name="' . $id . '" checked type="checkbox">'.$filter->getName().'</input><l/>';
+				echo '<li><input onChange="this.form.submit()" name="'.$id.'" type="checkbox">'.$filter->getName().'</input><l/>';
+        
         }
     }
-    echo "</ul><br>";
+    echo "</ul><br></form><div>";
     
 	foreach ($data->getList() as $item)
 	{
@@ -65,7 +67,7 @@
 			<input type="submit" value="_>_" style="background-color: darkgrey" />
 			</form>';
 	}
-	echo __DIR__ . "/../ui-components/javascript/cart-management.js";
+    echo "</div>";
 ?>
 <script>
     function onCheckChecked(event) {

@@ -1,11 +1,13 @@
 <?php
 	namespace bikeshop\app\controller;
+	use ArrayObject;
 	use bikeshop\app\core\ActionResult;
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
+	use bikeshop\app\database\models\DbProductFilter;
 	use bikeshop\app\models\PagingModel;
 	use bikeshop\app\models\ProductsViewModel;
 	use Exception;
@@ -29,20 +31,25 @@
 				
 				// Connect to database to get data from it
 				$db = new DatabaseConnector('user', 'password', 'BIKE_SHOP');
-				try
+				
+				// Get filters. Using the filter ids, convert them into fil-1, fil-2, etc...
+				// If they exist in the _GET array, then add them into the $db->selectProducts call
+				$allProductFilterList = $db->selectFiltersFromProductsQuery($this->productId, $currentPage * $resultCount, $resultCount);
+				$userSelectedFilters = [];
+				foreach ($allProductFilterList as $p)
 				{
-					// pageIndex * resultCount = amount of results the user has already viewed. Skip them.
-					$bikes = $db->selectProducts($this->productId, $currentPage * $resultCount, $resultCount);
-					$productIds = $db->selectFiltersFromProductsQuery($this->productId, $currentPage * $resultCount, $resultCount);
-					$maxPages = ceil($db->selectProductCount($this->productId) / $resultCount);
-				}
-				catch (Exception $e)
-				{
-					echo "Database Exception: " . $e;
-					return;
+					if ($p instanceof DbProductFilter && $get->keyExists("fil-" . $p->getId()))
+					{
+						$userSelectedFilters[] = $p;
+					}
 				}
 				
-				$model = new ProductsViewModel($this->productName, $this->productName, $productIds, $bikes, $currentPage, $maxPages, $resultCount, $state);
+				// pageIndex * resultCount = amount of results the user has already viewed. Skip them.
+				$bikes = $db->selectProducts($this->productId, $userSelectedFilters,$currentPage * $resultCount, $resultCount);
+				$maxPages = ceil($db->selectProductCount($this->productId) / $resultCount);
+				
+				
+				$model = new ProductsViewModel($this->productName, $this->productName, $allProductFilterList, $bikes, $currentPage, $maxPages, $resultCount, $state);
 				$this->view(new ActionResult('products', 'index', $model));
 			}
 			else
