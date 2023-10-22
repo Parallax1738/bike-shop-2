@@ -9,16 +9,17 @@
 		echo '<p>Well the data parameter isn\'t set for some reason. Good luck!</p>';
 		die;
 	}
+	$get = new ArrayWrapper($_GET);
 
 	echo "<h1><b>" . $data->getProductDisplayName() . "</b></h1><br>";
 	
 	echo '<form method="GET" action="/products" >';
     echo "<ul>";
+    echo count($data->getProductsFilterList());
     foreach ($data->getProductsFilterList() as $filter)
 	{
         if ($filter instanceof DbProductFilter)
 		{
-            $get = new ArrayWrapper($_GET);
             $id = "fil-" . $filter->getId();
             
             if ($val = $get->getValueWithKey($id)) {
@@ -51,12 +52,17 @@
 		echo '<form method="get" action="/products">
 			<input type="hidden" name="page" value="' . $newPage . '" />
 			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
-			<input type="submit" value="_<_" style="background-color: darkgrey" />
-			</form>';
+			<input type="submit" value="_<_" style="background-color: darkgrey" />';
+        
+        $c = $get->getValueWithKey('category');
+        if ($c)
+            echo '<input type="hidden" name="category" value="'. $c .'" />';
+        
+		echo '</form>';
 	}
 	
 	echo "<div style='background-color: orange'>" . $data->getCurrentPage() + 1 . " / " . $data->getMaxPage();
-	
+ 
 	if ($data->getCurrentPage() < $data->getMaxPage() - 1)
 	{
 		$newPage = $data->getCurrentPage() + 1;
@@ -64,8 +70,13 @@
 		echo '<form method="get" action="/products">
 			<input type="hidden" name="page" value="' . $newPage . '" />
 			<input type="hidden" name="results" value="' . $data->getMaxResults() . '" />
-			<input type="submit" value="_>_" style="background-color: darkgrey" />
-			</form>';
+			<input type="submit" value="_>_" style="background-color: darkgrey" />';
+		
+		$c = $get->getValueWithKey('category');
+		if ($c)
+			echo '<input type="hidden" name="category" value="'. $c .'" />';
+        
+        echo '</form>';
 	}
     echo "</div>";
 ?>

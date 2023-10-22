@@ -1,5 +1,5 @@
 <div>
-    <form method="GET" action="/search">
+    <form method="GET" action="/products/search">
         <label>Search</label>
         <input type="text" name="q" placeholder="Text Here" />
         <input type="submit" value="Search" style="color: blue; text-decoration: underline" />

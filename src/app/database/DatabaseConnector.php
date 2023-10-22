@@ -147,7 +147,7 @@
 		
 		public function selectProductCountWithQuery(string $query, int | null $categoryId, array | null $productFilters) : int
 		{
-			if (empty($query)) return [];
+			if (empty($query)) return 0;
 			
 			// Filter and sanatise query before inserting into query
 			$query = str_replace('+', ' ', $query);
@@ -455,45 +455,61 @@
 		/**
 		 * This function returns an array of DbProductFilters coming from a SQL query. For each product, it selects
 		 * finds all PRODUCT_FILTER ids, and groups them together.
-		 * @param int|null $prodId
+		 * @param int|null $categoryId
 		 * @param int $offset
 		 * @param int $count
 		 * @param string $query
 		 * @return array
 		 */
-		public function selectFiltersFromProductsQuery(int | null $prodId, int $offset = 0, int $count = 0, string $query = "") : array
+		public function selectFiltersFromProductsQuery(int | null $categoryId, string $query = "") : array
 		{
+			if ($query)
+			{
+				$query = str_replace('+', ' ', $query);
+				$query = ('%'.$query.'%');
+			}
 			$this->connect();
 			
-			if ($prodId == null)
+			if ($categoryId == null)
 			{
 				// Selects all products in between $count and $offset, only returning the PRODUCT_FILTER.ID grouped
-				$stmt = $this->mysqli->prepare("
-				SELECT PRODUCT_FILTER.ID, PRODUCT_FILTER.NAME
+				$sql = "SELECT PRODUCT_FILTER.ID, PRODUCT_FILTER.NAME
 				FROM BIKE_SHOP.`PRODUCT`
 				INNER JOIN PRODUCT_FILTER_LINK ON PRODUCT.ID = PRODUCT_FILTER_LINK.PRODUCT_ID
-				INNER JOIN PRODUCT_FILTER ON PRODUCT_FILTER_LINK.PRODUCT_FILTER_ID = PRODUCT_FILTER.ID
-				GROUP BY PRODUCT_FILTER.ID
-				LIMIT ? OFFSET ?");
+				INNER JOIN PRODUCT_FILTER ON PRODUCT_FILTER_LINK.PRODUCT_FILTER_ID = PRODUCT_FILTER.ID";
 				
-				$stmt->bind_param('ii', $limitSql, $offsetSql);
+				if ($query)
+				{
+					$sql .= " WHERE PRODUCT.`NAME` LIKE ? GROUP BY PRODUCT_FILTER.ID;";
+					$stmt = $this->mysqli->prepare($sql);
+					$stmt->bind_param('s', $query);
+				}
+				else
+				{
+					$sql .= " GROUP BY PRODUCT_FILTER.ID;";
+					$stmt = $this->mysqli->prepare($sql);
+				}
 			}
 			else
 			{
-				$stmt = $this->mysqli->prepare("SELECT PRODUCT_FILTER.ID, PRODUCT_FILTER.NAME
+				$sql ="SELECT PRODUCT_FILTER.ID, PRODUCT_FILTER.NAME
 				FROM BIKE_SHOP.`PRODUCT`
 				INNER JOIN PRODUCT_FILTER_LINK ON PRODUCT.ID = PRODUCT_FILTER_LINK.PRODUCT_ID
 				INNER JOIN PRODUCT_FILTER ON PRODUCT_FILTER_LINK.PRODUCT_FILTER_ID = PRODUCT_FILTER.ID
-				WHERE PRODUCT.CATEGORY_ID = ?
-				GROUP BY PRODUCT_FILTER.ID
-				LIMIT ? OFFSET ?"
-				);
-				$stmt->bind_param('iii', $sqlProdId, $limitSql, $offsetSql);
-				$sqlProdId = $prodId;
+				WHERE PRODUCT.CATEGORY_ID = ?";
+				if ($query)
+				{
+					$sql .= " AND PRODUCT.`NAME` LIKE ? GROUP BY PRODUCT_FILTER.ID;";
+					$stmt = $this->mysqli->prepare($sql);
+					$stmt->bind_param('is', $categoryId, $query);
+				}
+				else
+				{
+					$sql .= " GROUP BY PRODUCT_FILTER.ID;";
+					$stmt = $this->mysqli->prepare($sql);
+					$stmt->bind_param('i', $categoryId);
+				}
 			}
-			
-			$offsetSql = $offset;
-			$limitSql = $count;
 			
 			if ($stmt->execute())
 			{

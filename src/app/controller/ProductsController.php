@@ -35,7 +35,7 @@
 				
 				// Get filters. Using the filter ids, convert them into fil-1, fil-2, etc...
 				// If they exist in the _GET array, then add them into the $db->selectProducts call
-				$allProductFilterList = $db->selectFiltersFromProductsQuery($categoryId, $currentPage * $resultCount, $resultCount);
+				$allProductFilterList = $db->selectFiltersFromProductsQuery($categoryId);
 				$userSelectedFilters = [];
 				foreach ($allProductFilterList as $p) {
 					if ($p instanceof DbProductFilter && $get->keyExists("fil-" . $p->getId())) {
