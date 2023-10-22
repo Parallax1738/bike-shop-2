@@ -192,6 +192,10 @@
 		 */
 		private function displaySingleProduct(ProductEntity $product) : string
 		{
-			return '<p>' . $product->getName() . '</p><hr>';
+			return '<p>' . $product->getName() . ' |
+					<a style="color: blue; text-decoration: underline" href="/products/details?product=' . $product->getId() . '">More Details</a> |
+					<a style="color: blue; text-decoration: underline">Add To Cart</a></p>
+					
+					<p>' . $product->getDescription() . '</p><br><hr><br>';
 		}
 	}

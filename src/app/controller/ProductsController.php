@@ -68,7 +68,7 @@
 			}
 		}
 		
-		public function details()
+		public function details() : void
 		{
 			if ($_SERVER["REQUEST_METHOD"] == "GET")
 			{
