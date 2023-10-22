@@ -6,10 +6,10 @@
         </div>
         <div class="w-1/4 flex justify-end items-center space-x-4 gap-2">
             <?php
-				use bikeshop\app\database\models\DbUserModel;
+				use bikeshop\app\database\entities\UserEntity;
 				include( 'button.php' );
                 
-                if (isset($loggedInUser) && $loggedInUser instanceof DbUserModel)
+                if (isset($loggedInUser) && $loggedInUser instanceof UserEntity)
 				{
                     // We are logged in!
 					button([

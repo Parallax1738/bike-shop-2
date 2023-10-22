@@ -7,7 +7,7 @@
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
-	use bikeshop\app\database\models\DbUserModel;
+	use bikeshop\app\database\entities\UserEntity;
 	use bikeshop\app\models\EditUserModel;
 	use bikeshop\app\models\StaffManagementModel;
 	use Exception;

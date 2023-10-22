@@ -5,7 +5,7 @@
 <div>
 	<h2><b>Review Cart</b></h2>
 	<?php
-		use bikeshop\app\database\models\DbProduct;
+		use bikeshop\app\database\entities\ProductEntity;
 		use bikeshop\app\models\CartModel;
 		use bikeshop\app\models\ModelBase;
 		
@@ -30,7 +30,7 @@
 					<tbody>';
 				foreach ($data->getProducts() as $p)
 				{
-					if ($p instanceof DbProduct)
+					if ($p instanceof ProductEntity)
 					{
 						echo '<tr style="text-align: right">';
 						echo '<td>' . $p->getName() . ': </td>';

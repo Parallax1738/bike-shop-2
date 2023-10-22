@@ -1,16 +1,16 @@
 <?php
 	namespace bikeshop\app\database;
-	use bikeshop\app\database\models\DbProduct;
-	use bikeshop\app\database\models\DbProductFilter;
-	use bikeshop\app\database\models\DbUserModel;
+	use bikeshop\app\database\entities\ProductEntity;
+	use bikeshop\app\database\entities\ProductFilterEntity;
+	use bikeshop\app\database\entities\UserEntity;
 	use bikeshop\app\models\CreateAccountModel;
 	use Exception;
 	use Money\Currency;
 	use Money\Money;
 	use mysqli;
 	
-	require_once 'models/DbProduct.php';
-	require_once 'models/DbUserModel.php';
+	require_once 'entities/ProductEntity.php';
+	require_once 'entities/UserEntity.php';
 	require_once __DIR__ . '/../models/CreateAccountModel.php';
 	
 	class DatabaseConnector
@@ -57,7 +57,7 @@
 			return $userRoles;
 		}
 		
-		public function findUserWithEmailAddress($emailToFind) : DbUserModel | null
+		public function findUserWithEmailAddress($emailToFind) : UserEntity | null
 		{
 			$this->connect();
 			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER.EMAIL_ADDRESS = ?");
@@ -69,7 +69,7 @@
 				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				while ($sql->fetch())
 				{
-					$user = new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+					$user = new UserEntity($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				}
 			}
 			$this->disconnect();
@@ -103,7 +103,7 @@
 				$records = $stmt->bind_result($id, $catId, $name, $description, $price);
 				while ($stmt->fetch())
 				{
-					$products[] = new DbProduct($id, $catId, $name, $description, $price);
+					$products[] = new ProductEntity($id, $catId, $name, $description, $price);
 				}
 			}
 			
@@ -207,7 +207,7 @@
 					// properly binded
 					$productFilterIds = [];
 					foreach ($productFilters as $p)
-						if ($p instanceof DbProductFilter)
+						if ($p instanceof ProductFilterEntity)
 							$productFilterIds[] = $p->getId();
 					
 					// Forcefully add query to bind_params because PHP is fucking annoying
@@ -224,7 +224,7 @@
 					// properly binded
 					$productFilterIds = [];
 					foreach ($productFilters as $p)
-						if ($p instanceof DbProductFilter)
+						if ($p instanceof ProductFilterEntity)
 							$productFilterIds[] = $p->getId();
 					
 					// Forcefully add query to bind_params because PHP is fucking annoying
@@ -299,7 +299,7 @@
 					// properly binded
 					$productFilterIds = [];
 					foreach ($productFilters as $p)
-						if ($p instanceof DbProductFilter)
+						if ($p instanceof ProductFilterEntity)
 							$productFilterIds[] = $p->getId();
 					$productFilterIds[] = $limit;
 					$productFilterIds[] = $offset;
@@ -313,7 +313,7 @@
 				{
 					$productFilterIds = [];
 					foreach ($productFilters as $p)
-						if ($p instanceof DbProductFilter)
+						if ($p instanceof ProductFilterEntity)
 							$productFilterIds[] = $p->getId();
 					$productFilterIds[] = $limit;
 					$productFilterIds[] = $offset;
@@ -333,7 +333,7 @@
 				$stmt->bind_result($resultId, $resultName, $resultPrice, $resultDescription, $resultCategoryId);
 				while ($stmt->fetch())
 				{
-					$records[] = new DbProduct($resultId, $resultCategoryId, $resultName, $resultDescription, $resultPrice);
+					$records[] = new ProductEntity($resultId, $resultCategoryId, $resultName, $resultDescription, $resultPrice);
 				}
 			}
 			
@@ -402,7 +402,7 @@
 					// properly binded
 					$productFilterIds = [];
 					foreach ($productFilters as $p)
-						if ($p instanceof DbProductFilter)
+						if ($p instanceof ProductFilterEntity)
 							$productFilterIds[] = $p->getId();
 					
 					// Forcefully add query to bind_params because PHP is fucking annoying
@@ -421,7 +421,7 @@
 					// properly binded
 					$productFilterIds = [];
 					foreach ($productFilters as $p)
-						if ($p instanceof DbProductFilter)
+						if ($p instanceof ProductFilterEntity)
 							$productFilterIds[] = $p->getId();
 					
 					// Forcefully add query to bind_params because PHP is fucking annoying
@@ -444,7 +444,7 @@
 				$stmt->bind_result($resultId, $resultName, $resultPrice, $resultDescription, $resultCategoryId);
 				while ($stmt->fetch())
 				{
-					$records[] = new DbProduct($resultId, $resultCategoryId, $resultName, $resultDescription, $resultPrice);
+					$records[] = new ProductEntity($resultId, $resultCategoryId, $resultName, $resultDescription, $resultPrice);
 				}
 			}
 			
@@ -517,7 +517,7 @@
 				$stmt->bind_result($id, $name);
 				while ($stmt->fetch())
 				{
-					$records[] = new DbProductFilter($id, $name);
+					$records[] = new ProductFilterEntity($id, $name);
 				}
 				return $records;
 			}
@@ -531,7 +531,7 @@
 		{
 			// make sure a user does not exist already
 			$foundUser = $this->findUserWithEmailAddress($newAcc->getEmail());
-			if ($foundUser instanceof DbUserModel)
+			if ($foundUser instanceof UserEntity)
 			{
 				throw new Exception("An account with the email address " . $foundUser->getEmailAddress() . " already exists!");
 			}
@@ -590,9 +590,9 @@
 		/**
 		 * Finds a user from the database that has a specific id
 		 * @param int $userId Id to find
-		 * @return DbUserModel|null Null if no user was found
+		 * @return UserEntity|null Null if no user was found
 		 */
-		public function findUserWithId(int $userId): DbUserModel | null
+		public function findUserWithId(int $userId): UserEntity | null
 		{
 			$this->connect();
 			$sql = $this->mysqli->prepare("SELECT * FROM USER WHERE USER.ID = ?");
@@ -605,7 +605,7 @@
 				if ($sql->fetch())
 				{
 					$this->disconnect();
-					return new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+					return new UserEntity($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				}
 			}
 			
@@ -632,7 +632,7 @@
 				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 				while ($sql->fetch())
 				{
-					$p = new DbUserModel($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
+					$p = new UserEntity($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address, $suburb, $state, $postcode, $country, $phone);
 					$records[] = $p;
 				}
 				return $records;
@@ -646,7 +646,7 @@
 		/**
 		 * @throws Exception when user was not found in the database
 		 */
-		public function updateUser(DbUserModel $user)
+		public function updateUser(UserEntity $user)
 		{
 			// Check if user exists
 			if (!$this->findUserWithId($user->getId()))

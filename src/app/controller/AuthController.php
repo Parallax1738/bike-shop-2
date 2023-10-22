@@ -7,7 +7,7 @@
 	use bikeshop\app\core\authentication\JwtToken;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\database\DatabaseConnector;
-	use bikeshop\app\database\models\DbUserModel;
+	use bikeshop\app\database\entities\UserEntity;
 	use bikeshop\app\models\CreateAccountModel;
 	use bikeshop\app\models\EditUserModel;
 	use bikeshop\app\models\LoginModel;
@@ -73,7 +73,7 @@
 				// If the credentials are correct, ensure that it was retrieved correctly
 				$foundUser = $this->validateCredentials($credentials);
 				
-				if (!( $foundUser instanceof DbUserModel ))
+				if (!( $foundUser instanceof UserEntity ))
 				{
 					$this->view(parent::http401ResponseAction());
 					return;
@@ -376,7 +376,7 @@
 			return new LoginModel($emailAddress, $password, $state);
 		}
 		
-		private function validateCredentials(LoginModel $credentials) : DbUserModel | null
+		private function validateCredentials(LoginModel $credentials) : UserEntity | null
 		{
 			// Check if user exists
 			$user = $this->db->findUserWithEmailAddress($credentials->getEmail());

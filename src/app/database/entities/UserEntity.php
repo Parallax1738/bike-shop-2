@@ -2,11 +2,11 @@
 	// TODO - Should SET methods be private?
 	// TODO - Also validate length of strings
 	
-	namespace bikeshop\app\database\models;
+	namespace bikeshop\app\database\entities;
 	/**
 	 * A class representation of a user record inside the database
 	 */
-	class DbUserModel
+	class UserEntity
 	{
 		private int $id;
 		private int $userRoleId;

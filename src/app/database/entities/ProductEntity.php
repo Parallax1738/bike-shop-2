@@ -1,9 +1,9 @@
 <?php
 	
-	namespace bikeshop\app\database\models;
+	namespace bikeshop\app\database\entities;
 	use Money\Money;
 	
-	class DbProduct
+	class ProductEntity
 	{
 		public function __construct(
 			private int $id,
