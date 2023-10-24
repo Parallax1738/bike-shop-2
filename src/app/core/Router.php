@@ -3,9 +3,8 @@
 	use bikeshop\app\controller\AuthController;
 	use bikeshop\app\controller\CartController;
 	use bikeshop\app\controller\ErrorController;
-	use bikeshop\app\controller\ProductsController;
 	use bikeshop\app\controller\HomeController;
-	use bikeshop\app\controller\SearchController;
+	use bikeshop\app\controller\ProductsController;
 	use bikeshop\app\controller\SysAdminController;
 	use Exception;
 	use ReflectionClass;
@@ -15,6 +14,8 @@
 		private Controller $indexController;
 		private array $controllerMap;
 		private ApplicationState $state;
+		
+		private array $routes;
 		
 		public function __construct(ApplicationState $state)
 		{
@@ -33,6 +34,11 @@
 			// Products
 			$this->controllerMap[ "products" ] = new ProductsController();
 			
+		}
+		
+		public function get(string $route, callable $function)
+		{
+			$this->routes['get'][$route] = $function;
 		}
 		
 		public function manageUrl() : void
