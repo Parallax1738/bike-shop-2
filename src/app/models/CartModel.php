@@ -3,7 +3,7 @@
 	namespace bikeshop\app\models;
 	
 	use bikeshop\app\core\ApplicationState;
-	use bikeshop\app\database\models\DbProduct;
+	use bikeshop\app\database\entity\ProductEntity;
 	use bikeshop\app\models\ModelBase;
 	use Money\Money;
 	

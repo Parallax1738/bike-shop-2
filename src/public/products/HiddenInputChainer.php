@@ -3,7 +3,7 @@
 	namespace bikeshop\public\products;
 	
 	use bikeshop\app\core\ArrayWrapper;
-	use bikeshop\app\database\models\DbProductFilter;
+	use bikeshop\app\database\entity\ProductFilterEntity;
 	use bikeshop\app\models\ProductsModel;
 	
 	/**
@@ -59,7 +59,7 @@
 		{
 			foreach ($this->data->getProductsFilterList() as $f)
 			{
-				if (!$f instanceof DbProductFilter)
+				if (!$f instanceof ProductFilterEntity)
 					continue;
 				
 				// Remember that fil-4 means that the user selected the filter with an id of 4, passed as a param in

@@ -3,7 +3,6 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/build/mysql/init-scripts/init.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/src/app/database/DatabaseConnector.php" dialect="MySQL" />
-    <file url="file://$PROJECT_DIR$/src/app/database/TEMP-SELECT-PRODUCT.sql" dialect="MySQL" />
     <file url="PROJECT" dialect="MySQL" />
   </component>
 </project>
