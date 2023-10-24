@@ -7,23 +7,23 @@
 	use bikeshop\app\core\authentication\JwtToken;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\database\DatabaseConnector;
-	use bikeshop\app\database\models\DbUserModel;
+	use bikeshop\app\database\entity\UserEntity;
+	use bikeshop\app\database\repository\UserRepository;
 	use bikeshop\app\models\CreateAccountModel;
 	use bikeshop\app\models\EditUserModel;
 	use bikeshop\app\models\LoginModel;
 	use bikeshop\app\models\LoginSuccessModel;
-	use bikeshop\app\models\ModelBase;
 	use DateInterval;
 	use DateTime;
 	use Exception;
 	
 	class AuthController extends Controller
 	{
-		private DatabaseConnector $db;
+		private UserRepository $db;
 		
 		public function __construct()
 		{
-			$this->db = new DatabaseConnector("user", "password", "BIKE_SHOP");
+			$this->db = new UserRepository();
 			
 			// Check to make sure that there is a SYSADMIN user
 			$env = new ArrayWrapper($_ENV);
@@ -34,7 +34,14 @@
 				$password = $env->getValueWithKey('__SYSADMIN_PASS');
 				if (!$this->db->findUserWithEmailAddress($email))
 				{
-					$this->db->insertUser(new CreateAccountModel($email, $password, null, [], 4));
+					try
+					{
+						$this->db->insertUser(new CreateAccountModel($email, $password, null, [], 4));
+					}
+					catch (Exception $e)
+					{
+						die ("Could not insert the sysadmin user. Error Details: " . $e->getMessage());
+					}
 				}
 			}
 		}
@@ -73,7 +80,7 @@
 				// If the credentials are correct, ensure that it was retrieved correctly
 				$foundUser = $this->validateCredentials($credentials);
 				
-				if (!( $foundUser instanceof DbUserModel ))
+				if (!( $foundUser instanceof UserEntity ))
 				{
 					$this->view(parent::http401ResponseAction());
 					return;
@@ -376,7 +383,7 @@
 			return new LoginModel($emailAddress, $password, $state);
 		}
 		
-		private function validateCredentials(LoginModel $credentials) : DbUserModel | null
+		private function validateCredentials(LoginModel $credentials) : UserEntity | null
 		{
 			// Check if user exists
 			$user = $this->db->findUserWithEmailAddress($credentials->getEmail());

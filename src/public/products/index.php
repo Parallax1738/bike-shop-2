@@ -1,7 +1,7 @@
 <?php
 	use bikeshop\app\core\ArrayWrapper;
-	use bikeshop\app\database\models\DbProduct;
-	use bikeshop\app\database\models\DbProductFilter;
+	use bikeshop\app\database\entity\ProductEntity;
+	use bikeshop\app\database\entity\ProductFilterEntity;
 	use bikeshop\app\models\ProductsModel;
 	use bikeshop\public\products\ProductsPageHelper;
 	
