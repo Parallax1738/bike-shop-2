@@ -2,6 +2,9 @@
 	
 	namespace bikeshop\app\core\attributes;
 	
+	use Attribute;
+	
+	#[Attribute]
 	class RouteAttribute
 	{
 		public function __construct(private HttpMethod $method, private string $action)

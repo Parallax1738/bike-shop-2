@@ -3,6 +3,8 @@
 	use bikeshop\app\core\ActionResult;
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\ArrayWrapper;
+	use bikeshop\app\core\attributes\HttpMethod;
+	use bikeshop\app\core\attributes\RouteAttribute;
 	use bikeshop\app\core\authentication\JwtPayload;
 	use bikeshop\app\core\authentication\JwtToken;
 	use bikeshop\app\core\Controller;
@@ -42,6 +44,7 @@
 		/**
 		 * @throws Exception
 		 */
+#		#[RouteAttribute(HttpMethod::GET, "login")]
 		public function login(ApplicationState $state) : void
 		{
 			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
