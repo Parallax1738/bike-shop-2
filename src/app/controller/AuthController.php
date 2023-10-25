@@ -51,7 +51,7 @@
 		/**
 		 * @throws Exception
 		 */
-#		#[RouteAttribute(HttpMethod::GET, "login")]
+		#[RouteAttribute(HttpMethod::GET, "login")]
 		public function login(ApplicationState $state) : void
 		{
 			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
