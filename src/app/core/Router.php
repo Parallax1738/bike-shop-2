@@ -195,11 +195,12 @@
 				$att = $attribute->newInstance();
 				if ($att instanceof RouteAttribute)
 				{
-					if ($att->getAction() == $targetAction && $att->getMethod() == $this->stringToHttpMethod($method));
+					if (strcmp($att->getMethod()->name, $targetMethod->name) == 0)
+					{
 						return $method;
+					}
 				}
 			}
-			
 			return null;
 		}
 		

@@ -4,6 +4,8 @@
 	use bikeshop\app\core\ActionResult;
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\ArrayWrapper;
+	use bikeshop\app\core\attributes\HttpMethod;
+	use bikeshop\app\core\attributes\RouteAttribute;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
@@ -21,11 +23,13 @@
 			$this->db = new DatabaseConnector("user", "password", "BIKE_SHOP");
 		}
 		
+		#[RouteAttribute(HttpMethod::GET, "index")]
 		public function index(ApplicationState $state)
 		{
 			$this->view(new ActionResult('sys-admin', 'index'));
 		}
 		
+		#[RouteAttribute(HttpMethod::GET, "staff-management")]
 		public function staffManagement(ApplicationState $state)
 		{
 			// Get all staff members, and managers
