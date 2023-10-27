@@ -3,18 +3,22 @@
 	use bikeshop\app\controller\AuthController;
 	use bikeshop\app\controller\CartController;
 	use bikeshop\app\controller\ErrorController;
-	use bikeshop\app\controller\ProductsController;
 	use bikeshop\app\controller\HomeController;
-	use bikeshop\app\controller\SearchController;
+	use bikeshop\app\controller\ProductsController;
 	use bikeshop\app\controller\SysAdminController;
+	use bikeshop\app\core\attributes\HttpMethod;
+	use bikeshop\app\core\attributes\RouteAttribute;
 	use Exception;
 	use ReflectionClass;
+	use ReflectionMethod;
 	
 	class Router
 	{
 		private Controller $indexController;
 		private array $controllerMap;
 		private ApplicationState $state;
+		
+		private array $routes;
 		
 		public function __construct(ApplicationState $state)
 		{
@@ -54,8 +58,12 @@
 				return;
 			}
 			
-			$a = $this->getActionFromStr($c, $uri->getActionName());
-			if (empty($a))
+			$actionCallable = $this->getActionFromStr(
+				$c,
+				$uri->getActionName(),
+				$uri->getHttpMethod());
+			
+			if (empty($actionCallable))
 			{
 				// No action, go to index page if it exists
 				if ($c instanceof IHasIndexPage) {
@@ -70,7 +78,10 @@
 			}
 			
 			// Calling the action as a method inside the controller
-			$c->$a($this->state);
+			if (!is_callable($actionCallable))
+				include (__DIR__ . "/../../public/error/http404.php");
+			else
+				call_user_func_array($actionCallable, [ $this->state ]);
 		}
 		
 		private function displayIndex(ApplicationState $state) : void
@@ -116,7 +127,7 @@
 			if (str_contains($action, '?'))
 				$action = $this->removeParams($action);
 			
-			return new MvcUri($controller, $action, []);
+			return new MvcUri($controller, $action, $this->stringToHttpMethod($_SERVER['REQUEST_METHOD']));
 		}
 		
 		/**
@@ -131,25 +142,76 @@
 		
 		private function getControllerFromStr($controllerName) : Controller | null
 		{
-			if (array_key_exists(strTolower($controllerName), $this->controllerMap)) {
+			if (array_key_exists(strTolower($controllerName), $this->controllerMap))
+			{
 				return $this->controllerMap[ strtolower($controllerName) ];
-			} else {
+			}
+			else
+			{
 				return null;
 			}
 		}
 		
-		private function getActionFromStr(Controller $controller, string $actionName) : string | null
+		/**
+		 * Finds an action method from inside a controller based on an action name and HTTP method. It finds it
+		 * looking at the attribute on top of a method.
+	  	 * @param Controller $controller Where to find the action name inside of
+		 * @param string $actionName The action name to search for on the attribute.
+		 * @param HttpMethod $httpMethod The method type that the attribute should have
+		 * @return array|null The method that you can call. THe array is a callable by the way, so you'll have to use
+		 * the function call_usr_array(getActionFromStr(...));
+		 */
+		private function getActionFromStr(Controller $controller, string $actionName, HttpMethod $httpMethod) : array | null
 		{
-			if (empty($actionName)) {
+			if (empty($actionName))
+			{
 				return null;
 			}
 			
 			$reflectedController = new ReflectionClass($controller);
-			foreach ($reflectedController->getMethods() as $controllerMethod) {
-				if (str_contains(strtolower($controllerMethod->getName()), strtolower($actionName))) {
-					return $controllerMethod->getName();
+			foreach ($reflectedController->getMethods() as $controllerMethod)
+			{
+				$method = $this->checkMethodAttributeAgainstAction($controllerMethod, $actionName, $httpMethod);
+				if ($method)
+					return [ $controller, $method->getName() ];
+			}
+			return null;
+		}
+		
+		/**
+		 * Loops through all attributes on the function. If an attribute with the 'RouteAttribute' one exists, and it's
+		 * route name is equal to $targetAction and it's method type is equal to $methodType, then it returns the method
+		 * . Otherwise it will return null
+		 * @param ReflectionMethod $method Method to search
+		 * @param string $targetAction Action to search for
+		 * @param HttpMethod $targetMethod Method to search for
+		 * @return ReflectionMethod | null If the method exists that match the following requirements, it will return
+		 * the reflection method. Otherwise, it will return null.
+		 */
+		private function checkMethodAttributeAgainstAction(ReflectionMethod $method, string $targetAction, HttpMethod $targetMethod) : ReflectionMethod | null
+		{
+			foreach ($method->getAttributes() as $attribute)
+			{
+				$att = $attribute->newInstance();
+				if ($att instanceof RouteAttribute)
+				{
+					if (strcmp($att->getMethod()->name, $targetMethod->name) == 0)
+					{
+						return $method;
+					}
 				}
 			}
 			return null;
+		}
+		
+		private function stringToHttpMethod($method): HttpMethod
+		{
+			return match ( $method ) {
+				"POST" => HttpMethod::POST,
+				"PUT" => HttpMethod::PUT,
+				"PATCH" => HttpMethod::PATCH,
+				"DELETE" => HttpMethod::DELETE,
+				default => HttpMethod::GET,
+			};
 		}
 	}

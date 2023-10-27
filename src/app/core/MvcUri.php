@@ -1,17 +1,17 @@
 <?php
 	
 	namespace bikeshop\app\core;
+	use bikeshop\app\core\attributes\HttpMethod;
+	
 	class MvcUri
 	{
-		private string $controller;
-		private string $action;
-		private array $parameters;
 		
-		public function __construct(string $controller, string $action, array $parameters)
+		public function __construct(
+			private readonly string $controller,
+			private readonly string $action,
+			private readonly HttpMethod $httpMethod)
 		{
-			$this->controller = $controller;
-			$this->action = $action;
-			$this->parameters = $parameters;
+		
 		}
 		
 		public function getControllerName() : string
@@ -24,8 +24,8 @@
 			return str_replace('-', '', $this->action);
 		}
 		
-		public function getParametersArray() : array
+		public function getHttpMethod(): HttpMethod
 		{
-			return $this->parameters;
+			return $this->httpMethod;
 		}
 	}

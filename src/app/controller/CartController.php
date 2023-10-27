@@ -6,6 +6,8 @@
 	use bikeshop\app\core\ActionResult;
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\ArrayWrapper;
+	use bikeshop\app\core\attributes\HttpMethod;
+	use bikeshop\app\core\attributes\RouteAttribute;
 	use bikeshop\app\core\Controller;
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
@@ -24,36 +26,24 @@
 			$this->db = new DatabaseConnector();
 		}
 		
-		public function index(ApplicationState $state)
+		#[RouteAttribute(HttpMethod::GET, "index")]
+		public function index(ApplicationState $state) : void
 		{
-			if ($_SERVER ["REQUEST_METHOD"] == "GET")
-			{
-				// Get cookie
-				$products = $this->db->selectAllProducts($this->getProductIdsFromCart());
-				
-				// Send of to view
-				$this->view(new ActionResult('cart', 'index', (new CartModel($products, $state))));
-			}
-			else
-			{
-				$this->view($this->http405ResponseAction());
-			}
+			// Get cookie
+			$products = $this->db->selectAllProducts($this->getProductIdsFromCart());
+			
+			// Send of to view
+			$this->view(new ActionResult('cart', 'index', (new CartModel($products, $state))));
 		}
 		
+		#[RouteAttribute(HttpMethod::GET, "checkout")]
 		public function checkout(ApplicationState $state): void
 		{
-			if ($_SERVER ["REQUEST_METHOD"] == "GET")
-			{
-				// Get cookie
-				$products = $this->db->selectAllProducts($this->getProductIdsFromCart());
-				
-				// Send of to view
-				$this->view(new ActionResult('cart', 'checkout', (new CartModel($products, $state))));
-			}
-			else
-			{
-				$this->view($this->http405ResponseAction());
-			}
+			// Get cookie
+			$products = $this->db->selectAllProducts($this->getProductIdsFromCart());
+			
+			// Send of to view
+			$this->view(new ActionResult('cart', 'checkout', (new CartModel($products, $state))));
 		}
 		
 		private function getProductIdsFromCart(): array

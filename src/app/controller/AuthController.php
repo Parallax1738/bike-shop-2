@@ -3,6 +3,8 @@
 	use bikeshop\app\core\ActionResult;
 	use bikeshop\app\core\ApplicationState;
 	use bikeshop\app\core\ArrayWrapper;
+	use bikeshop\app\core\attributes\HttpMethod;
+	use bikeshop\app\core\attributes\RouteAttribute;
 	use bikeshop\app\core\authentication\JwtPayload;
 	use bikeshop\app\core\authentication\JwtToken;
 	use bikeshop\app\core\Controller;
@@ -49,65 +51,59 @@
 		/**
 		 * @throws Exception
 		 */
-		public function login(ApplicationState $state) : void
+		#[RouteAttribute(HttpMethod::GET, "login")]
+		public function loginGet(ApplicationState $state) : void
 		{
-			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
-			{
-				$this->view(new ActionResult('auth', 'login'));
-				return;
-			}
-			else if ($_SERVER[ "REQUEST_METHOD"] == "POST")
-			{
-				$credentials = null;
-				
-				// Get Login Credentials
-				try
-				{
-					$credentials = $this->getLoginCredentials(new ArrayWrapper($_POST), $state);
-				}
-				catch (Exception $e)
-				{
-					$this->view(parent::http400ResponseAction());
-					return;
-				}
-				
-				if (!( $credentials instanceof LoginModel ))
-				{
-					$this->view(parent::http400ResponseAction());
-					return;
-				}
-				
-				// If the credentials are correct, ensure that it was retrieved correctly
-				$foundUser = $this->validateCredentials($credentials);
-				
-				if (!( $foundUser instanceof UserEntity ))
-				{
-					$this->view(parent::http401ResponseAction());
-					return;
-				}
-				
-				// Create Jwt
-				$expiry = new DateTime();
-				$expiryTime = new DateInterval("P1M"); // 30M = 30 minutes, P is required for date intervals
-				$expiry->add($expiryTime);
-				
-				$payload = new JwtPayload('localhost', new DateTime(), $expiry, $foundUser->getId());
-				
-				$token = new JwtToken([], $payload);
-				
-				$this->view(new ActionResult('auth', 'login', new LoginSuccessModel($token, $state)));
-			}
-			else
-			{
-				$this->view($this->http405ResponseAction());
-			}
+			$this->view(new ActionResult('auth', 'login'));
+			return;
 		}
 		
-		public function logout(ApplicationState $state): void
+		#[RouteAttribute(HttpMethod::POST, "login")]
+		public function loginPost(ApplicationState $state) : void
 		{
-			if ($_SERVER["REQUEST_METHOD"] != 'GET')
-				$this->view($this->http405ResponseAction());
+			$credentials = null;
 			
+			// Get Login Credentials
+			try
+			{
+				$credentials = $this->getLoginCredentials(new ArrayWrapper($_POST), $state);
+			}
+			catch (Exception $e)
+			{
+				$this->view(parent::http400ResponseAction());
+				return;
+			}
+			
+			if (!( $credentials instanceof LoginModel ))
+			{
+				$this->view(parent::http400ResponseAction());
+				return;
+			}
+			
+			// If the credentials are correct, ensure that it was retrieved correctly
+			$foundUser = $this->validateCredentials($credentials);
+			
+			if (!( $foundUser instanceof UserEntity ))
+			{
+				$this->view(parent::http401ResponseAction());
+				return;
+			}
+			
+			// Create Jwt
+			$expiry = new DateTime();
+			$expiryTime = new DateInterval("P1M"); // 30M = 30 minutes, P is required for date intervals
+			$expiry->add($expiryTime);
+			
+			$payload = new JwtPayload('localhost', new DateTime(), $expiry, $foundUser->getId());
+			
+			$token = new JwtToken([], $payload);
+			
+			$this->view(new ActionResult('auth', 'login', new LoginSuccessModel($token, $state)));
+		}
+		
+		#[RouteAttribute(HttpMethod::POST, "logout")]
+		public function logoutPost(ApplicationState $state): void
+		{
 			if ($state->getUser())
 			{
 				$state->setUser(null);
@@ -115,187 +111,174 @@
 			}
 		}
 		
+		#[RouteAttribute(HttpMethod::GET, "create-account")]
 		public function createAccount(ApplicationState $state) : void
 		{
-			if ($_SERVER[ "REQUEST_METHOD" ] == "GET")
+			$userRoles = $this->db->selectAllUserRoles();
+			$this->view(new ActionResult('auth', 'create-account', new CreateAccountModel("", "", $state, $userRoles)));
+		}
+	
+		#[RouteAttribute(HttpMethod::POST, "create-account")]
+		public function createAccountPost() : void
+		{
+			$account = null;
+			// get data
+			try
 			{
-				$userRoles = $this->db->selectAllUserRoles();
-				$this->view(new ActionResult('auth', 'create-account', new CreateAccountModel("", "", $state, $userRoles)));
+				$account = $this->getCreateAccountDetails(new ArrayWrapper($_POST), $state);
 			}
-			else if ($_SERVER["REQUEST_METHOD"] == "POST")
+			catch (Exception $e)
 			{
-				$account = null;
-				// get data
+				$this->view(parent::http403ResponseAction());
+				return;
+			}
+			
+			if ($account instanceof CreateAccountModel)
+			{
+				// Sysadmins (id = 4) can create any account
+				// Managers (id = 3) can only create other managers and staff
+				// Staff (id = 2) can only create member accounts
+				// Members (id = 1) are only allowed to create a member account
+				$user = $state->getUser();
+				if ($user)
+				{
+					switch ($user->getUserRoleId())
+					{
+						case 3:
+							if ($account->getRoleId() == 4)
+							{
+								$this->view($this->http401ResponseAction());
+								return;
+							}
+							break;
+						case 2:
+						case 1:
+							if ($account->getRoleId() != 1)
+							{
+								$this->view($this->http401ResponseAction());
+								return;
+							}
+							break;
+						default:
+							break;
+					}
+				}
+				
+				// User is not null, insert it into the database
 				try
 				{
-					$account = $this->getCreateAccountDetails(new ArrayWrapper($_POST), $state);
+					$this->db->insertUser($account);
 				}
 				catch (Exception $e)
 				{
-					$this->view(parent::http403ResponseAction());
+					$this->view(parent::http401ResponseAction());
 					return;
 				}
-				
-				if ($account instanceof CreateAccountModel)
-				{
-					// Sysadmins (id = 4) can create any account
-					// Managers (id = 3) can only create other managers and staff
-					// Staff (id = 2) can only create member accounts
-					// Members (id = 1) are only allowed to create a member account
-					$user = $state->getUser();
-					if ($user)
-					{
-						switch ($user->getUserRoleId())
-						{
-							case 3:
-								if ($account->getRoleId() == 4)
-								{
-									$this->view($this->http401ResponseAction());
-									return;
-								}
-								break;
-							case 2:
-							case 1:
-								if ($account->getRoleId() != 1)
-								{
-									$this->view($this->http401ResponseAction());
-									return;
-								}
-								break;
-							default:
-								break;
-						}
-					}
-					
-					// User is not null, insert it into the database
-					try
-					{
-						$this->db->insertUser($account);
-					}
-					catch (Exception $e)
-					{
-						$this->view(parent::http401ResponseAction());
-						return;
-					}
-				}
-				else
-				{
-					$this->view(parent::http403ResponseAction());
-					return;
-				}
-				
-				$this->view(new ActionResult("auth", "login"));
 			}
 			else
 			{
+				$this->view(parent::http403ResponseAction());
+				return;
+			}
+			
+			$this->view(new ActionResult("auth", "login"));
+		}
+		
+		#[RouteAttribute(HttpMethod::GET, "edit-account")]
+		public function editAccount(ApplicationState $state) : void
+		{
+			// Get Account Id
+			$get = new ArrayWrapper($_GET);
+			$accountId = $this->getAccountIdToEdit($state);
+			if ($accountId == null) {
+				$this->view($this->http401ResponseAction());
+				return;
+			}
+			
+			// Make sure manager exists in database
+			$user = $this->db->findUserWithId($accountId);
+			
+			if ($user == null) {
 				$this->view($this->http405ResponseAction());
+				return;
 			}
+			
+			$model = new EditUserModel($user, $state);
+			
+			// Return view
+			$this->view(new ActionResult('auth', 'edit-account', $model));
 		}
 		
-		/**
-		 * @throws Exception
-		 */
-		public function editAccount(ApplicationState $state)
+		#[RouteAttribute(HttpMethod::POST, "edit-account")]
+		public function editAccountPost() : void
 		{
-			if ($_SERVER['REQUEST_METHOD'] == 'GET')
+			// Make sure user id and the user itself exists in the database
+			$post = new ArrayWrapper($_POST);
+			
+			$id = $post->getValueWithKey('id');
+			if ($id == null) {
+				$this->view($this->http405ResponseAction());
+				return;
+			}
+			
+			$user = $this->db->findUserWithId($id);
+			if ($user == null)
 			{
-				// Get Account Id
-				$get = new ArrayWrapper($_GET);
-				$accountId = $this->getAccountIdToEdit($state);
-				if ($accountId == null)
-				{
-					$this->view($this->http401ResponseAction());
-					return;
-				}
-				
-				
-				// Make sure manager exists in database
-				$user = $this->db->findUserWithId($accountId);
-				
-				if ($user == null)
-				{
-					$this->view($this->http405ResponseAction());
-					return;
-				}
-				
-				$model = new EditUserModel($user, $state);
-				
-				// Return view
-				$this->view(new ActionResult('auth', 'edit-account', $model));
+				$this->view($this->http405ResponseAction());
+				return;
 			}
-			else {
-				// Make sure user id and the user itself exists in the database
-				$post = new ArrayWrapper($_POST);
-				
-				$id = $post->getValueWithKey('id');
-				if ($id == null) {
-					$this->view($this->http405ResponseAction());
-					return;
-				}
-				
-				$user = $this->db->findUserWithId($id);
-				if ($user == null)
-				{
-					$this->view($this->http405ResponseAction());
-					return;
-				}
-				
-				# region Setting Values
-				
-				if ($post->keyExists('email'))
-					$user->setEmailAddress($post->getValueWithKey('email'));
-				if ($post->keyExists('first-name'))
-					$user->setFirstName($post->getValueWithKey('first-name'));
-				if ($post->keyExists('last-name'))
-					$user->setLastName($post->getValueWithKey('last-name'));
-				if ($post->keyExists('address'))
-					$user->setAddress($post->getValueWithKey('address'));
-				if ($post->keyExists('suburb'))
-					$user->setSuburb($post->getValueWithKey('suburb'));
-				if ($post->keyExists('state'))
-					$user->setState($post->getValueWithKey('state'));
-				if ($post->keyExists('postcode'))
-					$user->setPostcode($post->getValueWithKey('postcode'));
-				if ($post->keyExists('country'))
-					$user->setCountry($post->getValueWithKey('country'));
-				if ($post->keyExists('phone'))
-					$user->setPhone($post->getValueWithKey('phone'));
-				
-				# endregion
-				
-				// If a new password has been provided, re-hash it and update it
-				if ($post->keyExists('password'))
-				{
-					$newPass = password_hash($post->getValueWithKey('password'), PASSWORD_BCRYPT);
-					$user->setPassword($newPass);
-				}
-				
-				$this->db->updateUser($user);
+			
+			# region Setting Values
+			
+			if ($post->keyExists('email'))
+				$user->setEmailAddress($post->getValueWithKey('email'));
+			if ($post->keyExists('first-name'))
+				$user->setFirstName($post->getValueWithKey('first-name'));
+			if ($post->keyExists('last-name'))
+				$user->setLastName($post->getValueWithKey('last-name'));
+			if ($post->keyExists('address'))
+				$user->setAddress($post->getValueWithKey('address'));
+			if ($post->keyExists('suburb'))
+				$user->setSuburb($post->getValueWithKey('suburb'));
+			if ($post->keyExists('state'))
+				$user->setState($post->getValueWithKey('state'));
+			if ($post->keyExists('postcode'))
+				$user->setPostcode($post->getValueWithKey('postcode'));
+			if ($post->keyExists('country'))
+				$user->setCountry($post->getValueWithKey('country'));
+			if ($post->keyExists('phone'))
+				$user->setPhone($post->getValueWithKey('phone'));
+			
+			# endregion
+			
+			// If a new password has been provided, re-hash it and update it
+			if ($post->keyExists('password'))
+			{
+				$newPass = password_hash($post->getValueWithKey('password'), PASSWORD_BCRYPT);
+				$user->setPassword($newPass);
 			}
+			
+			$this->db->updateUser($user);
 		}
 		
-		public function deleteAccount(ApplicationState $state)
+		#[RouteAttribute(HttpMethod::POST, "delete-account")]
+		public function deleteAccount(ApplicationState $state) : void
 		{
-			if ($_SERVER['REQUEST_METHOD'])
+			// Get Account Id
+			$get = new ArrayWrapper($_GET);
+			$accountId = $this->getAccountIdToEdit($state);
+			if ($accountId == null)
 			{
-				// Get Account Id
-				$get = new ArrayWrapper($_GET);
-				$accountId = $this->getAccountIdToEdit($state);
-				if ($accountId == null)
-				{
-					$this->view($this->http401ResponseAction());
-					return;
-				}
-				
-				// If it is a sysadmin, and there is only 1 sysadmin account left, stop the user from deleteing it
-				
-				
-				if ($this->db->findUserWithId($accountId))
-				{
-					$this->db->deleteUser($accountId);
-					// Going to logout page will clear the token and redirect to home page
-					$this->view(new ActionResult('auth', 'logout'));
-				}
+				$this->view($this->http401ResponseAction());
+				return;
+			}
+			
+			// If it is a sysadmin, and there is only 1 sysadmin account left, stop the user from deleting it
+			if ($this->db->findUserWithId($accountId))
+			{
+				$this->db->deleteUser($accountId);
+				// Going to log out page will clear the token and redirect to home page
+				$this->view(new ActionResult('auth', 'logout'));
 			}
 		}
 
