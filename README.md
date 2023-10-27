@@ -224,4 +224,11 @@ For simplicity, I have left a script called `docker-setup.sh` which you can run 
 There are some environment variables which you can set if you so desire. Here are all the currently available vars you
 can change inside `docker-compose.yml`:
 
-- __DEFAULT_SEARCH_RESULT_COUNT = 10
+| Environment Variable          | Default     |
+|-------------------------------|-------------|
+| __DEFAULT_SEARCH_RESULT_COUNT | 10          |
+| __SYSADMIN_EMAIL              | sa@mail.com |
+| __SYSADMIN_PASS               | password    |
+| MYSQL_USER                    |             |
+| MYSQL_PASSWORD                |             |
+| MYSQL_DATABASE                | BIKE_SHOP   |
