@@ -5,7 +5,7 @@
 	use bikeshop\app\controller\ErrorController;
 	use bikeshop\app\controller\HomeController;
 	use bikeshop\app\controller\ProductsController;
-	use bikeshop\app\controller\SysAdminController;
+	use bikeshop\app\controller\ManagementController;
 	use bikeshop\app\core\attributes\HttpMethod;
 	use bikeshop\app\core\attributes\RouteAttribute;
 	use Exception;
@@ -30,7 +30,7 @@
 			$this->indexController = $homeController;
 			$this->controllerMap[ "home" ] = $homeController;
 			$this->controllerMap[ "auth" ] = new AuthController();
-			$this->controllerMap[ "sys-admin" ] = new SysAdminController();
+			$this->controllerMap[ "management" ] = new ManagementController();
 			$this->controllerMap[ "error" ] = new ErrorController();
 			$this->controllerMap[ "cart" ] = new CartController();
 			

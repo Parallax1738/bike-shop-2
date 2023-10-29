@@ -25,12 +25,12 @@
                     
                     if ($loggedInUser->getUserRoleId() == 4)
 					{
-                        // User is a system administrator -> allow them to access sys-admin pages. Remember, sys-admin
+                        // User is a system administrator -> allow them to access management pages. Remember, management
                         // role has a USER_ROLE_ID = 4
 						
 						button([
 							'text' => 'SysAdmin',
-							'targetPage' => '/sys-admin'
+							'targetPage' => '/management'
 						]);
                     }
                 }
