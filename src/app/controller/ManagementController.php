@@ -21,17 +21,11 @@
 		
 		public function __construct()
 		{
-			$this->db = new UserRepository("user", "password", "BIKE_SHOP");
+			$this->db = new UserRepository();
 		}
 		
 		#[RouteAttribute(HttpMethod::GET, "index")]
 		public function index(ApplicationState $state)
-		{
-			$this->view(new ActionResult('management', 'index'));
-		}
-		
-		#[RouteAttribute(HttpMethod::GET, "staffmanagement")]
-		public function staffManagement(ApplicationState $state)
 		{
 			// Get all staff members, and managers
 			$staffMembers = $this->db->selectAllUsers(2);
@@ -39,7 +33,7 @@
 			
 			$data = new StaffManagementModel($staffMembers, $managers, $state);
 			
-			$this->view(new ActionResult('management', 'staff-management', $data));
+			$this->view(new ActionResult('management', 'index', $data));
 		}
 		
 	}
