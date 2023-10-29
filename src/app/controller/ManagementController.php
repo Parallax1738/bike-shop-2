@@ -25,7 +25,7 @@
 		}
 		
 		#[RouteAttribute(HttpMethod::GET, "index")]
-		public function index(ApplicationState $state)
+		public function index(ApplicationState $state) : void
 		{
 			// Get all staff members, and managers
 			$staffMembers = $this->db->selectAllUsers(2);
@@ -36,4 +36,9 @@
 			$this->view(new ActionResult('management', 'index', $data));
 		}
 		
+		#[RouteAttribute(HttpMethod::GET, "roster")]
+		public function roster(ApplicationState $state) : void
+		{
+			$this->view(new ActionResult('management', 'roster'));
+		}
 	}

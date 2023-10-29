@@ -51,4 +51,5 @@
 ?>
 
 <br>
-<a href="/auth/create-account" style="color: blue !important; text-decoration: underline;">Create Staff Account</a>
+<p><a href="/auth/create-account" style="color: blue !important; text-decoration: underline;">Create Staff Account</a></p>
+<p><a href="/management/roster" style="color: blue; text-decoration: underline;">View Roster</a></p>
