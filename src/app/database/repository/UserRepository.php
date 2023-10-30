@@ -51,14 +51,14 @@
 					// Add user to user array if it does not exist
 					if (!$users->keyExists($id))
 					{
-						$users->getArray()[ $id ] = $u;
+						$users->arr[$id] = $u;
 					}
 					// Add found shift to map if it exists
 					if ($shiftId)
 					{
 						$test = new DateTime($shiftDate.' '.$startTime);
 						
-						$userShiftMap->getArray()[$id][$shiftId] = new StaffShiftEntity($u, $shiftId,
+						$userShiftMap->arr[$id][$shiftId] = new StaffShiftEntity($u, $shiftId,
 							new DateTime($shiftDate.' '.$startTime),
 							new DateTime($shiftDate.' '.$endTime));
 					}

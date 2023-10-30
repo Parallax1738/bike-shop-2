@@ -7,7 +7,7 @@
 	 */
 	class ArrayWrapper
 	{
-		public function __construct(private array $arr) { }
+		public function __construct(public array $arr) { }
 		
 		public function getArray(): array
 		{
