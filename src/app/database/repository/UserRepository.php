@@ -2,13 +2,78 @@
 	
 	namespace bikeshop\app\database\repository;
 	
+	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\database\DatabaseConnector;
+	use bikeshop\app\database\entity\StaffShiftEntity;
 	use bikeshop\app\database\entity\UserEntity;
 	use bikeshop\app\models\CreateAccountModel;
+	use DateTime;
 	use Exception;
 	
 	class UserRepository extends DatabaseConnector
 	{
+		public function getRoster(DateTime $startDate, DateTime $endDate) : array
+		{
+			$this->connect();
+			$sql = $this->mysqli->prepare("
+				SELECT
+					USER.*,
+					STAFF_SHIFT.SHIFT_ID,
+					STAFF_SHIFT.START_TIME,
+					STAFF_SHIFT.END_TIME,
+					STAFF_SHIFT.SHIFT_DATE
+				FROM USER
+				LEFT JOIN STAFF_SHIFT ON STAFF_SHIFT.USER_ID = USER.ID
+				WHERE
+					USER.USER_ROLE_ID IN (2, 3)
+					AND (STAFF_SHIFT.START_TIME IS NULL OR STAFF_SHIFT.SHIFT_DATE BETWEEN DATE(?) AND DATE(?));");
+			
+			$sql->bind_param('ss', $startDateSql, $endDateSql);
+			$startDateSql = $startDate->format('Y-m-d');
+			$endDateSql = $endDate->format('Y-m-d');
+			
+			if ($sql->execute())
+			{
+				// Maps user id to user entity
+				$users = new ArrayWrapper([]);
+				
+				// Maps user id to shifts. Shifts is an array that maps shift id to shift entity
+				// [userId][shiftId] =
+				$userShiftMap = new ArrayWrapper([]);
+				
+				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address,
+					$suburb, $state, $postcode, $country, $phone, $shiftId, $shiftDate, $startTime, $endTime, $shaft);
+				while ($sql->fetch())
+				{
+					$u = new UserEntity($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address,
+						$suburb, $state, $postcode, $country, $phone);
+					
+					// Add user to user array if it does not exist
+					if (!$users->keyExists($id))
+					{
+						$users->getArray()[ $id ] = $u;
+					}
+					
+					// Add found shift to map if it exists
+					if ($shiftId)
+					{
+						$userShiftMap[$id][$shiftId] = new StaffShiftEntity($u, $shiftId,
+							DateTime::createFromFormat('Y-m-d hh:mm::ss', $shiftDate.' '.$startTime),
+							DateTime::createFromFormat('Y-m-d hh:mm::ss', $shiftDate.' '.$endTime));
+					}
+				}
+				
+				return
+				[
+					'users' => $users->getArray(),
+					'shifts' => $userShiftMap->getArray()
+				];
+			}
+			
+			$this->disconnect();
+			return [];
+		}
+		
 		/**
 		 * Selects every user role in the database
 		 * @return array Array of all user roles

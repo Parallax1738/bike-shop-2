@@ -39,7 +39,7 @@
 		#[RouteAttribute(HttpMethod::GET, "roster")]
 		public function roster(ApplicationState $state) : void
 		{
-			
+			// Get start and end dates
 			
 			$this->view(new ActionResult('management', 'roster'));
 		}
