@@ -71,6 +71,7 @@
 				$uri->getActionName(),
 				$uri->getHttpMethod());
 			
+			
 			if ($actionCallable == null || !is_callable($actionCallable))
 			{
 				// Nothing was found, therefore error

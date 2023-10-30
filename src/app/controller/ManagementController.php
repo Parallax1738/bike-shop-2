@@ -39,6 +39,8 @@
 		#[RouteAttribute(HttpMethod::GET, "roster")]
 		public function roster(ApplicationState $state) : void
 		{
+			
+			
 			$this->view(new ActionResult('management', 'roster'));
 		}
 	}
