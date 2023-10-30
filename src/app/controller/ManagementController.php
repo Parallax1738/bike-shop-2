@@ -13,6 +13,8 @@
 	use bikeshop\app\database\repository\UserRepository;
 	use bikeshop\app\models\EditUserModel;
 	use bikeshop\app\models\StaffManagementModel;
+	use DateInterval;
+	use DateTime;
 	use Exception;
 	
 	class ManagementController extends Controller implements IHasIndexPage
@@ -40,7 +42,12 @@
 		public function roster(ApplicationState $state) : void
 		{
 			// Get start and end dates
+			$start = new DateTime();
+			$interval = DateInterval::createFromDateString('14 Days');
+			$end = $start->add($interval);
 			
-			$this->view(new ActionResult('management', 'roster'));
+			$data = $this->db->getRoster($start, $end);
+			
+			$this->view(new ActionResult('management', 'roster', $data));
 		}
 	}

@@ -42,7 +42,7 @@
 				$userShiftMap = new ArrayWrapper([]);
 				
 				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address,
-					$suburb, $state, $postcode, $country, $phone, $shiftId, $shiftDate, $startTime, $endTime, $shaft);
+					$suburb, $state, $postcode, $country, $phone, $shiftId, $startTime, $endTime, $shiftDate);
 				while ($sql->fetch())
 				{
 					$u = new UserEntity($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address,
