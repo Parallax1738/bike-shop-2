@@ -12,6 +12,7 @@
 	use bikeshop\app\database\entity\UserEntity;
 	use bikeshop\app\database\repository\UserRepository;
 	use bikeshop\app\models\EditUserModel;
+	use bikeshop\app\models\RosterModel;
 	use bikeshop\app\models\StaffManagementModel;
 	use DateInterval;
 	use DateTime;
@@ -44,9 +45,10 @@
 			// Get start and end dates
 			$start = new DateTime();
 			$interval = DateInterval::createFromDateString('14 Days');
-			$end = $start->add($interval);
+			$end = (new DateTime())->add($interval);
 			
-			$data = $this->db->getRoster($start, $end);
+			$roster = $this->db->getRoster($start, $end);
+			$data = new RosterModel($start, $end, $roster);
 			
 			$this->view(new ActionResult('management', 'roster', $data));
 		}

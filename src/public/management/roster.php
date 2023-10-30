@@ -1,13 +1,29 @@
-<h1>Roster</h1>
-
 <?php
 	use bikeshop\app\core\ArrayWrapper;
+	use bikeshop\app\models\RosterModel;
 	
-	if (!isset($data) || !is_array($data))
-        die ("Data is not set");
+	if (!isset($data) || !$data instanceof RosterModel)
+        die ("Data not set");
     
-    $dataWrapper = new ArrayWrapper($data);
+    // Loop until dateIncr is equal to $data->getEnd(). During the loop, increment dateIncr by one day, hence the while
+    // loop
+    echo "
+    <table><thead>
+    <tr>
+        <th>Staff</th>
+        <th>Details</th>
+    ";
+    $plusOneDay = DateInterval::createFromDateString('1 Day');
+    $dateIncr = $data->getStart();
     
-    if (!array_key_exists('users', $data) || !array_key_exists('shifts', $data))
-        die ("No user or shifts available");
+    echo $dateIncr->format('Y-m-d');
+    echo '<br>';
+    echo $data->getEnd()->format('Y-m-d');
+    
+    while (strcmp($dateIncr->format('Y-m-d'), $data->getEnd()->format('Y-m-d')) != 0)
+	{
+        echo '<th>'.$dateIncr->format('D, d M').'</th>';
+        
+        $dateIncr = $dateIncr->add($plusOneDay);
+	}
 ?>

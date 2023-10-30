@@ -53,13 +53,14 @@
 					{
 						$users->getArray()[ $id ] = $u;
 					}
-					
 					// Add found shift to map if it exists
 					if ($shiftId)
 					{
-						$userShiftMap[$id][$shiftId] = new StaffShiftEntity($u, $shiftId,
-							DateTime::createFromFormat('Y-m-d hh:mm::ss', $shiftDate.' '.$startTime),
-							DateTime::createFromFormat('Y-m-d hh:mm::ss', $shiftDate.' '.$endTime));
+						$test = new DateTime($shiftDate.' '.$startTime);
+						
+						$userShiftMap->getArray()[$id][$shiftId] = new StaffShiftEntity($u, $shiftId,
+							new DateTime($shiftDate.' '.$startTime),
+							new DateTime($shiftDate.' '.$endTime));
 					}
 				}
 				
