@@ -1,5 +1,5 @@
 <h1>Create Account</h1>
-<form action="/auth/create-account" method="post">
+<form action="/auth/create" method="post">
 	<?php
 		use bikeshop\app\database\entity\UserEntity;
 		use bikeshop\app\models\CreateAccountModel;

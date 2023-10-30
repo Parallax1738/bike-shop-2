@@ -111,15 +111,15 @@
 			}
 		}
 		
-		#[RouteAttribute(HttpMethod::GET, "create-account")]
+		#[RouteAttribute(HttpMethod::GET, "create")]
 		public function createAccount(ApplicationState $state) : void
 		{
 			$userRoles = $this->db->selectAllUserRoles();
 			$this->view(new ActionResult('auth', 'create-account', new CreateAccountModel("", "", $state, $userRoles)));
 		}
 	
-		#[RouteAttribute(HttpMethod::POST, "create-account")]
-		public function createAccountPost() : void
+		#[RouteAttribute(HttpMethod::POST, "create")]
+		public function createAccountPost(ApplicationState $state) : void
 		{
 			$account = null;
 			// get data
