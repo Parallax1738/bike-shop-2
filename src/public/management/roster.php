@@ -4,7 +4,14 @@
 	use bikeshop\app\database\entity\UserEntity;
 	use bikeshop\app\models\RosterModel;
 	
-	function displayShiftsRow(array $data, array $dates, UserEntity $user)
+	/**
+	 * Displays an entire record containing all of their shifts. Should be appended inside an existing table record.
+	 * @param array $shiftMap A map of shift IDs to shifts. Should only contain shifts for a specific user
+	 * @param array $dates A list of date strings (formatted to Y-m-d) to display
+	 * @param UserEntity $user User who's shifts should be displayed
+	 * @return void
+	 */
+	function displayShiftsRow(array $shiftMap, array $dates, UserEntity $user)
 	{
 		echo '<tr>';
 		
@@ -15,7 +22,7 @@
 		// Initialise a map of date => shift so we don't have to have nested foreach loops.
 		// Maps Date (Y-m-d) to Shift
 		$dateShiftMap = [];
-		foreach ($data as $shiftId => $shift)
+		foreach ($shiftMap as $shiftId => $shift)
 		{
 			if (!$shift instanceof StaffShiftEntity)
 				continue;
@@ -25,7 +32,9 @@
 		
 		// Loop through every day in the time span. If a shift exists for the user in the same day, fill in input field.
 		// Otherwise, empty input field
-		$shifts = new ArrayWrapper($data);
+		$shifts = new ArrayWrapper($shiftMap);
+		
+		// Remember, dates is auto-formatted as Y-m-d
 		foreach ($dates as $d)
 		{
 			if (array_key_exists($d, $dateShiftMap))
@@ -35,7 +44,10 @@
 			
 			if (!$shift instanceof StaffShiftEntity)
 			{
+				// No shift found.
+				// TODO - Only allow managers and sysadmins to change times
 				echo '<td>
+						<input type="hidden" name="user-id" value="'.$user->getId().'"
 						<input type="hidden" name="date" />
 						<p>Start: <input type="time" name="start-time" /></p>
 						<p>End: <input type="time" name="end-time" /></p>
@@ -44,7 +56,16 @@
 			}
 			else
 			{
-				echo '<td>Here</td>';
+				// Shift found. Include hidden input for shift id
+				$formattedStartTime = $shift->getStartTime()->format('H:m');
+				$formattedEndTime = $shift->getEndTime()->format('H:m');
+				echo '<td>
+						<input type="hidden" name="user-id" value="'.$user->getId().'"
+						<input type="hidden" name="date" value="'.$d.'"/>
+						<p>Start: <input type="time" name="start-time" value="'.$formattedStartTime.'"/></p>
+						<p>Start: <input type="time" name="end-time" value="'.$formattedEndTime.'"/></p>
+						<p><a style="color: blue; text-decoration: underline">Update</a></p>
+					  </td>';
 			}
 		}
 		
