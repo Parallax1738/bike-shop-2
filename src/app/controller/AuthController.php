@@ -101,8 +101,8 @@
 			$this->view(new ActionResult('auth', 'login', new LoginSuccessModel($token, $state)));
 		}
 		
-		#[RouteAttribute(HttpMethod::POST, "logout")]
-		public function logoutPost(ApplicationState $state): void
+		#[RouteAttribute(HttpMethod::GET, "logout")]
+		public function logoutGet(ApplicationState $state): void
 		{
 			if ($state->getUser())
 			{

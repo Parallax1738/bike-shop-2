@@ -47,7 +47,7 @@
 			$end = (new DateTime())->add($interval);
 			
 			$roster = $this->db->getRoster($start, $end);
-			$data = new RosterModel($start, $end, $roster);
+			$data = new RosterModel($start, $end, $roster, $state);
 			
 			$this->view(new ActionResult('management', 'roster', $data));
 		}

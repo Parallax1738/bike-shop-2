@@ -9,7 +9,7 @@
 		public function __construct
 		(
 			private readonly UserEntity $user,
-			private readonly int        $staffId,
+			private readonly int        $shiftId,
 			private readonly DateTime   $startTime,
 			private readonly DateTime   $endTime,
 		) { }
@@ -19,9 +19,9 @@
 			return $this->user;
 		}
 		
-		public function getStaffId() : int
+		public function getShiftId() : int
 		{
-			return $this->staffId;
+			return $this->shiftId;
 		}
 		
 		public function getStartTime() : DateTime

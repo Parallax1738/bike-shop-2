@@ -2,16 +2,21 @@
 	
 	namespace bikeshop\app\models;
 	
+	use bikeshop\app\core\ApplicationState;
 	use DateTime;
 	
-	class RosterModel
+	class RosterModel extends ModelBase
 	{
 		public function __construct
 		(
 			private DateTime $start,
 			private DateTime $end,
-			private array $data
-		) { }
+			private array $data,
+			ApplicationState $state
+		)
+		{
+			parent::__construct($state);
+		}
 		
 		public function getStart() : DateTime
 		{
