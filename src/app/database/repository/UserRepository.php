@@ -35,30 +35,28 @@
 			if ($sql->execute())
 			{
 				// Maps user id to user entity
-				$users = new ArrayWrapper([]);
+				$users = [];
 				
 				// Maps user id to shifts. Shifts is an array that maps shift id to shift entity
 				// [userId][shiftId] =
-				$userShiftMap = new ArrayWrapper([]);
+				$userShiftMap = [];
 				
-				$sql->bind_result($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address,
+				$sql->bind_result($userId, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address,
 					$suburb, $state, $postcode, $country, $phone, $shiftId, $startTime, $endTime, $shiftDate);
 				while ($sql->fetch())
 				{
-					$u = new UserEntity($id, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address,
+					$u = new UserEntity($userId, $userRoleId, $emailAddress, $firstName, $lastName, $password, $address,
 						$suburb, $state, $postcode, $country, $phone);
 					
 					// Add user to user array if it does not exist
-					if (!$users->keyExists($id))
+					if (!array_key_exists($userId, $users))
 					{
-						$users->arr[$id] = $u;
+						$users[$userId] = $u;
 					}
-					// Add found shift to map if it exists
+					// Add found shift to map if it exists. Otherwise, init it
 					if ($shiftId)
 					{
-						$test = new DateTime($shiftDate.' '.$startTime);
-						
-						$userShiftMap->arr[$id][$shiftId] = new StaffShiftEntity($u, $shiftId,
+						$userShiftMap[$userId][$shiftId] = new StaffShiftEntity($u, $shiftId,
 							new DateTime($shiftDate.' '.$startTime),
 							new DateTime($shiftDate.' '.$endTime));
 					}
@@ -66,8 +64,8 @@
 				
 				return
 				[
-					'users' => $users->getArray(),
-					'shifts' => $userShiftMap->getArray()
+					'users' => $users,
+					'shifts' => $userShiftMap
 				];
 			}
 			

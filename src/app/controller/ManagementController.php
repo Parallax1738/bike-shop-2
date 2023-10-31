@@ -30,7 +30,6 @@
 		#[RouteAttribute(HttpMethod::GET, "index")]
 		public function index(ApplicationState $state) : void
 		{
-			// Get all staff members, and managers
 			$staffMembers = $this->db->selectAllUsers(2);
 			$managers = $this->db->selectAllUsers(3);
 			
