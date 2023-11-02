@@ -5,19 +5,19 @@
 	use bikeshop\app\database\entity\UserEntity;
 	use bikeshop\app\models\StaffManagementModel;
 	
-    // Ensure data exists
+	// Ensure data exists
 	if (!isset($data) || !($data instanceof StaffManagementModel))
 	{
-        echo '<p><b style="color: red;">Error; data provided is not valid</b></p>';
-    }
-    
-    // List All Managers
-    echo '<br>';
-    echo '<h1><b>Managers</b></h1>';
-    if (count($data->getManagers()) == 0)
+		echo '<p><b style="color: red;">Error; data provided is not valid</b></p>';
+	}
+	
+	// List All Managers
+	echo '<br>';
+	echo '<h1><b>Managers</b></h1>';
+	if (count($data->getManagers()) == 0)
 	{
-        echo '<p>No Managers Found</p>';
-    }
+		echo '<p>No Managers Found</p>';
+	}
 	else
 	{
 		foreach ($data->getManagers() as $manager)
@@ -36,19 +36,20 @@
 	{
 		echo '<p>No Staff Members Found</p>';
 	}
-    else
+	else
 	{
-        foreach ($data->getStaffMembers() as $staff)
+		foreach ($data->getStaffMembers() as $staff)
 		{
-            if (!$staff instanceof UserEntity) continue;
+			if (!$staff instanceof UserEntity) continue;
 			echo '<p>' . $staff->getFirstName() . ' ' . $staff->getLastName() . ' <a style="color:blue; text-decoration: underline"
                     href="/auth/edit-account?a=' . $staff->getId() . '">
                     Edit
                   </a> <a style="color:blue; text-decoration: underline"
                     href="/auth/delete-account?a=' . $staff->getId() . '"></p>';
-        }
-    }
+		}
+	}
 ?>
 
 <br>
-<a href="/auth/create-account" style="color: blue !important; text-decoration: underline;">Create Staff Account</a>
+<p><a href="/auth/create" style="color: blue !important; text-decoration: underline;">Create Staff Account</a></p>
+<p><a href="/management/roster" style="color: blue; text-decoration: underline;">View Roster</a></p>

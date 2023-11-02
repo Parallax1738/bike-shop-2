@@ -13,6 +13,7 @@
     <meta charset="UTF-8">
     <title>Bike shop</title>
     <link href="../../output.css" rel="stylesheet">
+    <link href="../../table.css" rel="stylesheet">
 </head>
 
 <script>

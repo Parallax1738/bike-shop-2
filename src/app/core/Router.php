@@ -5,7 +5,7 @@
 	use bikeshop\app\controller\ErrorController;
 	use bikeshop\app\controller\HomeController;
 	use bikeshop\app\controller\ProductsController;
-	use bikeshop\app\controller\SysAdminController;
+	use bikeshop\app\controller\ManagementController;
 	use bikeshop\app\core\attributes\HttpMethod;
 	use bikeshop\app\core\attributes\RouteAttribute;
 	use Exception;
@@ -30,7 +30,7 @@
 			$this->indexController = $homeController;
 			$this->controllerMap[ "home" ] = $homeController;
 			$this->controllerMap[ "auth" ] = new AuthController();
-			$this->controllerMap[ "sys-admin" ] = new SysAdminController();
+			$this->controllerMap[ "management" ] = new ManagementController();
 			$this->controllerMap[ "error" ] = new ErrorController();
 			$this->controllerMap[ "cart" ] = new CartController();
 			
@@ -58,30 +58,28 @@
 				return;
 			}
 			
+			// If action does not exist, but controller has index page, load it
+			if (empty($uri->getActionName()) && $c instanceof IHasIndexPage)
+			{
+				$c->index($this->state);
+				return;
+			}
+			
+			// Action provided from user, parse it and get a callable from it
 			$actionCallable = $this->getActionFromStr(
 				$c,
 				$uri->getActionName(),
 				$uri->getHttpMethod());
 			
-			if (empty($actionCallable))
+			
+			if ($actionCallable == null || !is_callable($actionCallable))
 			{
-				// No action, go to index page if it exists
-				if ($c instanceof IHasIndexPage) {
-					
-					$c->index($this->state);
-				}
-				else
-				{
-					include(__DIR__ . "/../../public/error/http404.php");
-				}
+				// Nothing was found, therefore error
+				include(__DIR__ . "/../../public/error/http404.php");
 				return;
 			}
 			
-			// Calling the action as a method inside the controller
-			if (!is_callable($actionCallable))
-				include (__DIR__ . "/../../public/error/http404.php");
-			else
-				call_user_func_array($actionCallable, [ $this->state ]);
+			call_user_func_array($actionCallable, [ $this->state ]);
 		}
 		
 		private function displayIndex(ApplicationState $state) : void
@@ -195,7 +193,9 @@
 				$att = $attribute->newInstance();
 				if ($att instanceof RouteAttribute)
 				{
-					if (strcmp($att->getMethod()->name, $targetMethod->name) == 0)
+					$methodEqual = strcmp($att->getMethod()->name, $targetMethod->name) == 0;
+					$actionNameEqual = strcmp($att->getAction(), $targetAction) == 0;
+					if ($methodEqual && $actionNameEqual)
 					{
 						return $method;
 					}

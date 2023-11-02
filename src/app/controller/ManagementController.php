@@ -10,35 +10,45 @@
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\entity\UserEntity;
+	use bikeshop\app\database\repository\UserRepository;
 	use bikeshop\app\models\EditUserModel;
+	use bikeshop\app\models\RosterModel;
 	use bikeshop\app\models\StaffManagementModel;
+	use DateInterval;
+	use DateTime;
 	use Exception;
 	
-	class SysAdminController extends Controller implements IHasIndexPage
+	class ManagementController extends Controller implements IHasIndexPage
 	{
 		private DatabaseConnector $db;
 		
 		public function __construct()
 		{
-			$this->db = new DatabaseConnector("user", "password", "BIKE_SHOP");
+			$this->db = new UserRepository();
 		}
 		
 		#[RouteAttribute(HttpMethod::GET, "index")]
-		public function index(ApplicationState $state)
+		public function index(ApplicationState $state) : void
 		{
-			$this->view(new ActionResult('sys-admin', 'index'));
-		}
-		
-		#[RouteAttribute(HttpMethod::GET, "staff-management")]
-		public function staffManagement(ApplicationState $state)
-		{
-			// Get all staff members, and managers
 			$staffMembers = $this->db->selectAllUsers(2);
 			$managers = $this->db->selectAllUsers(3);
 			
 			$data = new StaffManagementModel($staffMembers, $managers, $state);
 			
-			$this->view(new ActionResult('sys-admin', 'staff-management', $data));
+			$this->view(new ActionResult('management', 'index', $data));
 		}
 		
+		#[RouteAttribute(HttpMethod::GET, "roster")]
+		public function roster(ApplicationState $state) : void
+		{
+			// Get start and end dates
+			$start = new DateTime();
+			$interval = DateInterval::createFromDateString('14 Days');
+			$end = (new DateTime())->add($interval);
+			
+			$roster = $this->db->getRoster($start, $end);
+			$data = new RosterModel($start, $end, $roster, $state);
+			
+			$this->view(new ActionResult('management', 'roster', $data));
+		}
 	}

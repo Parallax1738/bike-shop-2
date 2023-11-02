@@ -42,6 +42,44 @@ CREATE TABLE PRODUCT_FILTER_LINK (
      FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(ID)
 );
 
+-- Roles that each user can have, for example, staff and managers would have their own roles
+DROP TABLE IF EXISTS USER_ROLES;
+CREATE TABLE USER_ROLES(
+                           ID INT NOT NULL,
+                           NAME NVARCHAR(100),
+                           PRIMARY KEY (ID)
+);
+
+DROP TABLE IF EXISTS USER;
+CREATE TABLE USER(
+                     ID INT primary key auto_increment,
+                     USER_ROLE_ID INT NOT NULL DEFAULT(1),
+                     EMAIL_ADDRESS VARCHAR(500) unique,
+                     FIRST_NAME VARCHAR(50),
+                     LAST_NAME VARCHAR(50),
+                     PASSWORD VARCHAR(500),
+                     ADDRESS VARCHAR(200),
+                     SUBURB VARCHAR(10),
+                     STATE VARCHAR(10),
+                     POSTCODE VARCHAR(4),
+                     COUNTRY VARCHAR(50),
+                     PHONE VARCHAR(14),
+                     FOREIGN KEY (USER_ROLE_ID) REFERENCES USER_ROLES(ID)
+);
+
+DROP TABLE IF EXISTS STAFF_SHIFT;
+CREATE TABLE STAFF_SHIFT(
+    USER_ID INT NOT NULL,
+    SHIFT_ID INT NOT NULL,
+    SHIFT_DATE DATE NOT NULL,
+    START_TIME TIME NOT NULL,
+    END_TIME TIME NOT NULL,
+    CONSTRAINT START_TIME_CHK CHECK (START_TIME < END_TIME),
+    CONSTRAINT END_TIME_CHK CHECK (END_TIME > START_TIME),
+    PRIMARY KEY (USER_ID, SHIFT_ID),
+    FOREIGN KEY (USER_ID) REFERENCES USER(ID)
+);
+
 INSERT INTO PRODUCT_FILTER (ID, NAME)
 VALUES (1, 'Men'),
        (2, 'Woman'),
@@ -319,33 +357,6 @@ VALUES
     (21, 81),
     (21, 82),
     (21, 83);
-
--- Roles that each user can have, for example, staff and managers would have their own roles
-DROP TABLE IF EXISTS USER_ROLES;
-CREATE TABLE USER_ROLES(
-                           ID INT NOT NULL,
-                           NAME NVARCHAR(100),
-                           PRIMARY KEY (ID)
-);
-
-DROP TABLE IF EXISTS USER;
-CREATE TABLE USER(
-                     ID INT primary key auto_increment,
-                     USER_ROLE_ID INT NOT NULL DEFAULT(1),
-                     EMAIL_ADDRESS VARCHAR(500) unique,
-                     FIRST_NAME VARCHAR(50),
-                     LAST_NAME VARCHAR(50),
-                     PASSWORD VARCHAR(500),
-                     ADDRESS VARCHAR(200),
-                     SUBURB VARCHAR(10),
-                     STATE VARCHAR(10),
-                     POSTCODE VARCHAR(4),
-                     COUNTRY VARCHAR(50),
-                     PHONE VARCHAR(14),
-                     FOREIGN KEY (USER_ROLE_ID) REFERENCES USER_ROLES(ID)
-);
-
--- | INSERTING DATA | --
 
 INSERT INTO USER_ROLES(ID, NAME)
 VALUES (1, 'Member'), -- Can read the database and make purchases

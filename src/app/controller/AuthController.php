@@ -101,8 +101,8 @@
 			$this->view(new ActionResult('auth', 'login', new LoginSuccessModel($token, $state)));
 		}
 		
-		#[RouteAttribute(HttpMethod::POST, "logout")]
-		public function logoutPost(ApplicationState $state): void
+		#[RouteAttribute(HttpMethod::GET, "logout")]
+		public function logoutGet(ApplicationState $state): void
 		{
 			if ($state->getUser())
 			{
@@ -111,15 +111,15 @@
 			}
 		}
 		
-		#[RouteAttribute(HttpMethod::GET, "create-account")]
-		public function createAccount(ApplicationState $state) : void
+		#[RouteAttribute(HttpMethod::GET, "create")]
+		public function createGet(ApplicationState $state) : void
 		{
 			$userRoles = $this->db->selectAllUserRoles();
-			$this->view(new ActionResult('auth', 'create-account', new CreateAccountModel("", "", $state, $userRoles)));
+			$this->view(new ActionResult('auth', 'create', new CreateAccountModel("", "", $state, $userRoles)));
 		}
 	
-		#[RouteAttribute(HttpMethod::POST, "create-account")]
-		public function createAccountPost() : void
+		#[RouteAttribute(HttpMethod::POST, "create")]
+		public function createPost(ApplicationState $state) : void
 		{
 			$account = null;
 			// get data
@@ -184,8 +184,8 @@
 			$this->view(new ActionResult("auth", "login"));
 		}
 		
-		#[RouteAttribute(HttpMethod::GET, "edit-account")]
-		public function editAccount(ApplicationState $state) : void
+		#[RouteAttribute(HttpMethod::GET, "edit")]
+		public function editGet(ApplicationState $state) : void
 		{
 			// Get Account Id
 			$get = new ArrayWrapper($_GET);
@@ -209,8 +209,8 @@
 			$this->view(new ActionResult('auth', 'edit-account', $model));
 		}
 		
-		#[RouteAttribute(HttpMethod::POST, "edit-account")]
-		public function editAccountPost() : void
+		#[RouteAttribute(HttpMethod::POST, "edit")]
+		public function editPost() : void
 		{
 			// Make sure user id and the user itself exists in the database
 			$post = new ArrayWrapper($_POST);
@@ -261,8 +261,8 @@
 			$this->db->updateUser($user);
 		}
 		
-		#[RouteAttribute(HttpMethod::POST, "delete-account")]
-		public function deleteAccount(ApplicationState $state) : void
+		#[RouteAttribute(HttpMethod::POST, "delete")]
+		public function deletePost(ApplicationState $state) : void
 		{
 			// Get Account Id
 			$get = new ArrayWrapper($_GET);

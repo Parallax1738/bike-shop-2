@@ -1,0 +1,38 @@
+/* Striped Table */
+thead:first-child {
+    background-color: lightgrey;
+}
+
+tr:nth-child(even) {
+    background-color: lightgray;
+}
+
+/* Makes table scroll horizontally */
+/* Help from https://stackoverflow.com/questions/5533636/add-a-horizontal-scrollbar-to-an-html-table */
+
+table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+table tbody thead {
+    display: table;
+    width: 100%;
+}
+
+/* Adds borders */
+
+table {
+    border-collapse: collapse;
+}
+
+table td, table th{
+    border: .1rem solid darkgray;
+}
+
+/* Table Padding so it doesn't look bad */
+
+td {
+    padding: .8rem 1rem;
+}
