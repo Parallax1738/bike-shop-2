@@ -45,7 +45,7 @@
                     
 					button([
 						'text' => 'Create an account',
-						'targetPage' => '/auth/create-account',
+						'targetPage' => '/auth/create',
 						'isLoggedIn' => false
 					]);
                 }

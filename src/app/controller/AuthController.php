@@ -206,7 +206,7 @@
 			$model = new EditUserModel($user, $state);
 			
 			// Return view
-			$this->view(new ActionResult('auth', 'edit-account', $model));
+			$this->view(new ActionResult('auth', 'edit', $model));
 		}
 		
 		#[RouteAttribute(HttpMethod::POST, "edit")]

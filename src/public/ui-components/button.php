@@ -4,15 +4,29 @@
     $iconSVG = $params['iconSVG'] ?? null;
     $targetPage = $params['targetPage'] ?? null;
     $isLoggedIn = $params['isLoggedIn'] ?? false;
+    $type = $params['type'] ?? 'link';
+    $action = $params['action'] ?? null;
+    
 ?>
 <div>
-    <a href="<?php echo $isLoggedIn ? '/auth/edit-account' : $targetPage; ?>"
+    <?php if ($type === 'submit'): ?>
+    <button type="submit"
+        class="w-full transform transition-all duration-100 bg-orange-500 hover:bg-orange-600 hover:shadow-lg hover:scale-105 text-white font-bold py-2 px-4 rounded flex items-center justify-center"
+        name="<?php echo $action; ?>">
+        <?php if ($iconSVG): ?>
+        <div class="h-6 w-6 mr-2 flex items-center justify-center"><?php echo $iconSVG; ?></div>
+        <?php endif; ?>
+        <span class="flex items-center"><?php echo $isLoggedIn ? 'Account' : $text; ?></span>
+    </button>
+    <?php else: ?>
+    <a href="<?php echo $isLoggedIn ? '/auth/edit' : $targetPage; ?>"
         class="transform transition-all duration-100 bg-orange-500 hover:bg-orange-600 hover:shadow-lg hover:scale-105 text-white font-bold py-2 px-4 rounded flex items-center justify-center">
         <?php if ($iconSVG): ?>
         <div class="h-6 w-6 mr-2 flex items-center justify-center"><?php echo $iconSVG; ?></div>
         <?php endif; ?>
         <span class="flex items-center"><?php echo $isLoggedIn ? 'Account' : $text; ?></span>
     </a>
+    <?php endif; ?>
 </div>
 <?php
   }
