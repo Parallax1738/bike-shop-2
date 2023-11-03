@@ -32,7 +32,7 @@ require '/var/www/html/src/public/ui-components/input.php';
         <hr class="my-4">
         <h1 class="text-2xl font-bold mb-4">Don't have an account?</h1>
         <div class="mb-2">
-            <?php button(['text' => 'Create Account', 'targetPage' => '/auth/create-account']); ?>
+            <?php button(['text' => 'Create Account', 'targetPage' => '/auth/create']); ?>
         </div>
     </div>
 </div>

@@ -3,8 +3,8 @@
 <!-- Review Cart -->
 <br>
 <div>
-	<h2><b>Review Cart</b></h2>
-	<?php
+    <h2><b>Review Cart</b></h2>
+    <?php
 		use bikeshop\app\database\entity\ProductEntity;
 		use bikeshop\app\models\CartModel;
 		use bikeshop\app\models\ModelBase;
@@ -50,12 +50,12 @@
 <!-- Contact Details -->
 <br>
 <div>
-<h2><b>Your Details</b></h2>
-<?php
+    <h2><b>Your Details</b></h2>
+    <?php
 	if (isset($data) && $data instanceof ModelBase) {
-		echo '<p>Your account details will be used for the order. <a href="/auth/edit-account" style="color: blue; text-decoration: underline;">Check your account</a> before ordering</p>';
+		echo '<p>Your account details will be used for the order. <a href="/auth/edit" style="color: blue; text-decoration: underline;">Check your account</a> before ordering</p>';
 	} else {
-		echo '<p>You must <a style="color: blue; text-decoration: underline;" href="/auth/login">login</a> or <a href="/auth/create-account" style="color: blue; text-decoration: underline;">create an account</a> to order from this site. These are orders from Google and the company will be shut down if we cannot provide enough data about you to them</p>';
+		echo '<p>You must <a style="color: blue; text-decoration: underline;" href="/auth/login">login</a> or <a href="/auth/create" style="color: blue; text-decoration: underline;">create an account</a> to order from this site. These are orders from Google and the company will be shut down if we cannot provide enough data about you to them</p>';
 	}
 ?>
 </div>
@@ -63,13 +63,13 @@
 <!-- Pay With --->
 <br>
 <div>
-	<h2><b>Pay With</b></h2>
-	<ul>
-		<li><input type="radio" name="payment-type" value="cc"/><label>Credit Cart</label></li>
-		<li><input type="radio" name="payment-type" value="paypal"/><label>PayPal</label></li>
-		<li><input type="radio" name="payment-type" value="after-pay"/><label>After Pay</label></li>
-		<li><input type="radio" name="payment-type" value="google-pay"/><label>Google Pay</label></li>
-	</ul>
+    <h2><b>Pay With</b></h2>
+    <ul>
+        <li><input type="radio" name="payment-type" value="cc" /><label>Credit Cart</label></li>
+        <li><input type="radio" name="payment-type" value="paypal" /><label>PayPal</label></li>
+        <li><input type="radio" name="payment-type" value="after-pay" /><label>After Pay</label></li>
+        <li><input type="radio" name="payment-type" value="google-pay" /><label>Google Pay</label></li>
+    </ul>
 </div>
 
 <!-- Confirm and Pay -->
@@ -84,4 +84,4 @@
 	echo '<br><hr><br>';
 	echo '<p><b>Order Total: $' . $total . '</b></p>';
 ?>
-<input type="submit" value="Confirm and Pay" style="color: blue; text-decoration: underline"/>
+<input type="submit" value="Confirm and Pay" style="color: blue; text-decoration: underline" />
