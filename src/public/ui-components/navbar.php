@@ -1,5 +1,6 @@
 <?php
 include('button.php');
+include('search.php')
 ?>
 
 <head>
@@ -10,18 +11,9 @@ include('button.php');
 <nav class="bg-black p-6">
     <div class="flex items-center justify-between">
         <div class="flex items-center w-1/4">
-            <form method=" GET" action="/products" class="flex items-center w-auto gap-2">
-                <input type="text" id="nav-search" name="q" placeholder="Search"
-                    class="bg-white text-black rounded border-0 p-2" />
-                <?php
-                $iconSVG = '<div class="material-symbols-outlined">search</div>';
-                button([
-                    'iconSVG' => $iconSVG,
-                    'type' => 'submit',
-                    'action' => 'search'
-                ]);
-                ?>
-            </form>
+            <?php
+            search('/products');
+            ?>
 
         </div>
         <div class="w-1/2 flex justify-center">
