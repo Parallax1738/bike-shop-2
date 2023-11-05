@@ -11,10 +11,9 @@ function input(string $htmlName, string $label, mixed $value = null, string $fie
         name="$htmlName" 
         value="$value" 
         type="$fieldType" 
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none ring-orange-500 focus:ring"
         $requiredAttribute
     />
 </div>
 HTML;
 }
-?>

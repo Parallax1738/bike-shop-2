@@ -1,54 +1,65 @@
+<?php
+include('button.php');
+include('search.php')
+?>
+
+<head>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+
 <nav class="bg-black p-6">
     <div class="flex items-center justify-between">
-        <div class="w-1/4"></div>
-        <div class="w-1/2 font-bold text-center text-white text-7xl">
-            <a class="hover:text-gray-300" href="/">Bike shop</a>
+        <div class="flex items-center w-1/4">
+            <?php
+            search('/products');
+            ?>
+
+        </div>
+        <div class="w-1/2 flex justify-center">
+            <a class="hover:text-gray-300 font-bold text-center text-white text-7xl" href="/">Bike shop</a>
         </div>
         <div class="w-1/4 flex justify-end items-center space-x-4 gap-2">
             <?php
-				use bikeshop\app\database\entity\UserEntity;
-				include( 'button.php' );
-                
-                if (isset($loggedInUser) && $loggedInUser instanceof UserEntity)
-				{
-                    // We are logged in!
-					button([
-						'text' => 'Login',
-						'targetPage' => '/auth/login',
-						'isLoggedIn' => true
-					]);
-					
-					button([
-						'text' => 'Logout',
-						'targetPage' => '/auth/logout',
-					]);
-                    
-                    if ($loggedInUser->getUserRoleId() == 4)
-					{
-                        // User is a system administrator -> allow them to access management pages. Remember, management
-                        // role has a USER_ROLE_ID = 4
-						
-						button([
-							'text' => 'SysAdmin',
-							'targetPage' => '/management'
-						]);
-                    }
-                }
-                else
-				{
-                    // Not logged in. Give the user an option to login or create an account
+
+            use bikeshop\app\database\entity\UserEntity;
+
+            if (isset($loggedInUser) && $loggedInUser instanceof UserEntity) {
+                // We are logged in!
+                button([
+                    'text' => 'Login',
+                    'targetPage' => '/auth/login',
+                    'isLoggedIn' => true
+                ]);
+
+                button([
+                    'text' => 'Logout',
+                    'targetPage' => '/auth/logout',
+                ]);
+
+                if ($loggedInUser->getUserRoleId() == 4) {
+                    // User is a system administrator -> allow them to access management pages. Remember, management
+                    // role has a USER_ROLE_ID = 4
+
                     button([
-                        'text' => 'Login',
-                        'targetPage' => '/auth/login',
-                        'isLoggedIn' => false
+                        'text' => 'SysAdmin',
+                        'targetPage' => '/management'
                     ]);
-                    
-					button([
-						'text' => 'Create an account',
-						'targetPage' => '/auth/create',
-						'isLoggedIn' => false
-					]);
                 }
+            } else {
+                // Not logged in. Give the user an option to login or create an account
+                button([
+                    'text' => 'Login',
+                    'targetPage' => '/auth/login',
+                    'isLoggedIn' => false
+                ]);
+
+                button([
+                    'text' => 'Create an account',
+                    'targetPage' => '/auth/create',
+                    'isLoggedIn' => false
+                ]);
+            }
             ?>
             <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
                 <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->

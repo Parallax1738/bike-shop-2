@@ -1,17 +1,10 @@
-<div>
-    <form method="GET" action="/products/search">
-        <label>Search</label>
-        <input type="text" name="q" placeholder="Text Here" />
-        <input type="submit" value="Search" style="color: blue; text-decoration: underline" />
-    </form>
-</div>
 <div class="py-10">
     <div class="container px-5 mx-auto mb-12 flex justify-between items-center">
         <div class="text-3xl font-bold mt-6 mb-6">EXPLORE OUR PRODUCTS</div>
         <div>
-			<?php
-               require_once __DIR__ . '/../ui-components/button.php';
-                button(['text' => 'BOOK NOW', 'targetPage' => 'booking.php']);
+            <?php
+            require_once __DIR__ . '/../ui-components/button.php';
+            button(['text' => 'BOOK NOW', 'targetPage' => 'booking.php']);
             ?>
         </div>
     </div>
