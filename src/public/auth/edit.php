@@ -45,9 +45,15 @@ echo <<<HTML
 
             <div class="mt-8">
                 <input type="submit" value="Update User" class="mb-4 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transform transition-all duration-100 hover:shadow-lg hover:scale-105">
-                <a href="/auth/delete-account" class="block text-center text-red-600 hover:text-white border-solid border-2 border-red-600 hover:bg-red-600 transform transition-all duration-100 hover:shadow-lg hover:scale-105 py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">Delete Account</a>
-            </div>
-        </form>
+			</div>
+			
+			</form>
+			<form method="post" action="/auth/delete">
+			<input
+				type="submit"
+				class="block text-center text-red-600 hover:text-white border-solid border-2 border-red-600 hover:bg-red-600 transform transition-all duration-100 hover:shadow-lg hover:scale-105 py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+				value="Delete Account" />
+			</form>
     </div>
 </div>
 HTML;
