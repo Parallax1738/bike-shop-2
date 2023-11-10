@@ -47,6 +47,12 @@
 			$this->view(new ActionResult('cart', 'checkout', (new CartModel($products, $state))));
 		}
 		
+		#[RouteAttribute(HttpMethod::POST, "checkout")]
+		public function checkoutPost()
+		{
+			// TODO - Implement Checkout Stuffs
+		}
+		
 		private function getProductIdsFromCart(): array
 		{
 			$cookies = new ArrayWrapper($_COOKIE);
