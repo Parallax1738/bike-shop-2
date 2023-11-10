@@ -48,7 +48,7 @@
             </tbody>
             </table>
             <br><hr><br><p id="total">Total: $' . $total . '</p>
-            <a style="color: blue; text-decoration: underline">Purchase</a>';
+            <a href="/cart/checkout" style="color: blue; text-decoration: underline">Purchase</a>';
     }
 	?>
 <script>
