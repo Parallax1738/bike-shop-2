@@ -23,10 +23,24 @@
     async function addToCart(productId) {
         let cart = await getCart();
 
-        cart.push({
-            'p-id': productId,
-            'q': 1
-        });
+        // Loop through all cart items. If the product being added exists in the cart, increment the quantity and set
+        // exists = true
+        let exists = false;
+        for (let i = 0; i < cart.length; i++) {
+            pId = cart[i]['p-id'];
+            if (pId === productId) {
+                cart[i]['q'] += 1;
+                exists = true;
+                break;
+            }
+        }
+        
+        if (!exists) {
+            cart.push({
+                'p-id': productId,
+                'q': 1
+            });
+        }
 
         await cookieStore.set('cart', createCartCookie(cart))
     }
@@ -78,7 +92,6 @@
                     reloadPage = true;
                 } else {
                     cart[i]['q'] = quantity;
-                    console.log(cart[i]['q']);
                     break;
                 }
             }

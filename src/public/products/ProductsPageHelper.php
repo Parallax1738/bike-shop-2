@@ -184,7 +184,7 @@ class ProductsPageHelper
 	{
 		return '<p>' . $product->getName() . ' |
 					<a style="color: blue; text-decoration: underline" href="/products/details?product=' . $product->getId() . '">More Details</a> |
-					<a style="color: blue; text-decoration: underline">Add To Cart</a></p>
+					<a style="color: blue; text-decoration: underline" onclick="addToCart('.$product->getId().')" >Add To Cart</a></p>
 					
 					<p>' . $product->getDescription() . '</p><br><hr><br>';
 	}

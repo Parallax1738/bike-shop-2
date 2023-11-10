@@ -35,7 +35,7 @@
 						echo '<tr style="text-align: right">';
 						echo '<td>' . $p->getName() . ': </td>';
 						echo '<td>$' . $p->getPrice() . '</td>';
-						echo '<td><a href="/products/details?id=' . $p->getId() . '" style="color: blue; text-decoration: underline">View Details</a></td>';
+						echo '<td><a href="/products/details?product=' . $p->getId() . '" style="color: blue; text-decoration: underline">View Details</a></td>';
 						echo '<tr>';
 					}
 				}
