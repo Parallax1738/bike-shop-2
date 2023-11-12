@@ -46,7 +46,8 @@ echo <<<HTML
             <div class="mt-8">
                 <input type="submit" value="Update User" class="mb-4 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transform transition-all duration-100 hover:shadow-lg hover:scale-105">
 			</div>
-			
+            <hr class="my-4">
+
 			</form>
 			<form method="post" action="/auth/delete">
 			<input
