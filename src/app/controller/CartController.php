@@ -12,6 +12,7 @@
 	use bikeshop\app\core\IHasIndexPage;
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\entity\ProductEntity;
+	use bikeshop\app\database\repository\ProductRepository;
 	use bikeshop\app\models\CartModel;
 	use bikeshop\app\models\CartProductEntity;
 	use Money\Currency;
@@ -19,11 +20,11 @@
 	
 	class CartController extends Controller implements IHasIndexPage
 	{
-		private DatabaseConnector $db;
+		private ProductRepository $db;
 		
 		public function __construct()
 		{
-			$this->db = new DatabaseConnector();
+			$this->db = new ProductRepository();
 		}
 		
 		#[RouteAttribute(HttpMethod::GET, "index")]
@@ -44,6 +45,12 @@
 			
 			// Send of to view
 			$this->view(new ActionResult('cart', 'checkout', (new CartModel($products, $state))));
+		}
+		
+		#[RouteAttribute(HttpMethod::POST, "checkout")]
+		public function checkoutPost()
+		{
+			// TODO - Implement Checkout Stuffs
 		}
 		
 		private function getProductIdsFromCart(): array
