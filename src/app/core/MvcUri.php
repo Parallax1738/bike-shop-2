@@ -6,10 +6,7 @@
 	class MvcUri
 	{
 		
-		public function __construct(
-			private readonly string $controller,
-			private readonly string $action,
-			private readonly HttpMethod $httpMethod)
+		public function __construct(private readonly string $controller, private readonly string $action, private readonly HttpMethod $httpMethod)
 		{
 		
 		}
@@ -24,7 +21,7 @@
 			return str_replace('-', '', $this->action);
 		}
 		
-		public function getHttpMethod(): HttpMethod
+		public function getHttpMethod() : HttpMethod
 		{
 			return $this->httpMethod;
 		}

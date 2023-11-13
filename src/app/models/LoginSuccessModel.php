@@ -6,10 +6,7 @@
 	
 	class LoginSuccessModel extends ModelBase
 	{
-		public function __construct(
-			private JwtToken $token,
-			ApplicationState $state
-		)
+		public function __construct(private JwtToken $token, ApplicationState $state)
 		{
 			parent::__construct($state);
 		}

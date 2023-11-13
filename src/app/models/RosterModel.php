@@ -7,13 +7,7 @@
 	
 	class RosterModel extends ModelBase
 	{
-		public function __construct
-		(
-			private DateTime $start,
-			private DateTime $end,
-			private array $data,
-			ApplicationState $state
-		)
+		public function __construct(private DateTime $start, private DateTime $end, private array $data, ApplicationState $state)
 		{
 			parent::__construct($state);
 		}

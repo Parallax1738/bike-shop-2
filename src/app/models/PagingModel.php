@@ -15,39 +15,40 @@
 		 * @param int $pageCount The amount of pages for the SQL query
 		 * @param int $maxResults The amount of items to be displayed
 		 */
-		public function __construct(
-			private array $list,
-			private int   $currentPage,
-			private int   $pageCount,
-			private int   $maxResults,
-			ApplicationState $state) {
+		public function __construct(private array $list, private int $currentPage, private int $pageCount, private int $maxResults, ApplicationState $state)
+		{
 			parent::__construct($state);
 		}
 		
 		/**
 		 * The list of things to be displayed
 		 */
-		public function getList(): array {
+		public function getList() : array
+		{
 			return $this->list;
 		}
 		
 		/**
 		 * The current page that the user is on
 		 */
-		public function getCurrentPage(): int {
+		public function getCurrentPage() : int
+		{
 			return $this->currentPage;
 		}
+		
 		/**
 		 * The amount of pages
 		 */
-		public function getMaxPage(): int {
+		public function getMaxPage() : int
+		{
 			return $this->pageCount;
 		}
 		
 		/**
 		 * How many list items should show
 		 */
-		public function getMaxResults(): int {
+		public function getMaxResults() : int
+		{
 			return $this->maxResults;
 		}
 	}

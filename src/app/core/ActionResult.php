@@ -3,11 +3,9 @@
 	
 	class ActionResult
 	{
-		public function __construct(
-			private string $controller,
-			private string $action,
-			private mixed $data = null
-		) { }
+		public function __construct(private string $controller, private string $action, private mixed $data = null)
+		{
+		}
 		
 		/**
 		 * Finds the view asociated with the controller and action
@@ -19,22 +17,22 @@
 			$processedViewDir = $viewDir;
 			
 			// If the $viewDir parameter does not have '/', add it
-			if ($viewDir[strlen($viewDir) - 1] != '/')
+			if ($viewDir[ strlen($viewDir) - 1 ] != '/')
 				$processedViewDir .= '/';
 			return $processedViewDir . $this->getController() . '/' . $this->getAction() . '.php';
 		}
 		
-		public function getController(): string
+		public function getController() : string
 		{
 			return $this->controller;
 		}
 		
-		public function getAction(): string
+		public function getAction() : string
 		{
 			return $this->action;
 		}
 		
-		public function getData(): mixed
+		public function getData() : mixed
 		{
 			return $this->data;
 		}

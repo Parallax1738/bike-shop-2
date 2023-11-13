@@ -7,11 +7,22 @@
 	 */
 	class ArrayWrapper
 	{
-		public function __construct(public array $arr) { }
+		public function __construct(public array $arr)
+		{
+		}
 		
-		public function getArray(): array
+		public function getArray() : array
 		{
 			return $this->arr;
+		}
+		
+		public function getValueWithKey(string $key) : mixed
+		{
+			if ($this->keyExists($key)) {
+				return $this->arr[ $key ];
+			} else {
+				return null;
+			}
 		}
 		
 		/**
@@ -19,20 +30,8 @@
 		 * @param string $key Key inside array to search for
 		 * @return bool Whether the element was found
 		 */
-		public function keyExists(string $key): bool
+		public function keyExists(string $key) : bool
 		{
-			return array_key_exists($key, $this->arr) && !empty($this->arr[$key]);
-		}
-		
-		public function getValueWithKey(string $key): mixed
-		{
-			if ($this->keyExists($key))
-			{
-				return $this->arr[$key];
-			}
-			else
-			{
-				return null;
-			}
+			return array_key_exists($key, $this->arr) && !empty($this->arr[ $key ]);
 		}
 	}

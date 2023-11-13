@@ -6,21 +6,17 @@
 	
 	class StaffManagementModel extends ModelBase
 	{
-		public function __construct(
-			private array $staffMembers,
-			private array $managers,
-			ApplicationState $state
-		)
+		public function __construct(private array $staffMembers, private array $managers, ApplicationState $state)
 		{
 			parent::__construct($state);
 		}
 		
-		public function getStaffMembers(): array
+		public function getStaffMembers() : array
 		{
 			return $this->staffMembers;
 		}
 		
-		public function getManagers(): array
+		public function getManagers() : array
 		{
 			return $this->managers;
 		}

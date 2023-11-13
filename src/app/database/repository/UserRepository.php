@@ -2,7 +2,6 @@
 	
 	namespace bikeshop\app\database\repository;
 	
-	use bikeshop\app\core\ArrayWrapper;
 	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\entity\StaffShiftEntity;
 	use bikeshop\app\database\entity\UserEntity;

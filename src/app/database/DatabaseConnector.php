@@ -1,11 +1,6 @@
 <?php
 	namespace bikeshop\app\database;
 	use bikeshop\app\core\ArrayWrapper;
-	use bikeshop\app\database\entity\ProductEntity;
-	use bikeshop\app\database\entity\ProductFilterEntity;
-	use bikeshop\app\database\entity\UserEntity;
-	use bikeshop\app\models\CreateAccountModel;
-	use Exception;
 	use mysqli;
 	
 	require_once 'entity/ProductEntity.php';
@@ -37,6 +32,7 @@
 			$this->databasePwd = $env->getValueWithKey('MYSQL_PASSWORD');
 			$this->databaseName = $env->getValueWithKey('MYSQL_DATABASE');
 			$this->serverName = "bike-shop-database";
+			
 		}
 		
 		public function __destruct()

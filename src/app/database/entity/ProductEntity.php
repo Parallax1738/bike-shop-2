@@ -5,13 +5,7 @@
 	
 	class ProductEntity
 	{
-		public function __construct(
-			private int $id,
-			private int $categoryId,
-			private string $name,
-			private string $description,
-			private float $price
-		)
+		public function __construct(private int $id, private int $categoryId, private string $name, private string $description, private float $price)
 		{
 		}
 		

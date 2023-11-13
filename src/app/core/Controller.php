@@ -28,16 +28,13 @@
 		 * @param ActionResult $result Contains information about the view to load, and the model it needs
 		 * @return void
 		 */
-		protected function view(ActionResult $result): void
+		protected function view(ActionResult $result) : void
 		{
 			$fileName = $result->getViewFile(__DIR__ . "/../../public/");
-			if (!file_exists($fileName))
-			{
+			if (!file_exists($fileName)) {
 				$this->view($this->http404ResponseAction());
 				return;
-			}
-			else
-			{
+			} else {
 				// Ensure to load data before including the PHP file so that the PHP file can read the data
 				// (that sentence was needlessly long)
 				$data = $result->getData();
@@ -48,11 +45,22 @@
 		/**
 		 * Wiki Definition:
 		 *
+		 * The requested resource could not be found but may be available in the future. Subsequent requests by the client are permissible
+		 * @return ActionResult
+		 */
+		protected function http404ResponseAction() : ActionResult
+		{
+			return new ActionResult('error', 'http404');
+		}
+		
+		/**
+		 * Wiki Definition:
+		 *
 		 * The server cannot or will not process the request due to an apparent client error (e.g., malformed request
 		 * syntax, size too large, invalid request message framing, or deceptive request routing).
 		 * @return ActionResult
 		 */
-		protected function http400ResponseAction(): ActionResult
+		protected function http400ResponseAction() : ActionResult
 		{
 			return new ActionResult('error', 'http400');
 		}
@@ -68,7 +76,7 @@
 		 * resource.
 		 * @return ActionResult
 		 */
-		protected function http401ResponseAction(): ActionResult
+		protected function http401ResponseAction() : ActionResult
 		{
 			return new ActionResult('error', 'http401');
 		}
@@ -83,20 +91,9 @@
 		 * field challenge, but the server did not accept that authentication. The request should not be repeated.
 		 * @return ActionResult
 		 */
-		protected function http403ResponseAction(): ActionResult
+		protected function http403ResponseAction() : ActionResult
 		{
 			return new ActionResult('error', 'http403');
-		}
-		
-		/**
-		 * Wiki Definition:
-		 *
-		 * The requested resource could not be found but may be available in the future. Subsequent requests by the client are permissible
-		 * @return ActionResult
-		 */
-		protected function http404ResponseAction(): ActionResult
-		{
-			return new ActionResult('error', 'http404');
 		}
 		
 		/**
@@ -105,7 +102,7 @@
 		 * A request method is not supported for the requested resource; for example, a GET request on a form that requires data to be presented via POST, or a PUT request on a read-only resource.
 		 * @return ActionResult
 		 */
-		protected function http405ResponseAction(): ActionResult
+		protected function http405ResponseAction() : ActionResult
 		{
 			return new ActionResult('error', 'http405');
 		}

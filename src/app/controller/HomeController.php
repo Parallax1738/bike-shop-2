@@ -10,13 +10,13 @@
 	
 	class HomeController extends Controller implements IHasIndexPage
 	{
-		#[RouteAttribute(HttpMethod::GET, "index")]
+		#[RouteAttribute( HttpMethod::GET, "index" )]
 		public function index(ApplicationState $state) : void
 		{
 			$this->view(new ActionResult('home', 'index', $state));
 		}
 		
-		#[RouteAttribute(HttpMethod::GET, "test")]
+		#[RouteAttribute( HttpMethod::GET, "test" )]
 		public function test() : void
 		{
 			echo "<h1>Test</h1>";

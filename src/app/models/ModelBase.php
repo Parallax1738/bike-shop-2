@@ -11,7 +11,7 @@
 		
 		}
 		
-		public function getState(): ApplicationState | null
+		public function getState() : ApplicationState | null
 		{
 			return $this->state;
 		}

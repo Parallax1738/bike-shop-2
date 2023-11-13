@@ -6,13 +6,9 @@
 	
 	class StaffShiftEntity
 	{
-		public function __construct
-		(
-			private readonly UserEntity $user,
-			private readonly int        $shiftId,
-			private readonly DateTime   $startTime,
-			private readonly DateTime   $endTime,
-		) { }
+		public function __construct(private readonly UserEntity $user, private readonly int $shiftId, private readonly DateTime $startTime, private readonly DateTime $endTime,)
+		{
+		}
 		
 		public function getUser() : UserEntity
 		{

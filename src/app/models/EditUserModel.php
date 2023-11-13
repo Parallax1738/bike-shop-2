@@ -12,7 +12,7 @@
 			parent::__construct($state);
 		}
 		
-		public function getUserModel(): UserEntity
+		public function getUserModel() : UserEntity
 		{
 			return $this->user;
 		}

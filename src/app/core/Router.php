@@ -4,8 +4,8 @@
 	use bikeshop\app\controller\CartController;
 	use bikeshop\app\controller\ErrorController;
 	use bikeshop\app\controller\HomeController;
-	use bikeshop\app\controller\ProductsController;
 	use bikeshop\app\controller\ManagementController;
+	use bikeshop\app\controller\ProductsController;
 	use bikeshop\app\core\attributes\HttpMethod;
 	use bikeshop\app\core\attributes\RouteAttribute;
 	use Exception;
@@ -44,61 +44,34 @@
 			$uri = $this->getUri();
 			
 			// If no controller, go to /
-			if (empty($uri->getControllerName()))
-			{
+			if (empty($uri->getControllerName())) {
 				$this->displayIndex($this->state);
 				return;
 			}
 			
 			// Otherwise, get controller and go to /{controllerName}
 			$c = $this->getControllerFromStr($uri->getControllerName());
-			if (is_null($c))
-			{
-				include(__DIR__ . "/../../public/error/http404.php");
+			if (is_null($c)) {
+				include( __DIR__ . "/../../public/error/http404.php" );
 				return;
 			}
 			
 			// If action does not exist, but controller has index page, load it
-			if (empty($uri->getActionName()) && $c instanceof IHasIndexPage)
-			{
+			if (empty($uri->getActionName()) && $c instanceof IHasIndexPage) {
 				$c->index($this->state);
 				return;
 			}
 			
 			// Action provided from user, parse it and get a callable from it
-			$actionCallable = $this->getActionFromStr(
-				$c,
-				$uri->getActionName(),
-				$uri->getHttpMethod());
+			$actionCallable = $this->getActionFromStr($c, $uri->getActionName(), $uri->getHttpMethod());
 			
-			
-			if ($actionCallable == null || !is_callable($actionCallable))
-			{
+			if ($actionCallable == null || !is_callable($actionCallable)) {
 				// Nothing was found, therefore error
-				include(__DIR__ . "/../../public/error/http404.php");
+				include( __DIR__ . "/../../public/error/http404.php" );
 				return;
 			}
 			
 			call_user_func_array($actionCallable, [ $this->state ]);
-		}
-		
-		private function displayIndex(ApplicationState $state) : void
-		{
-			try
-			{
-				if ($this->indexController instanceof IHasIndexPage)
-				{
-					$this->indexController->index($state);
-				}
-				else
-				{
-					include(__DIR__ . "/../../public/error/http404.php");
-				}
-			}
-			catch (Exception $exception)
-			{
-				include(__DIR__ . "/../../public/error/http404.php");
-			}
 		}
 		
 		/**
@@ -125,7 +98,7 @@
 			if (str_contains($action, '?'))
 				$action = $this->removeParams($action);
 			
-			return new MvcUri($controller, $action, $this->stringToHttpMethod($_SERVER['REQUEST_METHOD']));
+			return new MvcUri($controller, $action, $this->stringToHttpMethod($_SERVER[ 'REQUEST_METHOD' ]));
 		}
 		
 		/**
@@ -138,14 +111,35 @@
 			return explode('?', $str)[ 0 ];
 		}
 		
+		private function stringToHttpMethod($method) : HttpMethod
+		{
+			return match ( $method ) {
+				"POST" => HttpMethod::POST,
+				"PUT" => HttpMethod::PUT,
+				"PATCH" => HttpMethod::PATCH,
+				"DELETE" => HttpMethod::DELETE,
+				default => HttpMethod::GET,
+			};
+		}
+		
+		private function displayIndex(ApplicationState $state) : void
+		{
+			try {
+				if ($this->indexController instanceof IHasIndexPage) {
+					$this->indexController->index($state);
+				} else {
+					include( __DIR__ . "/../../public/error/http404.php" );
+				}
+			} catch (Exception $exception) {
+				include( __DIR__ . "/../../public/error/http404.php" );
+			}
+		}
+		
 		private function getControllerFromStr($controllerName) : Controller | null
 		{
-			if (array_key_exists(strTolower($controllerName), $this->controllerMap))
-			{
+			if (array_key_exists(strTolower($controllerName), $this->controllerMap)) {
 				return $this->controllerMap[ strtolower($controllerName) ];
-			}
-			else
-			{
+			} else {
 				return null;
 			}
 		}
@@ -153,7 +147,7 @@
 		/**
 		 * Finds an action method from inside a controller based on an action name and HTTP method. It finds it
 		 * looking at the attribute on top of a method.
-	  	 * @param Controller $controller Where to find the action name inside of
+		 * @param Controller $controller Where to find the action name inside of
 		 * @param string $actionName The action name to search for on the attribute.
 		 * @param HttpMethod $httpMethod The method type that the attribute should have
 		 * @return array|null The method that you can call. THe array is a callable by the way, so you'll have to use
@@ -161,14 +155,12 @@
 		 */
 		private function getActionFromStr(Controller $controller, string $actionName, HttpMethod $httpMethod) : array | null
 		{
-			if (empty($actionName))
-			{
+			if (empty($actionName)) {
 				return null;
 			}
 			
 			$reflectedController = new ReflectionClass($controller);
-			foreach ($reflectedController->getMethods() as $controllerMethod)
-			{
+			foreach ($reflectedController->getMethods() as $controllerMethod) {
 				$method = $this->checkMethodAttributeAgainstAction($controllerMethod, $actionName, $httpMethod);
 				if ($method)
 					return [ $controller, $method->getName() ];
@@ -188,30 +180,16 @@
 		 */
 		private function checkMethodAttributeAgainstAction(ReflectionMethod $method, string $targetAction, HttpMethod $targetMethod) : ReflectionMethod | null
 		{
-			foreach ($method->getAttributes() as $attribute)
-			{
+			foreach ($method->getAttributes() as $attribute) {
 				$att = $attribute->newInstance();
-				if ($att instanceof RouteAttribute)
-				{
+				if ($att instanceof RouteAttribute) {
 					$methodEqual = strcmp($att->getMethod()->name, $targetMethod->name) == 0;
 					$actionNameEqual = strcmp($att->getAction(), $targetAction) == 0;
-					if ($methodEqual && $actionNameEqual)
-					{
+					if ($methodEqual && $actionNameEqual) {
 						return $method;
 					}
 				}
 			}
 			return null;
-		}
-		
-		private function stringToHttpMethod($method): HttpMethod
-		{
-			return match ( $method ) {
-				"POST" => HttpMethod::POST,
-				"PUT" => HttpMethod::PUT,
-				"PATCH" => HttpMethod::PATCH,
-				"DELETE" => HttpMethod::DELETE,
-				default => HttpMethod::GET,
-			};
 		}
 	}

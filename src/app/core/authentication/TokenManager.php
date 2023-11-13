@@ -1,7 +1,6 @@
 <?php
 	namespace bikeshop\app\core\authentication;
 	
-	use bikeshop\app\database\DatabaseConnector;
 	use bikeshop\app\database\entity\UserEntity;
 	use bikeshop\app\database\repository\UserRepository;
 	use Exception;
@@ -25,8 +24,7 @@
 		{
 			// Get token object from string
 			$parts = explode('.', $token);
-			if (count($parts) != 3)
-			{
+			if (count($parts) != 3) {
 				throw new Exception("Invalid token provided. Please login again");
 			}
 			
@@ -40,8 +38,7 @@
 			$expectedSignature = hash_hmac('sha256', $header . '.' . $payload, JwtToken::SECRET_KEY, true);
 			$expectedSignature = str_replace([ '+', '/', '=' ], [ '-', '_', '' ], base64_encode($expectedSignature));
 			
-			if ($receivedSignature != $expectedSignature)
-			{
+			if ($receivedSignature != $expectedSignature) {
 				throw new Exception("Invalid token provided. Please login again");
 			}
 			
@@ -50,19 +47,16 @@
 			
 			// Check expiry date. If it is passed the expiry date, reroute to /auth/login and clear the token cookie
 			$payload = json_decode($payload, true);
-
-			if (!array_key_exists('exp', $payload) || empty($payload[ 'exp' ]))
-			{
+			
+			if (!array_key_exists('exp', $payload) || empty($payload[ 'exp' ])) {
 				throw new Exception("Token has expired. Please login again");
 			}
 			
-			if (!array_key_exists('data', $payload) || empty($payload[ 'data' ]) &&
-				!array_key_exists('user-id', $payload['data']) || empty($payload['data'][ 'user-id' ]))
-			{
+			if (!array_key_exists('data', $payload) || empty($payload[ 'data' ]) && !array_key_exists('user-id', $payload[ 'data' ]) || empty($payload[ 'data' ][ 'user-id' ])) {
 				throw new Exception("Invalid token provided. Please login again");
 			}
 			
-			return $this->db->findUserWithId($payload['data']['user-id']);
+			return $this->db->findUserWithId($payload[ 'data' ][ 'user-id' ]);
 		}
 		
 		public function createDefaultSysAdmin()

@@ -3,7 +3,6 @@
 	namespace bikeshop\app\models;
 	
 	use bikeshop\app\core\ApplicationState;
-	use bikeshop\app\models\PagingModel;
 	
 	class ProductsModel extends PagingModel
 	{
@@ -17,24 +16,17 @@
 		 * @param int $maxResults The amount of products to be displayed
 		 * @param ApplicationState $state The application state
 		 */
-		public function __construct(
-			private string $productDisplayName,
-			private array $productFilterList,
-			array $list,
-			int   $currentPage,
-			int   $pageCount,
-			int   $maxResults,
-			ApplicationState $state)
+		public function __construct(private string $productDisplayName, private array $productFilterList, array $list, int $currentPage, int $pageCount, int $maxResults, ApplicationState $state)
 		{
 			parent::__construct($list, $currentPage, $pageCount, $maxResults, $state);
 		}
 		
-		public function getProductDisplayName(): string
+		public function getProductDisplayName() : string
 		{
 			return $this->productDisplayName;
 		}
 		
-		public function getProductsFilterList(): array
+		public function getProductsFilterList() : array
 		{
 			return $this->productFilterList;
 		}

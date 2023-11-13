@@ -37,24 +37,14 @@
 			$this->setPhone($phone);
 		}
 		
+		private function setUserRoleId(int $userRoleId)
+		{
+			$this->userRoleId = $userRoleId;
+		}
+		
 		public function print() : void
 		{
 			echo '<p>' . $this->getFirstName() . ' ' . $this->getLastName() . '</p>';
-		}
-		
-		/**
-		 * @return int
-		 */
-		public function getId() : int
-		{
-			return $this->id;
-		}
-		/**
-		 * @param int $id
-		 */
-		public function setId(int $id) : void
-		{
-			$this->id = $id;
 		}
 		
 		/**
@@ -89,6 +79,22 @@
 		{
 			$lastName = trim($lastName ?? "");
 			$this->lastName = $lastName;
+		}
+		
+		/**
+		 * @return int
+		 */
+		public function getId() : int
+		{
+			return $this->id;
+		}
+		
+		/**
+		 * @param int $id
+		 */
+		public function setId(int $id) : void
+		{
+			$this->id = $id;
 		}
 		
 		/**
@@ -227,13 +233,8 @@
 			$this->phone = $phone;
 		}
 		
-		public function getUserRoleId(): int
+		public function getUserRoleId() : int
 		{
 			return $this->userRoleId;
-		}
-		
-		private function setUserRoleId(int $userRoleId)
-		{
-			$this->userRoleId = $userRoleId;
 		}
 	}

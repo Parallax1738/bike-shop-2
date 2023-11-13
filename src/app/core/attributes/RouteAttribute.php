@@ -8,7 +8,8 @@
 	class RouteAttribute
 	{
 		public function __construct(private HttpMethod $method, private string $action)
-		{ }
+		{
+		}
 		
 		public function getMethod() : HttpMethod
 		{

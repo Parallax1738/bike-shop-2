@@ -19,7 +19,7 @@
 			return $this->user;
 		}
 		
-		public function setUser(UserEntity | null $user): void
+		public function setUser(UserEntity | null $user) : void
 		{
 			$this->user = $user;
 		}
